@@ -6,35 +6,87 @@ package com.risk.model.file;
 import java.util.HashMap;
 
 /**
- * This is an Schema Class for Map.
+ * This is an Model Class for Map.
+ * 
  * @author MayankJariwala
  * @version 0.0.1
  */
 public class Map {
-	
+
+	private String author;
+	private String image;
+	private String wrap;
+	private String scroll;
+	private String warn;
+
 	/**
-	 * @map_info : General Information of Map [Author,Version,...]
+	 * @return the author
 	 */
-	private HashMap<String, String> map_info;
-	
-	public Map() {
-		map_info = new HashMap<String,String>();
+	public String getAuthor() {
+		return author;
 	}
 
-	
 	/**
-	 * @return the map_info
+	 * @param author : the author to set
 	 */
-	public HashMap<String, String> getMap_info() {
-		return map_info;
+	public void setAuthor(String author) {
+		this.author = author;
 	}
 
+	/**
+	 * @return the image
+	 */
+	public String getImage() {
+		return image;
+	}
 
 	/**
-	 * @param map_info the map_info to set
+	 * @param image : the image to set
 	 */
-	public void setMap_info(HashMap<String, String> map_info) {
-		this.map_info = map_info;
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	/**
+	 * @return the wrap
+	 */
+	public String getWrap() {
+		return wrap;
+	}
+
+	/**
+	 * @param wrap : the wrap to set
+	 */
+	public void setWrap(String wrap) {
+		this.wrap = wrap;
+	}
+
+	/**
+	 * @return the scroll
+	 */
+	public String getScroll() {
+		return scroll;
+	}
+
+	/**
+	 * @param scroll : the scroll to set
+	 */
+	public void setScroll(String scroll) {
+		this.scroll = scroll;
+	}
+
+	/**
+	 * @return the warn
+	 */
+	public String getWarn() {
+		return warn;
+	}
+
+	/**
+	 * @param warn : the warn to set
+	 */
+	public void setWarn(String warn) {
+		this.warn = warn;
 	}
 
 }
