@@ -11,34 +11,16 @@ import java.util.List;
  */
 public class Territory {
 
-	/**
-	 * @name
-	 */
 	private String name;
-
-	/**
-	 * @x_coordinate
-	 */
 	private int x_coordinate;
-
-	/**
-	 * y_coordinate
-	 */
 	private int y_coordinate;
 
 	/**
 	 * @part_of_continent Territory belongs to Continent
 	 */
 	private String part_of_continent;
-
-	/**
-	 * @adj_territories
-	 */
 	private List<String> adj_territories;
 
-	/**
-	 * Territory Constructor
-	 */
 	public Territory() {
 		adj_territories = new ArrayList<String>();
 	}
@@ -112,6 +94,5 @@ public class Territory {
 	public void setAdj_territories(List<String> adj_territories) {
 		this.adj_territories = adj_territories;
 	}
-
 
 }

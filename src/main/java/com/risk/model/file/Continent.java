@@ -3,18 +3,15 @@ package com.risk.model.file;
 import java.util.Map;
 
 /**
- * This is an Schema Class for Continent. 
+ * This is an Schema Class for Continent.
+ * 
  * @author MayankJariwala
  * @version 0.0.1
  */
 public class Continent {
-	
-	/**
-	 * @continents
-	 */
+
 	private Map<String, Integer> continents;
 
-	
 	/**
 	 * @return the continents
 	 */
@@ -28,7 +25,5 @@ public class Continent {
 	public void setContinents(Map<String, Integer> continents) {
 		this.continents = continents;
 	}
-	
-	
-}
 
+}
