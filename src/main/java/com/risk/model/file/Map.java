@@ -3,8 +3,6 @@
  */
 package com.risk.model.file;
 
-import java.util.HashMap;
-
 /**
  * This is an Model Class for Map.
  * 
