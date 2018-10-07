@@ -1,7 +1,5 @@
 package com.risk.model.file;
 
-import java.util.Map;
-
 /**
  * This is an Schema Class for Continent.
  * 
@@ -10,20 +8,20 @@ import java.util.Map;
  */
 public class Continent {
 
-	private Map<String, Integer> continents;
+	private String name;
+	private int score;
 
-	/**
-	 * @return the continents
-	 */
-	public Map<String, Integer> getContinents() {
-		return continents;
+	public String getName() {
+		return name;
 	}
-
-	/**
-	 * @param continents the continents to set
-	 */
-	public void setContinents(Map<String, Integer> continents) {
-		this.continents = continents;
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 }
