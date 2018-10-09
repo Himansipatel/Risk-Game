@@ -15,7 +15,7 @@ public class Territory {
 	/**
 	 * List of neighboring territories
 	 */
-	private List<String> neighbour;
+	private List<String> neighbours;
 
 	public String getName() {
 		return name;
@@ -25,12 +25,12 @@ public class Territory {
 		this.name = name;
 	}
 
-	public List<String> getNeighbour() {
-		return neighbour;
+	public List<String> getNeighbours() {
+		return neighbours;
 	}
 
-	public void setNeighbour(List<String> neighbour) {
-		this.neighbour = neighbour;
+	public void setNeighbours(List<String> neighbours) {
+		this.neighbours = neighbours;
 	}
 	
 }
