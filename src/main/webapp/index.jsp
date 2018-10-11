@@ -1,49 +1,112 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Welcome</title>
-<link rel="stylesheet" href="resources/cssFiles/jquery-ui.css" />
-<link rel="stylesheet" href="resources/cssFiles/test.css" />
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"
-	integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-	crossorigin="anonymous"></script>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+<meta name="description" content="">
+<meta name="author" content="">
+<link rel="icon" href="../../favicon.ico">
+
+<title>Game Risk</title>
+
+<!-- Bootstrap core CSS -->
+<link href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"
+	rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<link rel="stylesheet" type="text/css"
+	href="https://cdn.datatables.net/1.10.15/css/dataTables.jqueryui.min.css" />
+
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript"
+	src="https://cdn.datatables.net/1.10.15/js/dataTables.jqueryui.min.js"></script>
+
+
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<!-- <link href="../../assets/css/ie10-viewport-bug-workaround.css"
+	rel="stylesheet"> -->
+
+<!-- Custom styles for this template -->
+<link href="navbar.css" rel="stylesheet">
+
+<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+<!-- <script src="../../assets/js/ie-emulation-modes-warning.js"></script> -->
+
+<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
 <script type="text/javascript">
 	$(document).ready(function() {
-		 $("p").text("Hello world!");
-		$("#map").click(function() {
-			getMap();
-		});
-		$("#clear").click(function() {
-			$("#country").val("");
-		});
-		function getMap() {
+
+		$("#manageMap").click(function() {
 			$.ajax({
-				url : "http://localhost:8080/GameRisk/maps/map"
-			}).then(function(data) {
-				//$("#country").value("yoooo");
-				//alert(data.countries);
-				$("#country").val(data.countries);
+				type : "GET",
+				url : "maps/getMapView",
+				success : function(data) {
+					$("#manageMap").addClass("active");
+					$("#jumbotron").html(data);
+
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("Failure");
+				}
 			});
-			
-		} 
-		
+		});
 	});
 </script>
-
 </head>
+
 <body>
-	<p>yoooo</p>
 
-	<table align="center"><tr>
-		<td><button id="map">Map</button></td>
-		<td><button id="clear">Clear</button></td>
-	</tr>
-	<tr>
-		Country :
-		<input id="country"></input>
+	<div class="container">
 
-	</tr>
-	</table>
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<a class="navbar-brand" href="#">Risk</a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarNav" aria-controls="navbarNav"
+				aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav">
+					<li class="nav-item" id="manageMap"><a class="nav-link">Map
+							Management <span class="sr-only">(current)</span>
+					</a></li>
+					<li class="nav-item" id="play"><a class="nav-link" href="#">Play</a></li>
+				</ul>
+			</div>
+		</nav>
+
+		<!-- Main component for a primary marketing message or call to action -->
+		<div class="jumbotron" id="jumbotron"
+			style="background-color: #40E0D0">
+			<h1>Risk Game</h1>
+			<p>Welcome to the Risk Game. Please choose navigation tool above
+				to continue.</p>
+
+		</div>
+
+	</div>
+	<!-- /container -->
+
+
+	<!-- Bootstrap core JavaScript
+    ================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script>
+		window.jQuery
+				|| document
+						.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')
+	</script>
+	<script src="webjars/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+	<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+	<!-- <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script> -->
 </body>
 </html>
