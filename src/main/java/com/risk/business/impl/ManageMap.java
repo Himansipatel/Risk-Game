@@ -10,6 +10,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.risk.business.IManageMap;
+import com.risk.file.impl.ManageFile;
 import com.risk.model.Continent;
 import com.risk.model.Map;
 import com.risk.model.Territory;
@@ -31,7 +32,8 @@ public class ManageMap implements IManageMap {
 	 */
 	@Override
 	public Map getFullMap(String fileName) {
-		//file = retreive_file_object(fileName);
+		ManageFile file_object = new ManageFile(fileName);
+		file = file_object.retreiveFileObject();
 		map = convertFileToMap(file);
 		return map;
 	}
