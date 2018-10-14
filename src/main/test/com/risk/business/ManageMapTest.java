@@ -117,8 +117,8 @@ public class ManageMapTest {
 	@Test
 	public void testMapCreationFromFile() {
 
-		File file = new File();
-		Map file_map = new Map();
+		//File file = new File();
+		//Map file_map = new Map();
 
 		/**
 		 * This part here is manually preparing File Object
@@ -126,7 +126,7 @@ public class ManageMapTest {
 		 * retreive_file_object(fileName). It'll serve as test run for 
 		 * method "retreive_file_object(fileName)", as well. 
 		 */
-		Continent continent_file = new Continent();
+/*		Continent continent_file = new Continent();
 		Territory territory_file = new Territory();
 		List<String> neighbours_file = new ArrayList<>();
 		List<Continent> continents_file = new ArrayList<>();
@@ -202,7 +202,8 @@ public class ManageMapTest {
 		file.setMap(file_map);
 		file.setTerritories(territories_file);
 		file.setContinents(continents_file);
-
-		//com.risk.model.Map map_out = manageMap.getFullMap("C://Test.map");
+*/
+		com.risk.model.Map map_out = manageMap.getFullMap("F:\\Concor\\Subjects\\Term1\\APP\\Sample\\Test_Map.map");
+		
 	}
 }
