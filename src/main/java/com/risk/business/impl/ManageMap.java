@@ -47,9 +47,18 @@ public class ManageMap implements IManageMap {
 	@Override
 	public void writeMapToFile(Map map) {
 		file = convertMapToFile(map);
-		//saveFileToDisk(file);
+		ManageFile manage_file = new ManageFile();
+		String file_write_message = manage_file.saveFileToDisk(file);
+		// Use file_write_message as response
+		System.out.println(file_write_message);
 	}
 
+
+	public static void main(String[] args) {
+		ManageMap manageMap = new ManageMap();
+		Map map = manageMap.getFullMap("F:\\Concor\\Subjects\\Term1\\APP\\Sample\\Test_Map.map");
+		manageMap.writeMapToFile(map);
+	}
 	/**
 	 * @see com.risk.business.IManageMap#getFullMap(java.lang.String)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -166,7 +175,7 @@ public class ManageMap implements IManageMap {
 	 * @return False If its an invalid Map otherwise True.
 	 */	
 	private Boolean guiMapToFile(com.risk.model.gui.Map map) {
-		
+
 		List<com.risk.model.gui.Continent> continents_gui    = new ArrayList<>();
 		List<com.risk.model.gui.Territory> territories_gui   = new ArrayList<>();
 		List<Territory> territories_model;
@@ -177,7 +186,7 @@ public class ManageMap implements IManageMap {
 		territories_gui = map.getTerritories();
 		HashMap<String, Continent> map_parsed = new HashMap<>();
 		Map map_model = new Map();
-		
+
 		for (com.risk.model.gui.Continent continent_gui : continents_gui) {
 			continent_model = new Continent();
 			continent_model.setName(continent_gui.getName());
@@ -198,7 +207,7 @@ public class ManageMap implements IManageMap {
 			continent_model.setTerritories(territories_model);
 			map_parsed.put(continent_model.getName(),continent_model);
 		}
-		
+
 		map_model.setContinents(map_parsed);
 		String message = checkDiscontinuity(map_model);
 		if (message.equals("")) {
@@ -218,15 +227,15 @@ public class ManageMap implements IManageMap {
 	 * @return GUI Map object if its a valid map otherwise Null.
 	 */		
 	private com.risk.model.gui.Map fileToGuiMap(String file_name){
-		
+
 		List<com.risk.model.gui.Continent> continents_gui    = new ArrayList<>();
 		List<com.risk.model.gui.Territory> territories_gui   = new ArrayList<>();
-		
+
 		com.risk.model.gui.Continent continent_gui;
 		com.risk.model.gui.Territory territory_gui;
-		
+
 		map = getFullMap(file_name);
-		
+
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator.hasNext();) {
 			java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
 			continent_gui = new com.risk.model.gui.Continent(continent_entry.getKey(),Integer.toString(continent_entry.getValue().getScore()));
@@ -237,7 +246,7 @@ public class ManageMap implements IManageMap {
 				territories_gui.add(territory_gui);
 			}
 		}
-		
+
 		if (continents_gui.size() > 0 && territories_gui.size() > 0) {
 			com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(continents_gui, territories_gui);
 			return map_gui;			
@@ -288,39 +297,36 @@ public class ManageMap implements IManageMap {
 	private File convertMapToFile(Map map) {
 
 		com.risk.model.file.Map mapHead;
-		com.risk.model.file.Continent file_continent = new com.risk.model.file.Continent();
-		com.risk.model.file.Territory file_territory = new com.risk.model.file.Territory();
+		com.risk.model.file.Continent file_continent;
+		com.risk.model.file.Territory file_territory;
 		List<com.risk.model.file.Continent> continents  = new ArrayList<>();
 		List<com.risk.model.file.Territory> territories = new ArrayList<>();
-		List<Territory> continent_territories = new ArrayList<>();
 
 		if (map!=null) {
 
 			file = new File();
 			mapHead = new com.risk.model.file.Map();
 
-			mapHead.setAuthor("Dummy");
-			mapHead.setImage("Dummy");
-			mapHead.setScroll("Dummy");
-			mapHead.setWarn("Dummy");
-			mapHead.setWrap("Dummy");
+			mapHead.setAuthor("Dummy"); //Dummy Hard-coded Values as MAP Object at business layer does not have any author.
+			mapHead.setImage("Dummy");  //Dummy Hard-coded Values as MAP Object at business layer does not have any image.
+			mapHead.setScroll("Dummy"); //Dummy Hard-coded Values as MAP Object at business layer does not have any scroll.
+			mapHead.setWarn("Dummy");   //Dummy Hard-coded Values as MAP Object at business layer does not have any warn.
+			mapHead.setWrap("Dummy");   //Dummy Hard-coded Values as MAP Object at business layer does not have any wrap.
 
 			for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator.hasNext();) {
 				java.util.Map.Entry<String,Continent> continent = iterator.next();				
-				file_continent.setName(continent.getValue().getName());
+				
+				file_continent = new com.risk.model.file.Continent();
+				file_continent.setName(continent.getKey());
 				file_continent.setScore(continent.getValue().getScore());
 				continents.add(file_continent);
-			}
 
-			for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator.hasNext();) {
-				java.util.Map.Entry<String,Continent> continent = iterator.next();				
-				continent_territories = continent.getValue().getTerritories();
-
-				for (Territory territory : continent_territories) {
+				for (Territory territory : continent.getValue().getTerritories()) {
+					file_territory = new com.risk.model.file.Territory();
 					file_territory.setName(territory.getName());
-					file_territory.setPart_of_continent(continent.getValue().getName());
-					file_territory.setX_coordinate(20);
-					file_territory.setY_coordinate(28);
+					file_territory.setPart_of_continent(continent.getKey());
+					file_territory.setX_coordinate(20); //Dummy Hard-coded Values as MAP Object at business layer does not have any coordinates.
+					file_territory.setY_coordinate(28); //Dummy Hard-coded Values as MAP Object at business layer does not have any coordinates.
 					file_territory.setAdj_territories(territory.getNeighbours());
 					territories.add(file_territory);
 				}
@@ -347,32 +353,34 @@ public class ManageMap implements IManageMap {
 	private Map convertFileToMap(File file) {
 
 		map = new Map();
-		Continent map_continent = new Continent();
-		Territory map_territory = new Territory();
+		Continent map_continent;
+		Territory map_territory;
 		HashMap<String, Continent> continents = new HashMap<>();
 		List<String> neighbours;
-
+		List<Territory> territories;
 		if (file != null) {
 			for (com.risk.model.file.Continent continent : file.getContinents()) {
+				map_continent = new Continent();
 				map_continent.setName(continent.getName());
 				map_continent.setScore(continent.getScore());
-				map_continent.setTerritories(new ArrayList<Territory>());
-				continents.put(continent.getName(), map_continent);
-				map_continent = new Continent();
-			}
+				territories = new ArrayList<Territory>();
 
-			map.setContinents(continents);
-
-			for (com.risk.model.file.Territory territory : file.getTerritories()) {
-				map_territory.setName(territory.getName());
-				neighbours = new ArrayList<>();
-				for (String neighbour : territory.getAdj_territories()) {
-					neighbours.add(neighbour);
+				for (com.risk.model.file.Territory territory : file.getTerritories()) {
+					if (territory.getPart_of_continent().equals(continent.getName())) {
+						map_territory = new Territory();
+						map_territory.setName(territory.getName());
+						neighbours = new ArrayList<>();
+						for (String neighbour : territory.getAdj_territories()) {
+							neighbours.add(neighbour);
+						}
+						map_territory.setNeighbours(neighbours);
+						territories.add(map_territory);
+					}					
 				}
-				map_territory.setNeighbours(neighbours);
-				map_continent = map.getContinents().get(territory.getPart_of_continent());
-				map_continent.getTerritories().add(map_territory);
+				map_continent.setTerritories(territories);
+				continents.put(continent.getName(), map_continent);
 			}
+			map.setContinents(continents);
 			return map;	
 		}else {
 			return null;
