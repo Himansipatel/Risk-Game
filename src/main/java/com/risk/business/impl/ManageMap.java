@@ -47,7 +47,9 @@ public class ManageMap implements IManageMap {
 	@Override
 	public void writeMapToFile(Map map) {
 		file = convertMapToFile(map);
-		//saveFileToDisk(file);
+		ManageFile manage_file = new ManageFile();
+		String file_write_message = manage_file.saveFileToDisk(file);
+		// Use file_write_message as response
 	}
 
 	/**
