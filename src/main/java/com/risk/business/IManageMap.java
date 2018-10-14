@@ -12,9 +12,9 @@ public interface IManageMap {
 	 * from the Map File to be saved/loaded.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param fileName : Fully Qualified Map File Name on local disk.
-	 *  				 This file will be rendered for Playing as well as for Editing Map.
-	 * @return Map : This is the entire Map Object which will be rendered for Playing.
+	 * @param fileName Fully Qualified Map File Name on local disk.
+	 *  			   This file will be rendered for Playing as well as for Editing Map.
+	 * @return Entire Map Object which will be rendered for Playing.
 	 */
 	Map getFullMap(String fileName);
 
@@ -23,8 +23,8 @@ public interface IManageMap {
 	 * into the Map File to be saved/loaded.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map  : This is the entire Map Object which will be converted to a File
-	 * 				 Object and then written on to a Map File.
+	 * @param map This is the entire Map Object which will be converted to a File
+	 * 			  Object and then written on to a Map File.
 	 */	
 	void writeMapToFile(Map map); 
 
@@ -32,8 +32,8 @@ public interface IManageMap {
 	 * This method checks the World Map Object for any duplicate continents.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map : Object Representation of the Map File.
-	 * @return String message : Any Errors is they exist otherwise empty String.
+	 * @param map Object Representation of the Map File.
+	 * @return Any Errors if they exist otherwise empty String.
 	 */
 	String checkDuplicateContinent(Map map, String continent);
 
@@ -41,8 +41,8 @@ public interface IManageMap {
 	 * This method checks the World Map Object for any duplicate territories.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map : Object Representation of the Map File.
-	 * @return String message : Any Errors is they exist otherwise empty String.
+	 * @param map Object Representation of the Map File.
+	 * @return Any Errors if they exist otherwise empty String.
 	 */
 	String checkDuplicateTerritory(Map map,String territory);
 
@@ -52,9 +52,30 @@ public interface IManageMap {
 	 * from the rest of the connected map.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map : Object Representation of the Map File.
-	 * @return String message : Any Errors is they exist otherwise empty String.
+	 * @param map Object Representation of the Map File.
+	 * @return Any Errors if they exist otherwise empty String.
 	 */	
-	String checkDiscontinuity(Map map);	
+	String checkDiscontinuity(Map map);
+	
+	/**
+	 * This method receives the World Map Object from GUI and checks it for any discontinuities.
+	 * If its valid then the map is converted to a FILE Object and forwarded to File Access Layer
+	 * for saving to a physical MAP File.
+	 * If its invalid then a boolean value False is returned to GUI. 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param map GUI Object Representation of the World Map.
+	 * @return False If its an invalid Map otherwise True.
+	 */	
+	Boolean saveMap(com.risk.model.gui.Map map);
+	
+	/**
+	 * This method retrieves an existing World Map File from local system and returns a 
+	 * MAP Object that can be rendered to UI.
+	 * If the loaded file is an invalid Map then it returns Null. 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param file_name Absolute Path of the  map file stored on local system.
+	 * @return GUI Map object if its a valid map otherwise Null.
+	 */	
+	com.risk.model.gui.Map fetchMap(String file_name);
 
 }

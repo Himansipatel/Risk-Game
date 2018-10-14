@@ -1,6 +1,7 @@
 package com.risk.business.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -105,8 +106,8 @@ public class ManageMap implements IManageMap {
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator.hasNext();) {
 			java.util.Map.Entry<String,Continent> continent = iterator.next();
 			territories.addAll(continent.getValue().getTerritories());
-		}		
-		
+		}
+
 		/**
 		 * If some territory does not have any neighbor then we can immediately 
 		 * arrive at a conclusion that Map is disconnected.
@@ -136,7 +137,115 @@ public class ManageMap implements IManageMap {
 			return message;	
 		}
 	}
-	
+
+	/**
+	 * @see com.risk.business.IManageMap#saveMap(com.risk.model.gui.Map)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Override
+	public Boolean saveMap(com.risk.model.gui.Map map) {
+		return guiMapToFile(map);
+	}
+
+	/**
+	 * @see com.risk.business.IManageMap#fetchMap(String)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Override
+	public com.risk.model.gui.Map fetchMap(String file_name) {
+		return fileToGuiMap(file_name);
+	}
+
+	/**
+	 * This method receives the World Map Object from GUI and checks it for any discontinuities.
+	 * If its valid then the map is converted to a FILE Object and forwarded to File Access Layer
+	 * for saving to a physical MAP File.
+	 * If its invalid then a boolean value False is returned to GUI. 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param map GUI Object Representation of the World Map.
+	 * @return False If its an invalid Map otherwise True.
+	 */	
+	private Boolean guiMapToFile(com.risk.model.gui.Map map) {
+		
+		List<com.risk.model.gui.Continent> continents_gui    = new ArrayList<>();
+		List<com.risk.model.gui.Territory> territories_gui   = new ArrayList<>();
+		List<Territory> territories_model;
+		Territory territory_model; 
+		Continent continent_model; 
+
+		continents_gui  = map.getContinents();
+		territories_gui = map.getTerritories();
+		HashMap<String, Continent> map_parsed = new HashMap<>();
+		Map map_model = new Map();
+		
+		for (com.risk.model.gui.Continent continent_gui : continents_gui) {
+			continent_model = new Continent();
+			continent_model.setName(continent_gui.getName());
+			continent_model.setScore(Integer.parseInt(continent_gui.getScore()));
+			territories_model = new ArrayList<>();
+
+			for (com.risk.model.gui.Territory territory_gui : territories_gui) {
+				if (continent_gui.getName().equals(territory_gui.getContinentName())) {
+					String[] neighbours_gui = territory_gui.getNeighbours().split(";");
+					List<String> neighbours_model = new ArrayList<>(Arrays.asList(neighbours_gui));
+
+					territory_model = new Territory();					
+					territory_model.setName(territory_gui.getName());
+					territory_model.setNeighbours(neighbours_model);
+					territories_model.add(territory_model);
+				}
+			}
+			continent_model.setTerritories(territories_model);
+			map_parsed.put(continent_model.getName(),continent_model);
+		}
+		
+		map_model.setContinents(map_parsed);
+		String message = checkDiscontinuity(map_model);
+		if (message.equals("")) {
+			writeMapToFile(map_model);
+			return true;
+		}else {
+			return false;
+		}
+	}
+
+	/**
+	 * This method retrieves an existing World Map File from local system and returns a 
+	 * MAP Object that can be rendered to UI.
+	 * If the loaded file is an invalid Map then it returns Null. 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param file_name Absolute Path of the  map file stored on local system.
+	 * @return GUI Map object if its a valid map otherwise Null.
+	 */		
+	private com.risk.model.gui.Map fileToGuiMap(String file_name){
+		
+		List<com.risk.model.gui.Continent> continents_gui    = new ArrayList<>();
+		List<com.risk.model.gui.Territory> territories_gui   = new ArrayList<>();
+		
+		com.risk.model.gui.Continent continent_gui;
+		com.risk.model.gui.Territory territory_gui;
+		
+		map = getFullMap(file_name);
+		
+		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator.hasNext();) {
+			java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
+			continent_gui = new com.risk.model.gui.Continent(continent_entry.getKey(),Integer.toString(continent_entry.getValue().getScore()));
+			continents_gui.add(continent_gui);
+			for (Territory territory : continent_entry.getValue().getTerritories()) {
+				String neighbours = String.join(";", territory.getNeighbours());
+				territory_gui = new com.risk.model.gui.Territory(territory.getName(), continent_entry.getKey(), neighbours);
+				territories_gui.add(territory_gui);
+			}
+		}
+		
+		if (continents_gui.size() > 0 && territories_gui.size() > 0) {
+			com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(continents_gui, territories_gui);
+			return map_gui;			
+		}else {
+			return null;
+		}
+	}
+
 	/**
 	 * This recursive method here is an implementation of DepthFirstSearch,
 	 * which is being run for checking any discontinuity in our Map.
@@ -190,11 +299,11 @@ public class ManageMap implements IManageMap {
 			file = new File();
 			mapHead = new com.risk.model.file.Map();
 
-			mapHead.setAuthor("Apoorv");
-			mapHead.setImage("Apoorv");
-			mapHead.setScroll("Apoorv");
-			mapHead.setWarn("Apoorv");
-			mapHead.setWrap("Apoorv");
+			mapHead.setAuthor("Dummy");
+			mapHead.setImage("Dummy");
+			mapHead.setScroll("Dummy");
+			mapHead.setWarn("Dummy");
+			mapHead.setWrap("Dummy");
 
 			for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator.hasNext();) {
 				java.util.Map.Entry<String,Continent> continent = iterator.next();				
