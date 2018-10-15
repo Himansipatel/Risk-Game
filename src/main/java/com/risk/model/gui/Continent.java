@@ -11,6 +11,10 @@ public class Continent {
 	String name;
 	String score;
 
+	public Continent() {
+		super();
+	}
+	
 	public Continent(String name, String score) {
 		super();
 		this.name = name;

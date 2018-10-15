@@ -13,6 +13,10 @@ public class Map {
 	List<Continent> continents;
 	List<Territory> territories;
 	
+	public Map() {
+		super();
+	}
+	
 	public Map(List<Continent> continents, List<Territory> territories) {
 		super();
 		this.continents = continents;

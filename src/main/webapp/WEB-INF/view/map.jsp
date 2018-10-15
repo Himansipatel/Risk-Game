@@ -91,22 +91,70 @@
 				$('#getFullMap').on(
 						'click',
 						function() {
+							var selectedMap=$( "#availableMapsName option:selected" ).text();
+							if(selectedMap == ''){
+								return;																
+							}
 							$.ajax({
 								type : "GET",
+								data: $.param({ fileName: selectedMap }),
 								url : "maps/map",
 								success : function(data) {
 									parseMapData(data);
+									$('#loadMapModal').modal('toggle');
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
-									alert("Failure");
+									$('#loadMapModal').modal('toggle');
+									alert("Failure loading map");
 								}
 							});
 						});
+				
+				$('#getMapName').on(
+						'click',
+						function() {
+							$.ajax({
+								type : "GET",
+								url : "maps/getAvailableMaps",
+								success : function(data) {
+									$('#availableMapsName')
+								    .find('option')
+								    .remove();
+									for(var i=0; i< data.length;i++){
+										$('#availableMapsName').append($('<option>', {
+										    value: data[i],
+										    text: data[i]
+										}));
+									}
+								},
+								error : function(XMLHttpRequest, textStatus,
+										errorThrown) {
+									alert("Failure fetching map");
+								}
+							});
+						});
+				
+				function checkIfDuplicateContinent(continentToBeChecked){
+					var existingContinent = continentDataTable.columns( 0 ).data()[0];
+					for(var i=0; i<existingContinent.length; i++){
+						if(existingContinent[i].toUpperCase() === continentToBeChecked.toUpperCase()){
+							return true;
+						}
+					}
+					return false;
+				}
 
 				$('#addContinent').on('click', function() {
 										var cont = $('#continentName').val();
 										var sco = $('#score').val();
+										
+										if(checkIfDuplicateContinent(cont)){
+											alert("Contient already present with name : " + cont);
+											return;
+										}
+										
+										
 										if(typeof(cont)!=undefined && typeof(sco)!=undefined && cont != '' && sco != ''){
 												addRowInContinentDataTable(cont, sco);
 												$('#continentName').val("");
@@ -114,11 +162,55 @@
 											}					
 				});
 				
+				function checkIfContinentPresent(continentToBeChecked){
+					var existingContinent = continentDataTable.columns( 0 ).data()[0];
+					for(var i=0; i<existingContinent.length; i++){
+						if(existingContinent[i].toUpperCase() === continentToBeChecked.toUpperCase()){
+							return true;
+						}
+					}
+					return false;
+				}
+				
+				function checkIfDuplicateCountry(countryToBeChecked){
+					var existingCountry = countryDataTable.columns( 0 ).data()[0];
+					for(var i=0; i<existingCountry.length; i++){
+						if(existingCountry[i].toUpperCase() === countryToBeChecked.toUpperCase()){
+							return true;
+						}
+					}
+					return false;
+				}
+				
+				function checkIfNeighboursPresent(neighboursToBeChecked){
+					for(var i=0; i<neighboursToBeChecked.length; i++){
+						if(neighboursToBeChecked[i] != '' && !checkIfDuplicateCountry(neighboursToBeChecked[i])){
+							return false;
+						}
+					}
+					return true;
+				}
+				
 				$('#addCountry').on('click', function() {
 				var con = $('#countryName').val();
 				var conti = $('#continent').val();
 				var neigh = $('#neighbors').val();
-				if(typeof(con)!=undefined && typeof(conti)!=undefined && typeof(neigh)!=undefined && con != '' && conti != '' && neigh != ''){
+				if(!checkIfContinentPresent(conti)){
+					alert("Please add continent : " + conti+" in continent table");
+					return;
+				}
+				
+				if(checkIfDuplicateCountry(con)){
+					alert("Country already present with name : " + con);
+					return;
+				}
+				
+				if(!checkIfNeighboursPresent(neigh.split(";"))){
+					alert("One or more neighbours countries not present");
+					return;
+				}
+				
+				if(typeof(con)!=undefined && typeof(conti)!=undefined && con != '' && conti != ''){
 					addRowInCountryDataTable(con, conti, neigh);
 						$('#countryName').val("");
 						$('#continent').val("");
@@ -149,7 +241,6 @@
 					var countryAray = formArraylistOfCountryToSave(data);
 					var map = {continents: continentArray, territories: countryAray};
 					var a = JSON.stringify(map);
-					debugger;
 					$.ajax({
 						type : "POST",
 						url : "maps/save",
@@ -157,11 +248,11 @@
 					    data: a,
 					    contentType: "application/json",
 						success : function(data) {
-							alert("success");
+							alert("success saving map");
 						},
 						error : function(XMLHttpRequest, textStatus,
 								errorThrown) {
-							alert("Failure");
+							alert("Failure saving map");
 						}
 					});
 					
@@ -204,6 +295,7 @@
 				style="background-color: black; border-color: black">Add</button>
 		</div>
 	</div>
+
 	<div style="margin-top: 2%">
 		<h2>Continents</h2>
 		<p>Please select row to update</p>
@@ -247,10 +339,43 @@
 			</table>
 		</div>
 	</div>
-	<button id="save" class="btn btn-primary"
+
+	<button id="save" class="btn btn-secondary"
 		style="background-color: black; border-color: black">Save</button>
-	<button id="getFullMap" class="btn btn-primary"
-		style="background-color: black; border-color: black">Map</button>
+	<button id="getMapName" class="btn btn-primary"
+		style="background-color: black; border-color: black"
+		data-toggle="modal" data-target="#loadMapModal">Load Map</button>
+
+
+
+	<!-- Modal -->
+	<div class="modal fade" id="loadMapModal" tabindex="-1" role="dialog"
+		aria-labelledby="loadMapModalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Select Map
+						to load</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<select class="form-control form-control-sm" id="availableMapsName">
+						<option></option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black"
+						data-dismiss="modal">Close</button>
+					<button id="getFullMap" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Load</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 </html>

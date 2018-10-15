@@ -18,6 +18,10 @@ public class Territory {
 		this.neighbours = neighbours;
 	}
 
+	public Territory() {
+		super();
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -49,41 +49,35 @@ public class MapController {
 	@ResponseBody
 	public Map getFullMap(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "fileName", required = false) String fileName) throws Exception {
-		Map map = prepareFileObject();
+		Map map = iManageMap.fetchMap("D:\\Study\\Concordia\\SOEN 6441 - APP\\Maps\\Africa.map");
 		return map;
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public void submitQRList(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map)
+	@ResponseBody
+	public Map submitMap(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map)
 			throws Exception {
 		System.out.println(map);
+		return map;
+	}
+
+	@RequestMapping(value = "/getAvailableMaps", method = RequestMethod.GET)
+	@ResponseBody
+	public List<String> getAvailableMaps(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		List<String> availableFiles = new ArrayList<>();
+		availableFiles.add("map1");
+		availableFiles.add("map2");
+		availableFiles.add("map3");
+		availableFiles.add("map4");
+
+		return availableFiles;
 	}
 
 	private com.risk.model.Map createMapObject() {
 		com.risk.model.Map map = new com.risk.model.Map();
 		map.setContinents(new HashMap<>());
 		return map;
-	}
-
-	private Map prepareFileObject() {
-
-		List<com.risk.model.gui.Continent> continents = new ArrayList<>();
-		List<com.risk.model.gui.Territory> territories = new ArrayList<>();
-
-		com.risk.model.gui.Continent continent = new com.risk.model.gui.Continent("Asia", "8");
-		com.risk.model.gui.Territory territory = new com.risk.model.gui.Territory("India", "Asia", "Nepal;China");
-
-		continents.add(continent);
-		territories.add(territory);
-
-		continent = new com.risk.model.gui.Continent("Europe", "8");
-		territory = new com.risk.model.gui.Territory("France", "Europe", "Germany;Belgium");
-
-		continents.add(continent);
-		territories.add(territory);
-		com.risk.model.gui.Map map = new com.risk.model.gui.Map(continents, territories);
-		return map;
-
 	}
 
 }
