@@ -224,4 +224,24 @@ public class ManageFile {
 		}
 		return file_writer_message;
 	}
+
+	/**
+	 * This function is use to fetch all map files from Resource Folder
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @return Name List of Map Files
+	 */
+	public List<String> fetchMapFilesFromResource() {
+		List<String> list_of_map_files = new ArrayList<>();
+		java.io.File resource_folder = new java.io.File("src/main/resource");
+		java.io.File[] listOfMapFiles = resource_folder.listFiles();
+		if (listOfMapFiles.length > 0) {
+			for (java.io.File file : listOfMapFiles) {
+				if (file.isFile() && file.getName().endsWith(".map")) {
+					list_of_map_files.add(file.getName());
+				}
+			}
+		}
+		return list_of_map_files;
+	}
 }
