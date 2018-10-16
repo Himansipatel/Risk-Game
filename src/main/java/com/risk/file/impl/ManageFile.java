@@ -179,8 +179,8 @@ public class ManageFile {
 	 * @param file
 	 * @return File Write Status Message
 	 */
-	public String saveFileToDisk(File file, String file_name) {
-		String file_writer_message = "";
+	public Boolean saveFileToDisk(File file, String file_name) {
+		boolean file_writer_message = false;
 		try (PrintStream map_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/" + file_name)))) {
 			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile) Line# 167");
@@ -213,10 +213,10 @@ public class ManageFile {
 			}
 			if (map_file_writer.checkError()) {
 				logger.warning("Error (saveFileToDisk::ManageFile)");
-				file_writer_message = "Problem while saving file";
+				file_writer_message = false;
 			} else {
 				logger.info("Success (saveFileToDisk::ManageFile)");
-				file_writer_message = "File Save Successfully";
+				file_writer_message = true;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
