@@ -10,7 +10,11 @@
 <link rel="icon" href="../../favicon.ico">
 
 <title>Game Risk</title>
-
+<style type="text/css">
+body {
+	background: url("https://imgwm.com/images/_RYoR3nBGGs.jpeg") fixed;
+}
+</style>
 <!-- Bootstrap core CSS -->
 <link href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"
 	rel="stylesheet">
@@ -51,6 +55,23 @@
 				url : "maps/getMapView",
 				success : function(data) {
 					$("#manageMap").addClass("active");
+					$("#play").removeClass("active");
+					$("#jumbotron").html(data);
+
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("Failure");
+				}
+			});
+		});
+
+		$("#play").click(function() {
+			$.ajax({
+				type : "GET",
+				url : "gamePlay/getPlayView",
+				success : function(data) {
+					$("#play").addClass("active");
+					$("#manageMap").removeClass("active");
 					$("#jumbotron").html(data);
 
 				},
@@ -67,8 +88,9 @@
 
 	<div class="container">
 
-		<nav class="navbar navbar-expand-lg navbar-light bg-light">
-			<a class="navbar-brand" href="#">Risk</a>
+		<nav class="navbar navbar-expand-lg navbar-light bg-light"
+			style="background-color: #16161780 !important; border: 1px solid #5094da">
+			<a class="navbar-brand" href="#" style="color: #5d88d6">Risk</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarNav" aria-controls="navbarNav"
 				aria-expanded="false" aria-label="Toggle navigation">
@@ -76,17 +98,19 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav">
-					<li class="nav-item" id="manageMap"><a class="nav-link">Map
-							Management <span class="sr-only">(current)</span>
+					<li class="nav-item" id="manageMap"><a class="nav-link"
+						href="#" style="color: #5d88d6">Map Management <span
+							class="sr-only">(current)</span>
 					</a></li>
-					<li class="nav-item" id="play"><a class="nav-link" href="#">Play</a></li>
+					<li class="nav-item" id="play"><a class="nav-link" href="#"
+						style="color: #5d88d6">Play</a></li>
 				</ul>
 			</div>
 		</nav>
 
 		<!-- Main component for a primary marketing message or call to action -->
 		<div class="jumbotron" id="jumbotron"
-			style="background-color: #40E0D0">
+			style="background-color: #d7e2fd8f">
 			<h1>Risk Game</h1>
 			<p>Welcome to the Risk Game. Please choose navigation tool above
 				to continue.</p>
