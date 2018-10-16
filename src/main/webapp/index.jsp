@@ -10,6 +10,11 @@
 <link rel="icon" href="../../favicon.ico">
 
 <title>Game Risk</title>
+<style type="text/css">
+body {
+	background: url("https://imgwm.com/images/_RYoR3nBGGs.jpeg") fixed;
+}
+</style>
 <!-- Bootstrap core CSS -->
 <link href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"
 	rel="stylesheet">
