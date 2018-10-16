@@ -33,7 +33,7 @@ public class MapController {
 	IManageMap iManageMap;
 
 	@RequestMapping(value = "/getMapView", method = RequestMethod.GET)
-	public ModelAndView ModelAndView(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView getMapView(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		ModelAndView model = new ModelAndView("map");
 		com.risk.model.Map map = createMapObject();
