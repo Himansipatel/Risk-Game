@@ -25,7 +25,7 @@ import com.risk.model.file.Territory;
  */
 public class ManageFile {
 
-	private String file_absolute_path;
+	private String file_name;
 	private Map filelayer_map_object;
 	private File file_object;
 	// Indicate Active Section such as Territory,Continent,Map
@@ -56,10 +56,10 @@ public class ManageFile {
 	 * 
 	 * @param file_absolute_path
 	 */
-	public ManageFile(String file_absolute_path) {
+	public ManageFile(String file_name) {
 		// Using Default Constructor Values
 		this();
-		this.file_absolute_path = file_absolute_path;
+		this.file_name = file_name;
 		filelayer_map_object = null;
 		current_section_in_file = null;
 		file_object = new File();
@@ -76,7 +76,7 @@ public class ManageFile {
 	 */
 	public File retreiveFileObject() {
 		String line = "";
-		try (BufferedReader map_file_object = new BufferedReader(new FileReader(file_absolute_path))) {
+		try (BufferedReader map_file_object = new BufferedReader(new FileReader("src/main/resource/" + file_name))) {
 			while ((line = map_file_object.readLine()) != null) {
 				if (line.length() > 0) {
 					// Later Change this Part to function
@@ -179,10 +179,10 @@ public class ManageFile {
 	 * @param file
 	 * @return File Write Status Message
 	 */
-	public String saveFileToDisk(File file) {
-		String file_writer_message = "";
+	public Boolean saveFileToDisk(File file, String file_name) {
+		boolean file_writer_message = false;
 		try (PrintStream map_file_writer = new PrintStream(
-				new BufferedOutputStream(new FileOutputStream("src/main/resource/xyz.map")))) {
+				new BufferedOutputStream(new FileOutputStream("src/main/resource/" + file_name)))) {
 			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile) Line# 167");
 			map_file_writer.println("[Map]");
 			map_file_writer.println("author=" + file.getMap().getAuthor());
@@ -213,15 +213,35 @@ public class ManageFile {
 			}
 			if (map_file_writer.checkError()) {
 				logger.warning("Error (saveFileToDisk::ManageFile)");
-				file_writer_message = "Problem while saving file";
+				file_writer_message = false;
 			} else {
 				logger.info("Success (saveFileToDisk::ManageFile)");
-				file_writer_message = "File Save Successfully";
+				file_writer_message = true;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			logger.warning("IOException (saveFileToDisk::ManageFile) " + e.getMessage());
 		}
 		return file_writer_message;
+	}
+
+	/**
+	 * This function is use to fetch all map files from Resource Folder
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @return Name List of Map Files
+	 */
+	public List<String> fetchMapFilesFromResource() {
+		List<String> list_of_map_files = new ArrayList<>();
+		java.io.File resource_folder = new java.io.File("src/main/resource");
+		java.io.File[] listOfMapFiles = resource_folder.listFiles();
+		if (listOfMapFiles.length > 0) {
+			for (java.io.File file : listOfMapFiles) {
+				if (file.isFile() && file.getName().endsWith(".map")) {
+					list_of_map_files.add(file.getName());
+				}
+			}
+		}
+		return list_of_map_files;
 	}
 }

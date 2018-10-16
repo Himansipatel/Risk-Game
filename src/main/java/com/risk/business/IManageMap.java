@@ -1,6 +1,7 @@
 package com.risk.business;
 
-import com.risk.model.Map;
+import java.util.List;
+import com.risk.model.Map; 
 
 /**
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -25,8 +26,10 @@ public interface IManageMap {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param map This is the entire Map Object which will be converted to a File
 	 * 			  Object and then written on to a Map File.
+	 * @param file_name Name of the Map file to be stored in Resource Folder. 
+	 * @return File write status. 
 	 */	
-	void writeMapToFile(Map map); 
+	boolean writeMapToFile(Map map, String file_name); 
 
 	/**
 	 * This method checks the World Map Object for any duplicate continents.
@@ -56,26 +59,38 @@ public interface IManageMap {
 	 * @return Any Errors if they exist otherwise empty String.
 	 */	
 	String checkDiscontinuity(Map map);
-	
+
 	/**
 	 * This method receives the World Map Object from GUI and checks it for any discontinuities.
 	 * If its valid then the map is converted to a FILE Object and forwarded to File Access Layer
 	 * for saving to a physical MAP File.
-	 * If its invalid then a boolean value False is returned to GUI. 
-	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map GUI Object Representation of the World Map.
-	 * @return False If its an invalid Map otherwise True.
-	 */	
-	Boolean saveMap(com.risk.model.gui.Map map);
-	
+	 * If its invalid then a boolean value False is returned to GUI.
+	 *  
+	 * @author   <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param    map GUI Object Representation of the World Map.
+	 * @param    file_name Name of the Map file to be stored in Resource Folder.
+	 * @return   False    If its an invalid Map otherwise True.
+	 */
+	Boolean saveMap(com.risk.model.gui.Map map, String file_name);
+
 	/**
-	 * This method retrieves an existing World Map File from local system and returns a 
+	 * This method retrieves an existing World Map File from Resource Folder and returns a 
 	 * MAP Object that can be rendered to UI.
 	 * If the loaded file is an invalid Map then it returns Null. 
+	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param file_name Absolute Path of the  map file stored on local system.
+	 * @param file_name Name of the Map file to be stored in Resource Folder.
 	 * @return GUI Map object if its a valid map otherwise Null.
-	 */	
+	 */		
 	com.risk.model.gui.Map fetchMap(String file_name);
+
+	/**
+	 * This method retrieves a list of existing World Map File from Resource Folder. 
+	 * User then selects a file from the given list.
+	 *  
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @return List of existing World Map Files from Resource Folder.
+	 */	
+	List<String> fetchMaps();	
 
 }
