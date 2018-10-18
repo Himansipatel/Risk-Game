@@ -56,7 +56,7 @@ public class MapController {
 	@ResponseBody
 	public Map submitMap(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map)
 			throws Exception {
-		iManageMap.saveMap(map, "dummy");
+		iManageMap.saveMap(map, map.getCurrentMap());
 		return map;
 	}
 

@@ -13,17 +13,23 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
+import com.risk.file.IManageFile;
 import com.risk.model.file.Continent;
 import com.risk.model.file.File;
 import com.risk.model.file.Map;
 import com.risk.model.file.Territory;
 
 /**
+ * This class is use to deal to with map traditional file read and write
+ * operation.
+ * 
  * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
  * @version 0.0.1
  */
-public class ManageFile {
+@Service
+public class ManageFile implements IManageFile {
 
 	private String file_name;
 	private Map filelayer_map_object;
@@ -42,7 +48,7 @@ public class ManageFile {
 
 	public ManageFile() {
 		try {
-			FileHandler fh = new FileHandler("src/main/resource/ManageFile.log");
+			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageFile/index.log");
 			logger.addHandler(fh);
 			logger.setUseParentHandlers(false);
 			SimpleFormatter formatter = new SimpleFormatter();
@@ -54,28 +60,26 @@ public class ManageFile {
 
 	/**
 	 * 
-	 * @param file_absolute_path
+	 * @param file_name Name of the Map File
 	 */
 	public ManageFile(String file_name) {
 		// Using Default Constructor Values
 		this();
 		this.file_name = file_name;
-		filelayer_map_object = null;
-		current_section_in_file = null;
-		file_object = new File();
-		continent_object_list = new ArrayList<Continent>();
-		territory_object_list = new ArrayList<Territory>();
 	}
 
 	/**
-	 * This Function reads various sections and their related information from map
-	 * file.
-	 * 
+	 * @see com.risk.file.IManageFile#retreiveFileObject()
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @return File Object
 	 */
+	@Override
 	public File retreiveFileObject() {
 		String line = "";
+		file_object = new File();
+		filelayer_map_object = null;
+		current_section_in_file = null;
+		continent_object_list = new ArrayList<Continent>();
+		territory_object_list = new ArrayList<Territory>();
 		try (BufferedReader map_file_object = new BufferedReader(new FileReader("src/main/resource/" + file_name))) {
 			while ((line = map_file_object.readLine()) != null) {
 				if (line.length() > 0) {
@@ -109,6 +113,77 @@ public class ManageFile {
 			logger.info("IOException (retreiveFileObject::ManageFile) " + e.getMessage());
 		}
 		return file_object;
+	}
+
+	/**
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @see com.risk.file.IManageFile#saveFileToDisk(File, String)
+	 */
+	@Override
+	public Boolean saveFileToDisk(File file, String file_name) {
+		boolean file_writer_message = false;
+		file_name = file_name.endsWith(".map") ? file_name : file_name + ".map";
+		try (PrintStream map_file_writer = new PrintStream(
+				new BufferedOutputStream(new FileOutputStream("src/main/resource/" + file_name)))) {
+			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile)");
+			map_file_writer.println("[Map]");
+			map_file_writer.println("author=" + file.getMap().getAuthor());
+			map_file_writer.println("image=" + file.getMap().getImage());
+			map_file_writer.println("wrap=" + file.getMap().getWrap());
+			map_file_writer.println("scroll=" + file.getMap().getScroll());
+			map_file_writer.println("warn=" + file.getMap().getWarn());
+			map_file_writer.println();
+
+			map_file_writer.println("[Continents]");
+			for (Continent continent_info : file.getContinents()) {
+				map_file_writer.println(continent_info.getName() + "=" + continent_info.getScore());
+			}
+			map_file_writer.println();
+
+			map_file_writer.println("[Territories]");
+			for (Territory territory_info : file.getTerritories()) {
+				String each_territory_info = "";
+				each_territory_info = StringUtils.join(new String[] { territory_info.getName(),
+						String.valueOf(territory_info.getX_coordinate()),
+						String.valueOf(territory_info.getY_coordinate()), territory_info.getPart_of_continent() }, ",");
+				List<String> each_adj_territory = new ArrayList<>();
+				for (String adj_territories : territory_info.getAdj_territories()) {
+					each_adj_territory.add(adj_territories);
+				}
+				each_territory_info += "," + StringUtils.join(each_adj_territory, ",");
+				map_file_writer.println(each_territory_info);
+			}
+			if (map_file_writer.checkError()) {
+				logger.warning("Error (saveFileToDisk::ManageFile)");
+				file_writer_message = false;
+			} else {
+				logger.info("Success (saveFileToDisk::ManageFile)");
+				file_writer_message = true;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			logger.warning("IOException (saveFileToDisk::ManageFile) " + e.getMessage());
+		}
+		return file_writer_message;
+	}
+
+	/**
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @see com.risk.file.IManageFile#fetchMapFilesFromResource()
+	 */
+	@Override
+	public List<String> fetchMapFilesFromResource() {
+		List<String> list_of_map_files = new ArrayList<>();
+		java.io.File resource_folder = new java.io.File("src/main/resource");
+		java.io.File[] listOfMapFiles = resource_folder.listFiles();
+		if (listOfMapFiles.length > 0) {
+			for (java.io.File file : listOfMapFiles) {
+				if (file.isFile() && file.getName().endsWith(".map")) {
+					list_of_map_files.add(file.getName());
+				}
+			}
+		}
+		return list_of_map_files;
 	}
 
 	/**
@@ -172,76 +247,4 @@ public class ManageFile {
 		}
 	}
 
-	/**
-	 * This function is use to write map data to new or existing map file.
-	 * 
-	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param file
-	 * @return File Write Status Message
-	 */
-	public Boolean saveFileToDisk(File file, String file_name) {
-		boolean file_writer_message = false;
-		try (PrintStream map_file_writer = new PrintStream(
-				new BufferedOutputStream(new FileOutputStream("src/main/resource/" + file_name)))) {
-			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile) Line# 167");
-			map_file_writer.println("[Map]");
-			map_file_writer.println("author=" + file.getMap().getAuthor());
-			map_file_writer.println("image=" + file.getMap().getImage());
-			map_file_writer.println("wrap=" + file.getMap().getWrap());
-			map_file_writer.println("scroll=" + file.getMap().getScroll());
-			map_file_writer.println("warn=" + file.getMap().getWarn());
-			map_file_writer.println();
-
-			map_file_writer.println("[Continents]");
-			for (Continent continent_info : file.getContinents()) {
-				map_file_writer.println(continent_info.getName() + "=" + continent_info.getScore());
-			}
-			map_file_writer.println();
-
-			map_file_writer.println("[Territories]");
-			for (Territory territory_info : file.getTerritories()) {
-				String each_territory_info = "";
-				each_territory_info = StringUtils.join(new String[] { territory_info.getName(),
-						String.valueOf(territory_info.getX_coordinate()),
-						String.valueOf(territory_info.getY_coordinate()), territory_info.getPart_of_continent() }, ",");
-				List<String> each_adj_territory = new ArrayList<>();
-				for (String adj_territories : territory_info.getAdj_territories()) {
-					each_adj_territory.add(adj_territories);
-				}
-				each_territory_info += "," + StringUtils.join(each_adj_territory, ",");
-				map_file_writer.println(each_territory_info);
-			}
-			if (map_file_writer.checkError()) {
-				logger.warning("Error (saveFileToDisk::ManageFile)");
-				file_writer_message = false;
-			} else {
-				logger.info("Success (saveFileToDisk::ManageFile)");
-				file_writer_message = true;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			logger.warning("IOException (saveFileToDisk::ManageFile) " + e.getMessage());
-		}
-		return file_writer_message;
-	}
-
-	/**
-	 * This function is use to fetch all map files from Resource Folder
-	 * 
-	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @return Name List of Map Files
-	 */
-	public List<String> fetchMapFilesFromResource() {
-		List<String> list_of_map_files = new ArrayList<>();
-		java.io.File resource_folder = new java.io.File("src/main/resource");
-		java.io.File[] listOfMapFiles = resource_folder.listFiles();
-		if (listOfMapFiles.length > 0) {
-			for (java.io.File file : listOfMapFiles) {
-				if (file.isFile() && file.getName().endsWith(".map")) {
-					list_of_map_files.add(file.getName());
-				}
-			}
-		}
-		return list_of_map_files;
-	}
 }
