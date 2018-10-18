@@ -122,6 +122,7 @@ public class ManageFile implements IManageFile {
 	@Override
 	public Boolean saveFileToDisk(File file, String file_name) {
 		boolean file_writer_message = false;
+		file_name = file_name.endsWith(".map") ? file_name : file_name+".map";
 		try (PrintStream map_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/" + file_name + ".map")))) {
 			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile)");
