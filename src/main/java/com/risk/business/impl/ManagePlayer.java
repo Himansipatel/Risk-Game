@@ -25,22 +25,6 @@ import com.risk.model.Territory;
 public class ManagePlayer implements IManagePlayer {
 
 	private List<Player> player_info_list;
-	int army_stock;
-	private List<GamePlayTerritory> total_territory_list;
-	private ManageMap manage_map_object;
-	private Map map;
-	private HashMap<String, Continent> continents;
-	Continent map_continent;
-	Territory map_territory;
-	GamePlayTerritory game_play_territory;
-
-	public ManagePlayer() {
-		player_info_list = new ArrayList<Player>();
-		manage_map_object = new ManageMap();
-		map = new Map();
-		continents = new HashMap<String, Continent>();
-		total_territory_list = new ArrayList<GamePlayTerritory>();
-	}
 
 	/**
 	 * @see com.risk.business.IManagePlayer#createPlayer(java.lang.Integer,java.lang.String)
@@ -48,8 +32,8 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	@Override
 	public List<Player> createPlayer(int num_of_players, String map_name) {
-
-		army_stock = getArmyStock(num_of_players);
+		player_info_list = new ArrayList<Player>();
+		int army_stock = getArmyStock(num_of_players);
 		for (int i = 1; i <= num_of_players; i++) {
 			String player_name = "player" + i;
 			List<GamePlayTerritory> gameplay_territory_list = new ArrayList<>();
@@ -65,6 +49,8 @@ public class ManagePlayer implements IManagePlayer {
 
 			player_info_list.add(p);
 		}
+		ManageMap manage_map_object = new ManageMap();
+		Map map = new Map();
 		map = manage_map_object.getFullMap(map_name);
 
 		assingTerritoriesToPlayers(map);
@@ -81,6 +67,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @return Army count being received by each Player.
 	 */
 	private int getArmyStock(int num_of_players) {
+		int army_stock = 0;
 		if (num_of_players == 2) {
 			army_stock = 25;
 		} else if (num_of_players == 3) {
@@ -124,23 +111,28 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
-	 * This method is randomly linking territories to
+	 * This method is randomly linking territories to game play territory object
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param map
 	 * @return
 	 */
 	private List<GamePlayTerritory> getTerritories(Map map) {
+		Continent map_continent;
+		Territory map_territory;
+		HashMap<String, Continent> continents = new HashMap<String, Continent>();
 		continents = map.getContinents();
 		List<Territory> temp_territory_list;
 		String continent_name;
+		ArrayList<GamePlayTerritory> total_territory_list = new ArrayList<GamePlayTerritory>();
+
 		for (Entry<String, Continent> m : continents.entrySet()) {
 			continent_name = m.getKey();
 			map_continent = m.getValue();
 			temp_territory_list = map_continent.getTerritories();
 			for (int i = 0; i < temp_territory_list.size(); i++) {
 				map_territory = temp_territory_list.get(i);
-				game_play_territory = new GamePlayTerritory();
+				GamePlayTerritory game_play_territory = new GamePlayTerritory();
 				game_play_territory.setTerritory_name(map_territory.getName());
 				game_play_territory.setContinent_name(continent_name);
 				game_play_territory.setNumber_of_armies(0);
@@ -149,5 +141,4 @@ public class ManagePlayer implements IManagePlayer {
 		}
 		return total_territory_list;
 	}
-
 }
