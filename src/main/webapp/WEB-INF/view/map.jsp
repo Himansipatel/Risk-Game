@@ -106,7 +106,7 @@
 							showLoading();
 							var selectedMap=$( "#availableMapsName option:selected" ).text();
 							//set current map in global variable
-							currentLoadedMap = selectedMap;
+							//currentLoadedMap = selectedMap;
 							if(selectedMap == ''){
 								return;																
 							}
@@ -256,15 +256,18 @@
 				
 				$('#save').on('click', function() {
 					$('#saveMapModal').modal('toggle');
-					$("#saveNameForMap").val(currentLoadedMap);
+					var loadedMapName = $( "#availableMapsName option:selected" ).text();
+					$("#saveNameForMap").val(loadedMapName);
 				});
 				
 				$('#saveMap').on('click', function() {
+					$('#saveMapModal').modal('toggle');
 					var data = continentDataTable.rows().data();
 					var continentArray = formArraylistOfContinentToSave(data);
 					data = countryDataTable.rows().data();
 					var countryAray = formArraylistOfCountryToSave(data);
-					var map = {currentMap: currentLoadedMap,continents: continentArray, territories: countryAray};
+					var name = $("#saveNameForMap").val();
+					var map = {currentMap: name,continents: continentArray, territories: countryAray};
 					var a = JSON.stringify(map);
 					$.ajax({
 						type : "POST",
@@ -276,8 +279,8 @@
 							alert("success saving map");
 						},
 						error : function(XMLHttpRequest, textStatus,
-								errorThrown) {
-							alert("Failure saving map");
+								errorThrown) {debugger;
+							alert("Invalid Map. Please check");
 						}
 					});
 					
@@ -416,7 +419,6 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<h2>Add Continent</h2>
 					<div class="form-group">
 						<p>Provide a name to save/update the map file.(Use the same
 							name to update the currently loaded map.)</p>
