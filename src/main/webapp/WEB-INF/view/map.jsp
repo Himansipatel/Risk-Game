@@ -10,6 +10,8 @@
 				
 				//$("#updateCountry").attr("disabled", "disabled");
 				
+				var currentLoadedMap;
+				
 				$("#score").keydown(function (e) {
 			        // Allow: backspace, delete, tab, escape, enter and .
 			        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
@@ -103,6 +105,8 @@
 						function() {
 							showLoading();
 							var selectedMap=$( "#availableMapsName option:selected" ).text();
+							//set current map in global variable
+							currentLoadedMap = selectedMap;
 							if(selectedMap == ''){
 								return;																
 							}
@@ -251,11 +255,16 @@
 				}
 				
 				$('#save').on('click', function() {
+					$('#saveMapModal').modal('toggle');
+					$("#saveNameForMap").val(currentLoadedMap);
+				});
+				
+				$('#saveMap').on('click', function() {
 					var data = continentDataTable.rows().data();
 					var continentArray = formArraylistOfContinentToSave(data);
 					data = countryDataTable.rows().data();
 					var countryAray = formArraylistOfCountryToSave(data);
-					var map = {continents: continentArray, territories: countryAray};
+					var map = {currentMap: currentLoadedMap,continents: continentArray, territories: countryAray};
 					var a = JSON.stringify(map);
 					$.ajax({
 						type : "POST",
@@ -388,6 +397,39 @@
 						data-dismiss="modal">Close</button>
 					<button id="getFullMap" type="button" class="btn btn-primary"
 						style="background-color: black; border-color: black">Load</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal -->
+	<div class="modal fade" id="saveMapModal" tabindex="-1" role="dialog"
+		aria-labelledby="loadMapModalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Confirm
+						name</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<h2>Add Continent</h2>
+					<div class="form-group">
+						<p>Provide a name to save/update the map file.(Use the same
+							name to update the currently loaded map.)</p>
+						<label for="saveNameForMap">Map Name</label> <input type="text"
+							class="form-control" id="saveNameForMap">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black"
+						data-dismiss="modal">Close</button>
+					<button id="saveMap" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Save</button>
 				</div>
 			</div>
 		</div>
