@@ -32,22 +32,13 @@ public interface IManageMap {
 	boolean writeMapToFile(Map map, String file_name); 
 
 	/**
-	 * This method checks the World Map Object for any duplicate continents.
-	 * 
-	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map Object Representation of the Map File.
-	 * @return Any Errors if they exist otherwise empty String.
-	 */
-	String checkDuplicateContinent(Map map, String continent);
-
-	/**
 	 * This method checks the World Map Object for any duplicate territories.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param map Object Representation of the Map File.
 	 * @return Any Errors if they exist otherwise empty String.
 	 */
-	String checkDuplicateTerritory(Map map,String territory);
+	String checkDuplicateTerritory(Map map);
 
 	/**
 	 * This method checks the World Map Object for any discontinuities,
@@ -61,6 +52,16 @@ public interface IManageMap {
 	String checkDiscontinuity(Map map);
 
 	/**
+	 * This method checks the World Map Object for any territory being used as a neighbor,
+	 * without actually being in existance. 
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param map Object Representation of the Map File.
+	 * @return Any Errors if they exist otherwise empty String.
+	 */		
+	String checkInvalidNeighbour(Map map);
+
+	/**
 	 * This method receives the World Map Object from GUI and checks it for any discontinuities.
 	 * If its valid then the map is converted to a FILE Object and forwarded to File Access Layer
 	 * for saving to a physical MAP File.
@@ -71,7 +72,7 @@ public interface IManageMap {
 	 * @param    file_name Name of the Map file to be stored in Resource Folder.
 	 * @return   False    If its an invalid Map otherwise True.
 	 */
-	Boolean saveMap(com.risk.model.gui.Map map, String file_name);
+	Boolean saveMap(com.risk.model.gui.Map map, String file_name) throws Exception;
 
 	/**
 	 * This method retrieves an existing World Map File from Resource Folder and returns a 
