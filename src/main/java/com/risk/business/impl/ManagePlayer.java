@@ -24,11 +24,7 @@ import com.risk.model.Territory;
 @Service
 public class ManagePlayer implements IManagePlayer {
 
-	private List<Player> player_info_list;
-
-	public ManagePlayer() {
-		player_info_list = new ArrayList<Player>();
-	}
+	private List<Player> player_info_list;	
 
 	/**
 	 * @see com.risk.business.IManagePlayer#createPlayer(java.lang.Integer,java.lang.String)
@@ -36,7 +32,7 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	@Override
 	public List<Player> createPlayer(int num_of_players, String map_name) {
-
+		player_info_list = new ArrayList<Player>();
 		int army_stock = getArmyStock(num_of_players);
 		for (int i = 1; i <= num_of_players; i++) {
 			String player_name = "player" + i;
