@@ -28,8 +28,18 @@
 
 				var continentDataTable = $('#continentsDesc').DataTable();
 				var countryDataTable = $('#countriesDesc').DataTable();
+				
+				//css change
+				$("#countriesDesc_next").css( "color","black" );
+				$("#countriesDesc_previous").css( "color","black" );
+				$("#continentsDesc_previous").css( "color","black" );
+				$("#continentsDesc_next").css( "color","black" );
 
 				function parseMapData(data) {
+					if(typeof(data) == undefined || data == null){
+						alert("Invalid Map");
+						return;
+					}
 
 					continentDataTable.clear().draw();
 					for (var i = 0; i < data.continents.length; i++) {
@@ -91,6 +101,7 @@
 				$('#getFullMap').on(
 						'click',
 						function() {
+							showLoading();
 							var selectedMap=$( "#availableMapsName option:selected" ).text();
 							if(selectedMap == ''){
 								return;																
@@ -102,9 +113,11 @@
 								success : function(data) {
 									parseMapData(data);
 									$('#loadMapModal').modal('toggle');
+									stopLoading();
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
+									stopLoading();
 									$('#loadMapModal').modal('toggle');
 									alert("Failure loading map");
 								}
@@ -114,6 +127,7 @@
 				$('#getMapName').on(
 						'click',
 						function() {
+							showLoading();
 							$.ajax({
 								type : "GET",
 								url : "maps/getAvailableMaps",
@@ -127,9 +141,11 @@
 										    text: data[i]
 										}));
 									}
+									stopLoading();
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
+									stopLoading();
 									alert("Failure fetching map");
 								}
 							});

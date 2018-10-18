@@ -12,7 +12,37 @@
 <title>Game Risk</title>
 <style type="text/css">
 body {
-	background: url("https://imgwm.com/images/_RYoR3nBGGs.jpeg") fixed;
+	background: url("images/riskImage.jpeg") fixed;
+}
+
+#loadingmsg {
+	color: #ffffff;
+	padding: 10px;
+	position: fixed;
+	top: 45%;
+	left: 45%;
+	z-index: 100;
+	margin-right: -25%;
+	margin-bottom: -25%;
+}
+
+#loadingover {
+	background: black;
+	z-index: 99;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	top: 0;
+	left: 0;
+	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+	filter: alpha(opacity = 80);
+	-moz-opacity: 0.8;
+	-khtml-opacity: 0.8;
+	opacity: 0.8;
+}
+
+.active {
+	background-color: #9288b36e;
 }
 </style>
 <!-- Bootstrap core CSS -->
@@ -47,6 +77,14 @@ body {
     <![endif]-->
 
 <script type="text/javascript">
+	function showLoading() {
+		document.getElementById('loadingmsg').style.display = 'block';
+		document.getElementById('loadingover').style.display = 'block';
+	}
+	function stopLoading() {
+		document.getElementById('loadingmsg').style.display = 'none';
+		document.getElementById('loadingover').style.display = 'none';
+	}
 	$(document).ready(function() {
 
 		$("#manageMap").click(function() {
@@ -119,6 +157,13 @@ body {
 
 	</div>
 	<!-- /container -->
+
+	<div id='loadingmsg' style='display: none;'>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img
+			style="height: 20%; width: 20%" alt="" src="images/loading popup.gif">
+		</br>Loading, please wait...
+	</div>
+	<div id='loadingover' style='display: none;'></div>
 
 
 	<!-- Bootstrap core JavaScript

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.springframework.stereotype.Service;
+
 import com.risk.business.IManagePlayer;
 import com.risk.model.Card;
 import com.risk.model.Continent;
@@ -19,6 +21,7 @@ import com.risk.model.Territory;
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @version 0.0.1
  */
+@Service
 public class ManagePlayer implements IManagePlayer {
 
 	private List<Player> player_info_list;

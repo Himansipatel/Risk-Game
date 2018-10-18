@@ -1,6 +1,5 @@
 package com.risk.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -49,7 +48,7 @@ public class MapController {
 	@ResponseBody
 	public Map getFullMap(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "fileName", required = false) String fileName) throws Exception {
-		Map map = iManageMap.fetchMap("D:\\Study\\Concordia\\SOEN 6441 - APP\\Maps\\Africa.map");
+		Map map = iManageMap.fetchMap(fileName);
 		return map;
 	}
 
@@ -57,20 +56,14 @@ public class MapController {
 	@ResponseBody
 	public Map submitMap(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map)
 			throws Exception {
-		System.out.println(map);
+		iManageMap.saveMap(map, "dummy");
 		return map;
 	}
 
 	@RequestMapping(value = "/getAvailableMaps", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getAvailableMaps(HttpServletRequest request, HttpServletResponse response) throws Exception {
-
-		List<String> availableFiles = new ArrayList<>();
-		availableFiles.add("map1");
-		availableFiles.add("map2");
-		availableFiles.add("map3");
-		availableFiles.add("map4");
-
+		List<String> availableFiles = iManageMap.fetchMaps();
 		return availableFiles;
 	}
 
