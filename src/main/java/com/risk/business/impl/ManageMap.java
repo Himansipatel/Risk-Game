@@ -3,6 +3,7 @@ package com.risk.business.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -45,7 +46,7 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#getFullMap(java.lang.String)
+	 * @see com.risk.business.IManageMap#writeMapToFile(com.risk.model.Map, java.lang.String)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
@@ -57,38 +58,23 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#getFullMap(java.lang.String)
+	 * @see com.risk.business.IManageMap#checkDuplicateTerritory(com.risk.model.Map)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public String checkDuplicateContinent(Map map, String continent) {
+	public String checkDuplicateTerritory(Map map) {
 		String message = "";
-		Set<String> continents = map.getContinents().keySet();
-		for (String map_continent : continents) {
-			if (map_continent.equalsIgnoreCase(continent)) {
-				message = continent.concat(": Continent is already added in the Map.");
-				break;
-			}
-		}
-		return message;
-	}
+		List<Territory> territories    = new ArrayList<>();
+		Set<String> unique_territories = new HashSet<>();
 
-	/**
-	 * @see com.risk.business.IManageMap#getFullMap(java.lang.String)
-	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 */
-	@Override
-	public String checkDuplicateTerritory(Map map, String territory) {
-		String message = "";
-		List<Territory> territories = new ArrayList<>();
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
 				.hasNext();) {
 			java.util.Map.Entry<String, Continent> continent = iterator.next();
 			territories.addAll(continent.getValue().getTerritories());
 		}
 		for (Territory map_territory : territories) {
-			if (map_territory.getName().equalsIgnoreCase(territory)) {
-				message = territory.concat(": Territory is already added in the Map.");
+			if (!unique_territories.add(map_territory.getName())) {
+				message = map_territory.getName().concat(": Duplicate territory detected in the Map.");
 				break;
 			}
 		}
@@ -96,7 +82,44 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#getFullMap(java.lang.String)
+	 * @see com.risk.business.IManageMap#checkNonExistingNeighbour(com.risk.model.Map)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Override	
+	public String checkInvalidNeighbour(Map map) {
+
+		String message = "";
+
+		List<Territory> territories = new ArrayList<>();		
+		Set<String> full_neighbour_list = new HashSet<>();		
+		Set<String> full_territory_list = new HashSet<>();
+
+		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
+				.hasNext();) {
+			java.util.Map.Entry<String, Continent> continent = iterator.next();
+			territories.addAll(continent.getValue().getTerritories());
+		}
+
+		for (Territory map_territory : territories) {
+			full_territory_list.add(map_territory.getName());
+			for (String neighbour : map_territory.getNeighbours()) {
+				full_neighbour_list.add(neighbour);
+			}
+		}
+
+		full_neighbour_list.removeAll(full_territory_list);
+		if (full_neighbour_list.size() > 0) {
+			message = "Invalid Territories used as a neighbor: ";
+			for (String string : full_neighbour_list) {
+				message = message.concat(string).concat("-");
+			}
+			message = message.substring(0, message.length() - 1);
+		}
+		return message;
+	}
+
+	/**
+	 * @see com.risk.business.IManageMap#checkDiscontinuity(com.risk.model.Map)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
@@ -108,6 +131,7 @@ public class ManageMap implements IManageMap {
 		List<Territory> territories = new ArrayList<>();
 		HashMap<String, Boolean> territory_visited = new HashMap<>();
 		HashMap<String, List<String>> neighbours_link = new HashMap<>();
+		Set<String> full_neighbour_list = new HashSet<>();
 
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
 				.hasNext();) {
@@ -121,6 +145,11 @@ public class ManageMap implements IManageMap {
 		 */
 		for (Territory map_territory : territories) {
 			neighbours_link.put(map_territory.getName(), map_territory.getNeighbours());
+
+			for (String neighbour : map_territory.getNeighbours()) {
+				full_neighbour_list.add(neighbour);
+			}
+
 			territory_visited.put(map_territory.getName(), false);
 			if (!(map_territory.getNeighbours() != null && map_territory.getNeighbours().size() > 0)) {
 				message = map_territory.getName().concat(": Territory is disconnected from the rest of the Map.");
@@ -132,13 +161,19 @@ public class ManageMap implements IManageMap {
 		if (!error_flag) {
 			start_node = territories.get(0).getName();
 			territory_visited = find_link(start_node, neighbours_link, territory_visited);
+			message = "Disconnected Territories:";
 			for (Iterator<Entry<String, Boolean>> iterator = territory_visited.entrySet().iterator(); iterator
 					.hasNext();) {
 				java.util.Map.Entry<String, Boolean> territory_link = iterator.next();
-				if (!territory_link.getValue()) {
-					message = "Map is disconnected.";
-					break;
+				if (territory_link.getValue() != null && !territory_link.getValue()) {
+					message = message.concat(territory_link.getKey()).concat("-");
 				}
+			}
+			if (message.length() > 25) {
+				message = message.substring(0,message.length() - 1);
+			}else {
+
+				message = "";
 			}
 			return message;
 		} else {
@@ -151,8 +186,12 @@ public class ManageMap implements IManageMap {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public Boolean saveMap(com.risk.model.gui.Map map, String file_name) {
-		return guiMapToFile(map,file_name);
+	public Boolean saveMap(com.risk.model.gui.Map map, String file_name) throws Exception {
+		String message = guiMapToFile(map,file_name);
+		if (message != "") {
+			throw new Exception("");
+		}
+		return true;
 	}
 
 	/**
@@ -172,9 +211,9 @@ public class ManageMap implements IManageMap {
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param map GUI Object Representation of the World Map.
-	 * @return False If its an invalid Map otherwise True.
+	 * @return String Status or Error Message for validations before saving map file.
 	 */
-	private Boolean guiMapToFile(com.risk.model.gui.Map map, String file_name) {
+	private String guiMapToFile(com.risk.model.gui.Map map, String file_name) {
 
 		List<com.risk.model.gui.Continent> continents_gui = new ArrayList<>();
 		List<com.risk.model.gui.Territory> territories_gui = new ArrayList<>();
@@ -194,7 +233,7 @@ public class ManageMap implements IManageMap {
 			territories_model = new ArrayList<>();
 
 			for (com.risk.model.gui.Territory territory_gui : territories_gui) {
-				if (continent_gui.getName().equals(territory_gui.getContinentName())) {
+				if (continent_gui.getName().equalsIgnoreCase(territory_gui.getContinentName())) {
 					String[] neighbours_gui = territory_gui.getNeighbours().split(";");
 					List<String> neighbours_model = new ArrayList<>(Arrays.asList(neighbours_gui));
 
@@ -209,12 +248,18 @@ public class ManageMap implements IManageMap {
 		}
 
 		map_model.setContinents(map_parsed);
-		String message = checkDiscontinuity(map_model);
-		if (message.equals("")) {
+		String message = "";
+		message = checkDiscontinuity(map_model);
+		message = checkDuplicateTerritory(map_model);
+		message = checkInvalidNeighbour(map_model);		
+		if (message.equalsIgnoreCase("")) {
 			Boolean write_file_status = writeMapToFile(map_model, file_name);
-			return write_file_status;
+			if (!write_file_status) {
+				message = "File Save Failed.";
+			}
+			return message;
 		} else {
-			return false;
+			return message;
 		}
 	}
 
@@ -248,6 +293,15 @@ public class ManageMap implements IManageMap {
 		com.risk.model.gui.Territory territory_gui;
 
 		map = getFullMap(file_name);
+		if (map != null) {
+			String message  = "";
+			message 	    = checkDiscontinuity(map);
+			message 		= checkDuplicateTerritory(map);
+			message 		= checkInvalidNeighbour(map);
+			if (message != "") {
+				return null;
+			}
+		}
 
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
 				.hasNext();) {
@@ -289,13 +343,14 @@ public class ManageMap implements IManageMap {
 	 */
 	private HashMap<String, Boolean> find_link(String start_node, HashMap<String, List<String>> neighbours_link,
 			HashMap<String, Boolean> territory_visited) {
-		if (!territory_visited.get(start_node)) {
+		if (territory_visited.get(start_node) != null && !territory_visited.get(start_node)) {
 			territory_visited.put(start_node, true);
 		}
+
 		Iterator<String> neighbour = neighbours_link.get(start_node).listIterator();
 		while (neighbour.hasNext()) {
 			String next_neighbour = neighbour.next();
-			if (!territory_visited.get(next_neighbour)) {
+			if (territory_visited.get(next_neighbour) != null && !territory_visited.get(next_neighbour)) {
 				find_link(next_neighbour, neighbours_link, territory_visited);
 			}
 		}
@@ -388,7 +443,7 @@ public class ManageMap implements IManageMap {
 				territories = new ArrayList<Territory>();
 
 				for (com.risk.model.file.Territory territory : file.getTerritories()) {
-					if (territory.getPart_of_continent().equals(continent.getName())) {
+					if (territory.getPart_of_continent().equalsIgnoreCase(continent.getName())) {
 						map_territory = new Territory();
 						map_territory.setName(territory.getName());
 						neighbours = new ArrayList<>();
