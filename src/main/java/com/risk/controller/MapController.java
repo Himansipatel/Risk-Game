@@ -31,6 +31,16 @@ public class MapController {
 	@Autowired
 	IManageMap iManageMap;
 
+	/**
+	 * This function create and update map model and simply render web page of map
+	 * in tabular form
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request
+	 * @param response
+	 * @return Web Page of Map
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/getMapView", method = RequestMethod.GET)
 	public ModelAndView getMapView(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -43,6 +53,13 @@ public class MapController {
 	/**
 	 * This method is an abstraction for the process of retrieving A Map Object from
 	 * the file name given as Input.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request
+	 * @param response
+	 * @param fileName
+	 * @return Full Map Object
+	 * @throws Exception
 	 */
 	@RequestMapping(value = "/map", method = RequestMethod.GET)
 	@ResponseBody
@@ -52,6 +69,16 @@ public class MapController {
 		return map;
 	}
 
+	/**
+	 * This function save current state of game to disk
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request
+	 * @param response
+	 * @param map
+	 * @return Map Object
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	@ResponseBody
 	public Map submitMap(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map)
@@ -60,6 +87,14 @@ public class MapController {
 		return map;
 	}
 
+	/**
+	 * This function fetches all available map files from resource folder
+	 * 
+	 * @param request
+	 * @param response
+	 * @return List of Available Map Files
+	 * @throws Exception
+	 */
 	@RequestMapping(value = "/getAvailableMaps", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getAvailableMaps(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -67,6 +102,9 @@ public class MapController {
 		return availableFiles;
 	}
 
+	/**
+	 * @return Map Object
+	 */
 	private com.risk.model.Map createMapObject() {
 		com.risk.model.Map map = new com.risk.model.Map();
 		map.setContinents(new HashMap<>());
