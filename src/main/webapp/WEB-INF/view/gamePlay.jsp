@@ -198,7 +198,7 @@
 															.text()
 												}),
 										url : "gamePlay/initStartUpPhase",
-										success : function(data) {
+										success : function(data) {debugger;
 											parseGamePlayData(data);
 											stopLoading();
 										},

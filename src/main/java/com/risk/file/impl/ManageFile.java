@@ -13,17 +13,23 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
+import com.risk.file.IManageFile;
 import com.risk.model.file.Continent;
 import com.risk.model.file.File;
 import com.risk.model.file.Map;
 import com.risk.model.file.Territory;
 
 /**
+ * This class is use to deal to with map traditional file read and write
+ * operation.
+ * 
  * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
  * @version 0.0.1
  */
-public class ManageFile {
+@Service
+public class ManageFile implements IManageFile {
 
 	private String file_name;
 	private Map filelayer_map_object;
@@ -42,7 +48,7 @@ public class ManageFile {
 
 	public ManageFile() {
 		try {
-			FileHandler fh = new FileHandler("src/main/resource/ManageFile.log");
+			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageFile.log");
 			logger.addHandler(fh);
 			logger.setUseParentHandlers(false);
 			SimpleFormatter formatter = new SimpleFormatter();
@@ -54,29 +60,27 @@ public class ManageFile {
 
 	/**
 	 * 
-	 * @param file_absolute_path
+	 * @param file_name Name of the Map File
 	 */
 	public ManageFile(String file_name) {
 		// Using Default Constructor Values
 		this();
 		this.file_name = file_name;
-		filelayer_map_object = null;
-		current_section_in_file = null;
-		file_object = new File();
-		continent_object_list = new ArrayList<Continent>();
-		territory_object_list = new ArrayList<Territory>();
 	}
 
 	/**
-	 * This Function reads various sections and their related information from map
-	 * file.
-	 * 
+	 * @see com.risk.file.IManageFile#retreiveFileObject()
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @return File Object
 	 */
+	@Override
 	public File retreiveFileObject() {
 		String line = "";
-		try (BufferedReader map_file_object = new BufferedReader(new FileReader("src/main/resource/" + file_name))) {
+		file_object = new File();
+		filelayer_map_object = null;
+		current_section_in_file = null;
+		continent_object_list = new ArrayList<Continent>();
+		territory_object_list = new ArrayList<Territory>();
+		try (BufferedReader map_file_object = new BufferedReader(new FileReader("src/main/resource/Maps/" + file_name))) {
 			while ((line = map_file_object.readLine()) != null) {
 				if (line.length() > 0) {
 					// Later Change this Part to function
@@ -112,78 +116,16 @@ public class ManageFile {
 	}
 
 	/**
-	 * This function is use to set value of territory model entities at file layer
-	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param territory_info
+	 * @see com.risk.file.IManageFile#saveFileToDisk(File, String)
 	 */
-	private void setValuesToFileLayerTerritoryObject(String territory_info) {
-		if (territory_info.length() > 0) {
-			List<String> adjacent_territories = new ArrayList<String>();
-			Territory territory = new Territory();
-			String[] key_value = territory_info.split(",");
-			int length = key_value.length;
-			territory.setName(key_value[0]);
-			territory.setX_coordinate(Integer.parseInt(key_value[1]));
-			territory.setY_coordinate(Integer.parseInt(key_value[2]));
-			territory.setPart_of_continent(key_value[3]);
-			for (int i = 4; i < length; i++) {
-				adjacent_territories.add(key_value[i]);
-			}
-			territory.setAdj_territories(adjacent_territories);
-			if (territory != null) {
-				territory_object_list.add(territory);
-			}
-		}
-	}
-
-	/**
-	 * This function is use to set value of continent model entities at file layer
-	 * 
-	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param continent_info
-	 */
-	private void setValuesToFileLayerContientObject(String continent_info) {
-		Continent continent = new Continent();
-		String[] key_value = continent_info.split("=");
-		continent.setName(key_value[0]);
-		continent.setScore(Integer.parseInt(key_value[1]));
-		continent_object_list.add(continent);
-	}
-
-	/**
-	 * This function is use to set value of map model entities at file layer
-	 * 
-	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param map_info
-	 */
-	private void setValuesToFileLayerMapObject(String map_info) {
-		String[] key_value = map_info.split("=");
-		if (key_value[0].equalsIgnoreCase("author")) {
-			filelayer_map_object.setAuthor(key_value[1]);
-		} else if (key_value[0].equalsIgnoreCase("imgae")) {
-			filelayer_map_object.setImage(key_value[1]);
-		} else if (key_value[0].equalsIgnoreCase("wrap")) {
-			filelayer_map_object.setWrap(key_value[1]);
-		} else if (key_value[0].equalsIgnoreCase("scroll")) {
-			filelayer_map_object.setScroll(key_value[1]);
-		} else if (key_value[0].equalsIgnoreCase("warn")) {
-			filelayer_map_object.setWarn(key_value[1]);
-		}
-	}
-
-	/**
-	 * This function is use to write map data to new or existing map file.
-	 * 
-	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param file
-	 * @return File Write Status Message
-	 */
+	@Override
 	public Boolean saveFileToDisk(File file, String file_name) {
 		boolean file_writer_message = false;
+		file_name = file_name.endsWith(".map") ? file_name : file_name + ".map";
 		try (PrintStream map_file_writer = new PrintStream(
-				new BufferedOutputStream(new FileOutputStream("src/main/resource/" + file_name)))) {
-			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile) Line# 167");
+				new BufferedOutputStream(new FileOutputStream("src/main/resource/Maps/" + file_name)))) {
+			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile)");
 			map_file_writer.println("[Map]");
 			map_file_writer.println("author=" + file.getMap().getAuthor());
 			map_file_writer.println("image=" + file.getMap().getImage());
@@ -226,14 +168,13 @@ public class ManageFile {
 	}
 
 	/**
-	 * This function is use to fetch all map files from Resource Folder
-	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @return Name List of Map Files
+	 * @see com.risk.file.IManageFile#fetchMapFilesFromResource()
 	 */
+	@Override
 	public List<String> fetchMapFilesFromResource() {
 		List<String> list_of_map_files = new ArrayList<>();
-		java.io.File resource_folder = new java.io.File("src/main/resource");
+		java.io.File resource_folder = new java.io.File("src/main/resource/Maps");
 		java.io.File[] listOfMapFiles = resource_folder.listFiles();
 		if (listOfMapFiles.length > 0) {
 			for (java.io.File file : listOfMapFiles) {
@@ -244,4 +185,66 @@ public class ManageFile {
 		}
 		return list_of_map_files;
 	}
+
+	/**
+	 * This function is use to set value of territory model entities at file layer
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @param territory_info Information Regarding Territory
+	 */
+	private void setValuesToFileLayerTerritoryObject(String territory_info) {
+		if (territory_info.length() > 0) {
+			List<String> adjacent_territories = new ArrayList<String>();
+			Territory territory = new Territory();
+			String[] key_value = territory_info.split(",");
+			int length = key_value.length;
+			territory.setName(key_value[0]);
+			territory.setX_coordinate(Integer.parseInt(key_value[1]));
+			territory.setY_coordinate(Integer.parseInt(key_value[2]));
+			territory.setPart_of_continent(key_value[3]);
+			for (int i = 4; i < length; i++) {
+				adjacent_territories.add(key_value[i]);
+			}
+			territory.setAdj_territories(adjacent_territories);
+			if (territory != null) {
+				territory_object_list.add(territory);
+			}
+		}
+	}
+
+	/**
+	 * This function is use to set value of continent model entities at file layer
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @param continent_info Information Regarding Continent
+	 */
+	private void setValuesToFileLayerContientObject(String continent_info) {
+		Continent continent = new Continent();
+		String[] key_value = continent_info.split("=");
+		continent.setName(key_value[0]);
+		continent.setScore(Integer.parseInt(key_value[1]));
+		continent_object_list.add(continent);
+	}
+
+	/**
+	 * This function is use to set value of map model entities at file layer
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @param map_info The basic information about Map
+	 */
+	private void setValuesToFileLayerMapObject(String map_info) {
+		String[] key_value = map_info.split("=");
+		if (key_value[0].equalsIgnoreCase("author")) {
+			filelayer_map_object.setAuthor(key_value[1]);
+		} else if (key_value[0].equalsIgnoreCase("image")) {
+			filelayer_map_object.setImage(key_value[1]);
+		} else if (key_value[0].equalsIgnoreCase("wrap")) {
+			filelayer_map_object.setWrap(key_value[1]);
+		} else if (key_value[0].equalsIgnoreCase("scroll")) {
+			filelayer_map_object.setScroll(key_value[1]);
+		} else if (key_value[0].equalsIgnoreCase("warn")) {
+			filelayer_map_object.setWarn(key_value[1]);
+		}
+	}
+
 }
