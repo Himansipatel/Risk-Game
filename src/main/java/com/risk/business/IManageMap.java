@@ -1,7 +1,9 @@
 package com.risk.business;
 
 import java.util.List;
-import com.risk.model.Map; 
+
+import com.risk.model.Map;
+import com.risk.model.file.File; 
 
 /**
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -81,5 +83,14 @@ public interface IManageMap {
 	 * @return List of existing World Map Files from Resource Folder.
 	 */	
 	List<String> fetchMaps();	
+	
+	/**
+	 * This method parses the File Object and converts it to a Map Object.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param file File Object Representing the Map File to be saved/loaded.
+	 * @return Map map : Object Representation of the Map File.
+	 */	
+	Map convertFileToMap(File file);
 
 }
