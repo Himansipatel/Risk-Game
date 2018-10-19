@@ -40,7 +40,8 @@ public class ManageGamePlay implements IManageGamePlay {
 	public GamePlay savePhase(GamePlay game_state) {
 
 		IManageMap  map_manager  = new ManageMap();
-		IManageFile file_manager = new ManageFile(game_state.getFile_name());		
+		String[] file_name = game_state.getFile_name().split("_");
+		IManageFile file_manager = new ManageFile(file_name[0].concat(".map"));		
 		File file = file_manager.retreiveFileObject();
 
 		Map map = map_manager.convertFileToMap(file);
