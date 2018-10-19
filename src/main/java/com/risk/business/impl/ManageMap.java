@@ -266,15 +266,15 @@ public class ManageMap implements IManageMap {
 		map_model.setContinents(map_parsed);
 		String message = "";
 		message = checkDiscontinuity(map_model);
-		if (message.equalsIgnoreCase("")) {
+		if (!message.equals("")) {
 			return message;
 		}
 		message = checkDuplicateTerritory(map_model);
-		if (message.equalsIgnoreCase("")) {
+		if (!message.equals("")) {
 			return message;
 		}
 		message = checkInvalidNeighbour(map_model);		
-		if (message.equalsIgnoreCase("")) {
+		if (!message.equals("")) {
 			Boolean write_file_status = writeMapToFile(map_model, file_name);
 			if (!write_file_status) {
 				message = "File Save Failed.";
