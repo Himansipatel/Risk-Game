@@ -536,7 +536,6 @@
 
 						function makePlayerData(playerNo) {
 							var countryArray = [];
-							debugger;
 							var playerCountryTable = fetchDataTableforCurrentPlayer(playerNo);
 							var data = playerCountryTable.rows().data();
 							for (var i = 0; i < data.length; i++) {
@@ -566,7 +565,6 @@
 								file_name : currentMapName,
 								game_phase : currentPhase
 							};
-							debugger;
 							var a = JSON.stringify(game_Play);
 							$.ajax({
 								type : "POST",
@@ -576,7 +574,7 @@
 								contentType : "application/json",
 								success : function(data) {
 									currentPhase = "ATTACK";
-									whichPlayerChance = 1;debugger;
+									whichPlayerChance = 1;
 									armiesStockOfPlayer1 = 3;
 									alert("success saving map");
 									checkForNextPhaseAndDisplayOption();
@@ -635,7 +633,7 @@
 							}
 						}
 												
-						$('#player1Reinforcement').on('click', function() {debugger;
+						$('#player1Reinforcement').on('click', function() {
 							fillReinforcementModal("1");
 							$('#reinforcementModal').modal({
 								backdrop : 'static',
@@ -643,7 +641,7 @@
 							});
 						});
 						
-						$('#armiesSelectionForReinforcementDone').on('click', function() {debugger;
+						$('#armiesSelectionForReinforcementDone').on('click', function() {
 							if(armiesStockOfPlayer1>0){
 								armiesStockOfPlayer1 = armiesStockOfPlayer1-1;
 								var country = $(
