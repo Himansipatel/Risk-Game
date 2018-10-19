@@ -84,7 +84,6 @@ public class GamePlayController {
 	@ResponseBody
 	public GamePlay submitGameState(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody GamePlay gamePlay) throws Exception {
-		System.out.println(gamePlay);
 		gamePlay = iManageGamePlay.savePhase(gamePlay);
 		return gamePlay;
 	}
