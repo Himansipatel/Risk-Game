@@ -46,10 +46,8 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		String file_name = gamePlay.getFile_name();
 		String game_phase = gamePlay.getGame_phase();
 		List<Player> player_list = gamePlay.getGame_state();
-		file_name = (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name) + "_"
-				+ String.valueOf(System.currentTimeMillis());
-		try (PrintStream player_file_writer = new PrintStream(new BufferedOutputStream(
-				new FileOutputStream("src/main/resource/gameplay/" + file_name + "__1.txt")))) {
+		try (PrintStream player_file_writer = new PrintStream(
+				new BufferedOutputStream(new FileOutputStream("src/main/resource/gameplay/" + file_name + ".txt")))) {
 			player_file_writer.println("Map name=" + file_name);
 			player_file_writer.println("Phase=" + game_phase);
 			player_file_writer.println();
