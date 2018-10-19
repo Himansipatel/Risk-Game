@@ -30,6 +30,24 @@
 						var armiesStockOfPlayer5 = 0;
 						var armiesStockOfPlayer6 = 0;
 
+						var idPlayer1 = "";
+						var idPlayer2 = "";
+						var idPlayer3 = "";
+						var idPlayer4 = "";
+						var idPlayer5 = "";
+						var idPlayer6 = "";
+
+						var namePlayer1 = "";
+						var namePlayer2 = "";
+						var namePlayer3 = "";
+						var namePlayer4 = "";
+						var namePlayer5 = "";
+						var namePlayer6 = "";
+
+						var currentPhase = "REINFORCEMENT";
+						var currentMapName = "";
+						var noOfPlayingPlayer = "";
+
 						//css change
 						$("#countriesDesc_next").css("color", "black");
 						$("#countriesDesc_previous").css("color", "black");
@@ -160,26 +178,38 @@
 
 						}
 
-						function setEachPlayerArmiesStock(playerData,
-								playerOrder) {
+						function setEachPlayerIdAndNameAndArmiesStock(
+								playerData, playerOrder) {
 							switch (playerOrder) {
 							case 1:
 								armiesStockOfPlayer1 = playerData.army_stock;
+								idPlayer1 = playerData.id;
+								namePlayer1 = playerData.name;
 								break;
 							case 2:
 								armiesStockOfPlayer2 = playerData.army_stock;
+								idPlayer2 = playerData.id;
+								namePlayer2 = playerData.name;
 								break;
 							case 3:
 								armiesStockOfPlayer3 = playerData.army_stock;
+								idPlayer3 = playerData.id;
+								namePlayer3 = playerData.name;
 								break;
 							case 4:
 								armiesStockOfPlayer4 = playerData.army_stock;
+								idPlayer4 = playerData.id;
+								namePlayer4 = playerData.name;
 								break;
 							case 5:
 								armiesStockOfPlayer5 = playerData.army_stock;
+								idPlayer5 = playerData.id;
+								namePlayer5 = playerData.name;
 								break;
 							case 6:
 								armiesStockOfPlayer6 = playerData.army_stock;
+								idPlayer6 = playerData.id;
+								namePlayer6 = playerData.name;
 								break;
 							}
 						}
@@ -201,13 +231,47 @@
 							}
 						}
 
+						function getEachPlayerId(playerNo) {
+							switch (String(playerNo)) {
+							case "1":
+								return idPlayer1;
+							case "2":
+								return idPlayer2;
+							case "3":
+								return idPlayer3;
+							case "4":
+								return idPlayer4;
+							case "5":
+								return idPlayer5;
+							case "6":
+								return idPlayer6;
+							}
+						}
+
+						function getEachPlayerName(playerNo) {
+							switch (String(playerNo)) {
+							case "1":
+								return namePlayer1;
+							case "2":
+								return namePlayer2;
+							case "3":
+								return namePlayer3;
+							case "4":
+								return namePlayer4;
+							case "5":
+								return namePlayer5;
+							case "6":
+								return namePlayer6;
+							}
+						}
+
 						function findAndFillPlayerData(data, playerOrder) {
 							for (var i = 0; i < data.length; i++) {
 								if (playerOrder == data[i].id) {
 									fillAndInitializeDataTable(data[i],
 											playerOrder);
-									setEachPlayerArmiesStock(data[i],
-											playerOrder);
+									setEachPlayerIdAndNameAndArmiesStock(
+											data[i], playerOrder);
 									return;
 								}
 							}
@@ -362,7 +426,7 @@
 										+ " - Allocate your army");
 							} else {
 								$('#mapSelectArmy').modal('toggle');
-								alert("army selection successfull");
+								saveGameState();
 							}
 						}
 
@@ -435,7 +499,13 @@
 												}),
 										url : "gamePlay/initStartUpPhase",
 										success : function(data) {
-											parseGamePlayData(data);
+											parseGamePlayData(data.game_state);
+											currentMapName = (data.file_name);
+											//set currentPhase also(later)
+											//read player no from data
+											noOfPlayingPlayer = $(
+													"#noOfPlayer option:selected")
+													.val();
 											stopLoading();
 											startArmyAllocation();
 										},
@@ -452,6 +522,60 @@
 							initStartUpPhase();
 							$('#mapSelectModal').modal('toggle');
 						});
+						$('#check').on('click', function() {
+							saveGameState();
+						});
+
+						function makePlayerData(playerNo) {
+							var countryArray = [];
+							debugger;
+							var playerCountryTable = fetchDataTableforCurrentPlayer(playerNo);
+							var data = playerCountryTable.rows().data();
+							for (var i = 0; i < data.length; i++) {
+								countryArray.push({
+									territory_name : data[i][0],
+									continent_name : data[i][1],
+									number_of_armies : data[i][2]
+								});
+							}
+							var playerObject = {
+								id : getEachPlayerId(playerNo),
+								name : getEachPlayerName(playerNo),
+								army_stock : getEachPlayerArmiesStock(playerNo),
+								territory_list : countryArray
+							};
+							return playerObject;
+						}
+
+						function saveGameState() {
+							var playerArray = [];
+							for (var i = 1; i <= noOfPlayingPlayer; i++) {
+								var playerD = makePlayerData(i);
+								playerArray.push(playerD);
+							}
+							var game_Play = {
+								game_state : playerArray,
+								file_name : currentMapName,
+								game_phase : currentPhase
+							};
+							debugger;
+							var a = JSON.stringify(game_Play);
+							$.ajax({
+								type : "POST",
+								url : "gamePlay/saveGameState",
+								dataType : "json",
+								data : a,
+								contentType : "application/json",
+								success : function(data) {
+									alert("success saving map");
+								},
+								error : function(XMLHttpRequest, textStatus,
+										errorThrown) {
+									debugger;
+									alert("Invalid GameState. Please check");
+								}
+							});
+						}
 
 					});
 </script>
@@ -687,6 +811,8 @@
 			</div>
 		</div>
 	</div>
+	<button id="check" type="button" class="btn btn-primary"
+		style="background-color: black; border-color: black">check</button>
 </body>
 </html>
 </html>
