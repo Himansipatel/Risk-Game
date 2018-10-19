@@ -19,7 +19,10 @@ import com.risk.business.IManageMap;
 import com.risk.model.gui.Map;
 
 /**
- * Model class for MapController
+ * Map Controller is a part of MVC Controller which handle the actions and
+ * events on GUI side.According to risk game, this controller calls appropriate
+ * business logic for saving and loading map into a local system and updates map
+ * as per the user action.
  * 
  * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
  * @version 0.0.1
@@ -31,6 +34,17 @@ public class MapController {
 	@Autowired
 	IManageMap iManageMap;
 
+	/**
+	 * This function create and update map model and simply render web page of map
+	 * in tabular form
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request  Request Payload
+	 * @param response An object to assist a servlet in sending a response to the
+	 *                 client
+	 * @return Web Page of Map
+	 * @throws Exception NullPointerException when model object is null
+	 */
 	@RequestMapping(value = "/getMapView", method = RequestMethod.GET)
 	public ModelAndView getMapView(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -43,6 +57,14 @@ public class MapController {
 	/**
 	 * This method is an abstraction for the process of retrieving A Map Object from
 	 * the file name given as Input.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request  Request Payload
+	 * @param response An object to assist a servlet in sending a response to the
+	 *                 client
+	 * @param fileName Map File Name
+	 * @return Map Object
+	 * @throws Exception NullPointerException when map object is null
 	 */
 	@RequestMapping(value = "/map", method = RequestMethod.GET)
 	@ResponseBody
@@ -52,6 +74,17 @@ public class MapController {
 		return map;
 	}
 
+	/**
+	 * This function save current state of game to disk
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request  Request Payload
+	 * @param response An object to assist a servlet in sending a response to the
+	 *                 client
+	 * @param map      Map Object
+	 * @return Map Object
+	 * @throws Exception NullPointerException when map object is null
+	 */
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	@ResponseBody
 	public Map submitMap(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map)
@@ -60,6 +93,15 @@ public class MapController {
 		return map;
 	}
 
+	/**
+	 * This function fetches all available map files from resource folder
+	 * 
+	 * @param request  Request Payload
+	 * @param response An object to assist a servlet in sending a response to the
+	 *                 client
+	 * @return List of Available Map Files
+	 * @throws Exception NullPointerException when list of player is empty
+	 */
 	@RequestMapping(value = "/getAvailableMaps", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getAvailableMaps(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -67,6 +109,9 @@ public class MapController {
 		return availableFiles;
 	}
 
+	/**
+	 * @return Map Object
+	 */
 	private com.risk.model.Map createMapObject() {
 		com.risk.model.Map map = new com.risk.model.Map();
 		map.setContinents(new HashMap<>());

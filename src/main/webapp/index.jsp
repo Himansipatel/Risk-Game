@@ -161,7 +161,7 @@ body {
 	<div id='loadingmsg' style='display: none;'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img
 			style="height: 20%; width: 20%" alt="" src="images/loading popup.gif">
-		</br>Loading, please wait...
+		<br/>Loading, please wait...
 	</div>
 	<div id='loadingover' style='display: none;'></div>
 

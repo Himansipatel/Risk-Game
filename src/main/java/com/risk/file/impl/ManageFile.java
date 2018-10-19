@@ -2,8 +2,10 @@ package com.risk.file.impl;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ public class ManageFile implements IManageFile {
 	 */
 	@Override
 	public File retreiveFileObject() {
+		removeBlankLinesFromFile(file_name);
 		String line = "";
 		file_object = new File();
 		filelayer_map_object = null;
@@ -68,21 +71,24 @@ public class ManageFile implements IManageFile {
 				new FileReader("src/main/resource/Maps/" + file_name))) {
 			while ((line = map_file_object.readLine()) != null) {
 				if (line.length() > 0) {
+					if (line.equalsIgnoreCase("[Map]")) {
+						filelayer_map_object = new Map();
+						current_section_in_file = FileSectionDivider.MAP;
+						line = map_file_object.readLine();
+					} else if (line.equalsIgnoreCase("[Continents]")) {
+						current_section_in_file = FileSectionDivider.CONTINENT;
+						line = map_file_object.readLine();
+					} else if (line.equalsIgnoreCase("[TERRITORIES]")) {
+						current_section_in_file = FileSectionDivider.TERRITORY;
+						line = map_file_object.readLine();
+					}
+
 					if (current_section_in_file == FileSectionDivider.MAP)
 						setValuesToFileLayerMapObject(line);
 					if (current_section_in_file == FileSectionDivider.CONTINENT)
 						setValuesToFileLayerContientObject(line);
 					if (current_section_in_file == FileSectionDivider.TERRITORY)
 						setValuesToFileLayerTerritoryObject(line);
-
-					if (line.equalsIgnoreCase("[Map]")) {
-						filelayer_map_object = new Map();
-						current_section_in_file = FileSectionDivider.MAP;
-					} else if (line.equalsIgnoreCase("[Continents]")) {
-						current_section_in_file = FileSectionDivider.CONTINENT;
-					} else if (line.equalsIgnoreCase("[TERRITORIES]")) {
-						current_section_in_file = FileSectionDivider.TERRITORY;
-					}
 				} else if (current_section_in_file != FileSectionDivider.TERRITORY) {
 					current_section_in_file = null;
 				}
@@ -176,12 +182,12 @@ public class ManageFile implements IManageFile {
 			Territory territory = new Territory();
 			String[] key_value = territory_info.split(",");
 			int length = key_value.length;
-			territory.setName(key_value[0]);
+			territory.setName(key_value[0].trim());
 			territory.setX_coordinate(Integer.parseInt(key_value[1]));
 			territory.setY_coordinate(Integer.parseInt(key_value[2]));
-			territory.setPart_of_continent(key_value[3]);
+			territory.setPart_of_continent(key_value[3].trim());
 			for (int i = 4; i < length; i++) {
-				adjacent_territories.add(key_value[i]);
+				adjacent_territories.add(key_value[i].trim());
 			}
 			territory.setAdj_territories(adjacent_territories);
 			if (territory != null) {
@@ -199,8 +205,8 @@ public class ManageFile implements IManageFile {
 	private void setValuesToFileLayerContientObject(String continent_info) {
 		Continent continent = new Continent();
 		String[] key_value = continent_info.split("=");
-		continent.setName(key_value[0]);
-		continent.setScore(Integer.parseInt(key_value[1]));
+		continent.setName(key_value[0].trim());
+		continent.setScore(Integer.parseInt(key_value[1].trim()));
 		continent_object_list.add(continent);
 	}
 
@@ -213,16 +219,41 @@ public class ManageFile implements IManageFile {
 	private void setValuesToFileLayerMapObject(String map_info) {
 		String[] key_value = map_info.split("=");
 		if (key_value[0].equalsIgnoreCase("author")) {
-			filelayer_map_object.setAuthor(key_value[1]);
+			filelayer_map_object.setAuthor(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("image")) {
-			filelayer_map_object.setImage(key_value[1]);
+			filelayer_map_object.setImage(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("wrap")) {
-			filelayer_map_object.setWrap(key_value[1]);
+			filelayer_map_object.setWrap(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("scroll")) {
-			filelayer_map_object.setScroll(key_value[1]);
+			filelayer_map_object.setScroll(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("warn")) {
-			filelayer_map_object.setWarn(key_value[1]);
+			filelayer_map_object.setWarn(key_value[1].trim());
 		}
 	}
 
+	/**
+	 * This function is use to remove all blank lines from map file
+	 * 
+	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
+	 * @author <a href="himansipatel1994@gmail.com"> Himansi Patel </a>
+	 * @param file_name
+	 */
+	private void removeBlankLinesFromFile(String file_name) {
+		file_name = file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name;
+		String original_file = "src/main/resource/Maps/" + file_name + ".map";
+		String file_content = "";
+		String line = "";
+		try (BufferedReader buffered_reader = new BufferedReader(new FileReader(original_file));) {
+			while ((line = buffered_reader.readLine()) != null) {
+				if (!line.isEmpty()) {
+					file_content += line.trim() + System.getProperty("line.separator");
+				}
+			}
+			BufferedWriter file_writer = new BufferedWriter(new FileWriter(original_file));
+			file_writer.write(file_content);
+			file_writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
