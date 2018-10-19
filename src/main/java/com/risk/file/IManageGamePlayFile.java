@@ -28,7 +28,7 @@ public interface IManageGamePlayFile {
 	/**
 	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
 	 * @param file_name The Playing Game File Name
-	 * @return Filename : The current ongoing game file name
+	 * @return Filename : The current ongoing game state object
 	 */
 	GamePlay fetchGameState(String file_name);
 
