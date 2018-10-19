@@ -182,12 +182,12 @@ public class ManageFile implements IManageFile {
 			Territory territory = new Territory();
 			String[] key_value = territory_info.split(",");
 			int length = key_value.length;
-			territory.setName(key_value[0]);
-			territory.setX_coordinate(Integer.parseInt(key_value[1]));
-			territory.setY_coordinate(Integer.parseInt(key_value[2]));
-			territory.setPart_of_continent(key_value[3]);
+			territory.setName(key_value[0].trim());
+			territory.setX_coordinate(Integer.parseInt(key_value[1].trim()));
+			territory.setY_coordinate(Integer.parseInt(key_value[2].trim()));
+			territory.setPart_of_continent(key_value[3].trim());
 			for (int i = 4; i < length; i++) {
-				adjacent_territories.add(key_value[i]);
+				adjacent_territories.add(key_value[i].trim());
 			}
 			territory.setAdj_territories(adjacent_territories);
 			if (territory != null) {
@@ -205,8 +205,8 @@ public class ManageFile implements IManageFile {
 	private void setValuesToFileLayerContientObject(String continent_info) {
 		Continent continent = new Continent();
 		String[] key_value = continent_info.split("=");
-		continent.setName(key_value[0]);
-		continent.setScore(Integer.parseInt(key_value[1]));
+		continent.setName(key_value[0].trim());
+		continent.setScore(Integer.parseInt(key_value[1].trim()));
 		continent_object_list.add(continent);
 	}
 
@@ -219,15 +219,15 @@ public class ManageFile implements IManageFile {
 	private void setValuesToFileLayerMapObject(String map_info) {
 		String[] key_value = map_info.split("=");
 		if (key_value[0].equalsIgnoreCase("author")) {
-			filelayer_map_object.setAuthor(key_value[1]);
+			filelayer_map_object.setAuthor(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("image")) {
-			filelayer_map_object.setImage(key_value[1]);
+			filelayer_map_object.setImage(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("wrap")) {
-			filelayer_map_object.setWrap(key_value[1]);
+			filelayer_map_object.setWrap(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("scroll")) {
-			filelayer_map_object.setScroll(key_value[1]);
+			filelayer_map_object.setScroll(key_value[1].trim());
 		} else if (key_value[0].equalsIgnoreCase("warn")) {
-			filelayer_map_object.setWarn(key_value[1]);
+			filelayer_map_object.setWarn(key_value[1].trim());
 		}
 	}
 
