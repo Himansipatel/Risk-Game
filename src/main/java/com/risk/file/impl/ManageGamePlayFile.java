@@ -4,9 +4,6 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import org.springframework.stereotype.Service;
 
@@ -25,19 +22,6 @@ import com.risk.model.file.PlayerFile;
 @Service
 public class ManageGamePlayFile implements IManageGamePlayFile {
 
-	private Logger logger = Logger.getLogger("ManageGamePlayFileLogger");
-
-	public ManageGamePlayFile() {
-		try {
-			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageGamePlayFile.log");
-			logger.addHandler(fh);
-			logger.setUseParentHandlers(false);
-			SimpleFormatter formatter = new SimpleFormatter();
-			fh.setFormatter(formatter);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -48,10 +32,12 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 	public Boolean savePlayerInfoToDisk(List<PlayerFile> file_player_list, String file_name) {
 
 		boolean file_writer_message = false;
-		file_name = String.valueOf(System.currentTimeMillis())
-				+ (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name);
+		file_name = (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name) + "_"
+				+ String.valueOf(System.currentTimeMillis());
 		try (PrintStream player_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/gameplay/" + file_name + ".txt")))) {
+			player_file_writer.println("Map name=" + file_name);
+			player_file_writer.println();
 //			Fetching all Current Players Object Playing in the Game
 			for (int player_index = 0; player_index < file_player_list.size(); player_index++) {
 				player_file_writer.println("[Player]");
@@ -75,10 +61,8 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 				player_file_writer.println();
 			}
 			if (player_file_writer.checkError()) {
-				logger.warning("Error (savePlayerInfoToDisk::ManageGamePlayFile)");
 				file_writer_message = false;
 			} else {
-				logger.info("Success (savePlayerInfoToDisk::ManageGamePlayFile)");
 				file_writer_message = true;
 			}
 		} catch (Exception e) {
