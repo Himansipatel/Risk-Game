@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -39,23 +36,12 @@ public class ManageFile implements IManageFile {
 	private List<Continent> continent_object_list;
 	private List<Territory> territory_object_list;
 
-	private Logger logger = Logger.getLogger("ManageFileLogger");
-
 	// Indicates 3 Section in Map File
 	enum FileSectionDivider {
 		MAP, CONTINENT, TERRITORY;
 	}
 
 	public ManageFile() {
-		try {
-			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageFile.log");
-			logger.addHandler(fh);
-			logger.setUseParentHandlers(false);
-			SimpleFormatter formatter = new SimpleFormatter();
-			fh.setFormatter(formatter);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -63,8 +49,6 @@ public class ManageFile implements IManageFile {
 	 * @param file_name Name of the Map File
 	 */
 	public ManageFile(String file_name) {
-		// Using Default Constructor Values
-		this();
 		this.file_name = file_name;
 	}
 
@@ -80,10 +64,10 @@ public class ManageFile implements IManageFile {
 		current_section_in_file = null;
 		continent_object_list = new ArrayList<Continent>();
 		territory_object_list = new ArrayList<Territory>();
-		try (BufferedReader map_file_object = new BufferedReader(new FileReader("src/main/resource/Maps/" + file_name))) {
+		try (BufferedReader map_file_object = new BufferedReader(
+				new FileReader("src/main/resource/Maps/" + file_name))) {
 			while ((line = map_file_object.readLine()) != null) {
 				if (line.length() > 0) {
-					// Later Change this Part to function
 					if (current_section_in_file == FileSectionDivider.MAP)
 						setValuesToFileLayerMapObject(line);
 					if (current_section_in_file == FileSectionDivider.CONTINENT)
@@ -107,10 +91,8 @@ public class ManageFile implements IManageFile {
 			file_object.setMap(filelayer_map_object);
 			file_object.setContinents(continent_object_list);
 			file_object.setTerritories(territory_object_list);
-			logger.info("Reading Map File Operation (retreiveFileObject::ManageFile)");
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.info("IOException (retreiveFileObject::ManageFile) " + e.getMessage());
 		}
 		return file_object;
 	}
@@ -125,7 +107,6 @@ public class ManageFile implements IManageFile {
 		file_name = file_name.endsWith(".map") ? file_name : file_name + ".map";
 		try (PrintStream map_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/Maps/" + file_name)))) {
-			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile)");
 			map_file_writer.println("[Map]");
 			map_file_writer.println("author=" + file.getMap().getAuthor());
 			map_file_writer.println("image=" + file.getMap().getImage());
@@ -154,15 +135,12 @@ public class ManageFile implements IManageFile {
 				map_file_writer.println(each_territory_info);
 			}
 			if (map_file_writer.checkError()) {
-				logger.warning("Error (saveFileToDisk::ManageFile)");
 				file_writer_message = false;
 			} else {
-				logger.info("Success (saveFileToDisk::ManageFile)");
 				file_writer_message = true;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			logger.warning("IOException (saveFileToDisk::ManageFile) " + e.getMessage());
 		}
 		return file_writer_message;
 	}

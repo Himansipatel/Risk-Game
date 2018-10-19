@@ -11,14 +11,14 @@ import com.risk.business.IManagePlayer;
 import com.risk.file.impl.ManageGamePlayFile;
 import com.risk.model.Card;
 import com.risk.model.Continent;
+import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Map;
 import com.risk.model.Player;
 import com.risk.model.Territory;
-import com.risk.model.file.PlayerFile;
 
 /**
- * This class is responsible for setting up Stratup Phase of the Game
+ * This class is responsible for setting up Startup Phase of the Game
  * ,converting list of current player object to game play file object.
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -41,37 +41,44 @@ public class ManagePlayer implements IManagePlayer {
 			String player_name = "player" + i;
 			List<GamePlayTerritory> gameplay_territory_list = new ArrayList<>();
 			List<Card> card_list = new ArrayList<Card>();
-
 			Player p = new Player();
-
 			p.setId(i);
 			p.setName(player_name);
 			p.setArmy_stock(army_stock);
 			p.setTerritory_list(gameplay_territory_list);
 			p.setCard_list(card_list);
-
 			player_info_list.add(p);
 		}
 		ManageMap manage_map_object = new ManageMap();
 		Map map = new Map();
 		map = manage_map_object.getFullMap(file_name);
-
 		assingTerritoriesToPlayers(map);
-		// convertPlayerToFileLayer(player_info_list, map_name);
 		writePlayerToFile(player_info_list, file_name);
 		return player_info_list;
 	}
 
 	/**
-	 * @see com.risk.business.IManagePlayer#writePlayerToFile(java.util.List,
-	 *      java.lang.String)
+	 * This method is an abstraction for the process of converting player Object
+	 * into the Game Play File to be saved/loaded.
+	 * 
+	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param player_info_list This is the entire Player Object which will be
+	 *                         converted to a Game Play File Object and then written
+	 *                         on to a GamePlay File.
+	 * @param file_name        Name of the Map file to be stored in Resource Folder
+	 *                         and GamePlay File.
+	 * @return File write status
 	 */
-	@Override
-	public boolean writePlayerToFile(List<Player> player_info_list, String file_name) {
-		List<PlayerFile> player_list_at_file = convertPlayerToFileLayer(player_info_list);
+	private boolean writePlayerToFile(List<Player> player_info_list, String file_name) {
+		List<Player> player_list_at_file = convertPlayerToFileLayer(player_info_list);
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
-		boolean file_write_message = manage_game_play_file.savePlayerInfoToDisk(player_list_at_file, file_name);
+		String game_phase = "Startup";
+		GamePlay gamePlay = new GamePlay();
+		gamePlay.setFile_name(file_name);
+		gamePlay.setGame_phase(game_phase);
+		gamePlay.setGame_state(player_list_at_file);
+		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(gamePlay);
 		return file_write_message;
 	}
 
@@ -84,19 +91,19 @@ public class ManagePlayer implements IManagePlayer {
 	 *                    Game play file object
 	 * @return list of converted Game play file object
 	 */
-	public List<PlayerFile> convertPlayerToFileLayer(List<Player> player_list) {
-		List<PlayerFile> player_list_at_file = new ArrayList<>();
+	private List<Player> convertPlayerToFileLayer(List<Player> player_list) {
+		List<Player> player_list_at_file = new ArrayList<>();
 		for (int i = 0; i < player_list.size(); i++) {
 
-			com.risk.model.file.PlayerFile player_object_at_file = new PlayerFile();
-			List<com.risk.model.file.GamePlayTerritory> game_play_territory_list = new ArrayList<>();
-			List<com.risk.model.file.Card> card_list = new ArrayList<>();
+			Player player_object_at_file = new Player();
+			List<GamePlayTerritory> game_play_territory_list = new ArrayList<>();
+			List<Card> card_list = new ArrayList<>();
 			player_object_at_file.setName(player_list.get(i).getName());
 			player_object_at_file.setId(player_list.get(i).getId());
 			player_object_at_file.setArmy_stock(player_list.get(i).getArmy_stock());
 
 			for (int j = 0; j < player_list.get(i).getTerritory_list().size(); j++) {
-				com.risk.model.file.GamePlayTerritory game_play_territory = new com.risk.model.file.GamePlayTerritory();
+				GamePlayTerritory game_play_territory = new GamePlayTerritory();
 				game_play_territory
 						.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
 				game_play_territory
@@ -108,7 +115,7 @@ public class ManagePlayer implements IManagePlayer {
 			player_object_at_file.setTerritory_list(game_play_territory_list);
 
 			for (int k = 0; k < player_list.get(i).getCard_list().size(); k++) {
-				com.risk.model.file.Card card = new com.risk.model.file.Card();
+				Card card = new Card();
 				card.setTerritory_name(player_list.get(i).getCard_list().get(k).getTerritory_name());
 				card.setArmy_type(player_list.get(i).getCard_list().get(k).getArmy_type());
 
