@@ -23,6 +23,13 @@
 						var player5DataTable = $('#player5').DataTable();
 						var player6DataTable = $('#player6').DataTable();
 
+						var armiesStockOfPlayer1 = 0;
+						var armiesStockOfPlayer2 = 0;
+						var armiesStockOfPlayer3 = 0;
+						var armiesStockOfPlayer4 = 0;
+						var armiesStockOfPlayer5 = 0;
+						var armiesStockOfPlayer6 = 0;
+
 						//css change
 						$("#countriesDesc_next").css("color", "black");
 						$("#countriesDesc_previous").css("color", "black");
@@ -153,10 +160,53 @@
 
 						}
 
+						function setEachPlayerArmiesStock(playerData,
+								playerOrder) {
+							switch (playerOrder) {
+							case 1:
+								armiesStockOfPlayer1 = playerData.army_stock;
+								break;
+							case 2:
+								armiesStockOfPlayer2 = playerData.army_stock;
+								break;
+							case 3:
+								armiesStockOfPlayer3 = playerData.army_stock;
+								break;
+							case 4:
+								armiesStockOfPlayer4 = playerData.army_stock;
+								break;
+							case 5:
+								armiesStockOfPlayer5 = playerData.army_stock;
+								break;
+							case 6:
+								armiesStockOfPlayer6 = playerData.army_stock;
+								break;
+							}
+						}
+
+						function getEachPlayerArmiesStock(playerNo) {
+							switch (playerNo) {
+							case 1:
+								return armiesStockOfPlayer1;
+							case 2:
+								return armiesStockOfPlayer2;
+							case 3:
+								return armiesStockOfPlayer3;
+							case 4:
+								return armiesStockOfPlayer4;
+							case 5:
+								return armiesStockOfPlayer5;
+							case 6:
+								return armiesStockOfPlayer6;
+							}
+						}
+
 						function findAndFillPlayerData(data, playerOrder) {
 							for (var i = 0; i < data.length; i++) {
 								if (playerOrder == data[i].id) {
 									fillAndInitializeDataTable(data[i],
+											playerOrder);
+									setEachPlayerArmiesStock(data[i],
 											playerOrder);
 									return;
 								}
@@ -170,7 +220,6 @@
 								findAndFillPlayerData(data, i);
 							}
 							//hide Extra Player Data table
-							debugger;
 							switch (noOfPlayers) {
 							case "2":
 								$("#p3").hide();
@@ -181,6 +230,193 @@
 							case "5":
 								$("#p6").hide();
 							}
+						}
+
+						function fetchDataTableforCurrentPlayer(whichPlayer) {
+							switch (String(whichPlayer)) {
+							case "1":
+								return player1DataTable;
+							case "2":
+								return player2DataTable;
+							case "3":
+								return player3DataTable;
+							case "4":
+								return player4DataTable;
+							case "5":
+								return player5DataTable;
+							case "6":
+								return player6DataTable;
+							}
+						}
+
+						function checkIfAnyOtherCountriesContainNoArmy(
+								currentPlayerDataTable) {
+							var countrySelected = $(
+									"#countriesForArmies option:selected")
+									.val();
+							var data = currentPlayerDataTable.rows().data();
+							for (var i = 0; i < data.length; i++) {
+								if (data[i][0] != countrySelected
+										&& data[i][2] == 0) {
+									return true;
+								}
+							}
+							return false;
+						}
+
+						function checkIfCountryAlreadyContainAnyArmy(
+								currentPlayerDataTable) {
+							var countrySelected = $(
+									"#countriesForArmies option:selected")
+									.val();
+							var data = currentPlayerDataTable.rows().data();
+							for (var i = 0; i < data.length; i++) {
+								if (data[i][0] == countrySelected
+										&& data[i][2] > 0) {
+									return true;
+								}
+							}
+							return false;
+						}
+
+						function validateArmyAllocation() {
+							var whichPlayer = $("#playerNo").text();
+							var currentPlayerArmies = $("#RemainingArmies")
+									.text();
+							var currentPlayerDataTable = fetchDataTableforCurrentPlayer(whichPlayer);
+							if (checkIfCountryAlreadyContainAnyArmy(currentPlayerDataTable)
+									&& checkIfAnyOtherCountriesContainNoArmy(currentPlayerDataTable)) {
+								return false;
+							} else {
+								return true;
+							}
+						}
+
+						function addArmy(currentPlayerDataTable, country) {
+							var lCountry;
+							var lContinent;
+							var lArmies;
+							var data = currentPlayerDataTable.rows().data();
+							for (var i = 0; i < data.length; i++) {
+								if (data[i][0] == country) {
+									lCountry = data[i][0];
+									lContinent = data[i][1];
+									lArmies = data[i][2];
+									break;
+								}
+							}
+							currentPlayerDataTable.row(
+									function(idx, data, node) {
+										return data[0] === country;
+									}).remove().draw(false);
+							lArmies = lArmies + 1;
+							currentPlayerDataTable.row.add(
+									[ lCountry, lContinent, lArmies ]).draw(
+									false);
+						}
+
+						function addArmyToPlayerChosenCountry() {
+							var whichPlayer = $("#playerNo").text();
+							var currentPlayerArmies = $("#RemainingArmies")
+									.text();
+							var currentPlayerDataTable = fetchDataTableforCurrentPlayer(whichPlayer);
+							var countrySelected = $(
+									"#countriesForArmies option:selected")
+									.val();
+							addArmy(currentPlayerDataTable, countrySelected);
+
+							//decrease current player armies stock by one
+							switch (String(whichPlayer)) {
+							case "1":
+								armiesStockOfPlayer1 = armiesStockOfPlayer1 - 1;
+								break;
+							case "2":
+								armiesStockOfPlayer2 = armiesStockOfPlayer2 - 1;
+								break;
+							case "3":
+								armiesStockOfPlayer3 = armiesStockOfPlayer3 - 1;
+								break;
+							case "4":
+								armiesStockOfPlayer4 = armiesStockOfPlayer4 - 1;
+								break;
+							case "5":
+								armiesStockOfPlayer5 = armiesStockOfPlayer5 - 1;
+								break;
+							case "6":
+								armiesStockOfPlayer6 = armiesStockOfPlayer6 - 1;
+								break;
+							}
+						}
+
+						function checkAndDisplayIfMoreArmyAllocationNeeded(
+								newPlayerNo) {
+							var currentPlayerDataTable = fetchDataTableforCurrentPlayer(newPlayerNo);
+							var currentPlayerArmyStock = getEachPlayerArmiesStock(newPlayerNo);
+							if (currentPlayerArmyStock > 0) {
+								currentPlayerDTable = currentPlayerDataTable
+										.rows().data();
+								armySelectionInStartupPhase(
+										currentPlayerDTable,
+										currentPlayerArmyStock);
+								alert("Player " + newPlayerNo
+										+ " - Allocate your army");
+							} else {
+								$('#mapSelectArmy').modal('toggle');
+								alert("army selection successfull");
+							}
+						}
+
+						function calculateNextPlayerNo(whichPlayer) {
+							var noOfPlayer = $("#noOfPlayer option:selected")
+									.val();
+							if (whichPlayer == noOfPlayer) {
+								whichPlayer = 1;
+							} else {
+								++whichPlayer;
+							}
+							return whichPlayer;
+						}
+
+						$('#armiesSelectionDone')
+								.on(
+										'click',
+										function() {
+											if (!validateArmyAllocation()) {
+												alert("Please add atleast one army to countries which doesnot have any army yet");
+												return;
+											}
+											addArmyToPlayerChosenCountry();
+											//set next Player no
+											var whichPlayer = $("#playerNo")
+													.text();
+											var newPlayerNo = calculateNextPlayerNo(whichPlayer);
+											$("#playerNo").text(newPlayerNo);
+											checkAndDisplayIfMoreArmyAllocationNeeded(newPlayerNo);
+										});
+
+						function armySelectionInStartupPhase(playerDTable,
+								remaingArmies) {
+							$('#countriesForArmies').find('option').remove();
+							$("#RemainingArmies").text(remaingArmies);
+							for (var i = 0; i < playerDTable.length; i++) {
+								$('#countriesForArmies').append($('<option>', {
+									value : playerDTable[i][0],
+									text : playerDTable[i][0]
+								}));
+							}
+						}
+
+						function startArmyAllocation() {
+							var noOfPlayers = $("#noOfPlayer option:selected")
+									.val();
+							$("#playerNo").text("1");
+							player1DTable = player1DataTable.rows().data();
+							armySelectionInStartupPhase(player1DTable,
+									armiesStockOfPlayer1);
+							$('#mapSelectArmy').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
 						}
 
 						function initStartUpPhase() {
@@ -198,9 +434,10 @@
 															.text()
 												}),
 										url : "gamePlay/initStartUpPhase",
-										success : function(data) {debugger;
+										success : function(data) {
 											parseGamePlayData(data);
 											stopLoading();
+											startArmyAllocation();
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -384,7 +621,7 @@
 		</div>
 	</div>
 
-	<!-- Modal -->
+	<!-- Modal map selection -->
 	<div class="modal fade" id="mapSelectModal" tabindex="-1" role="dialog"
 		aria-labelledby="mapSelectModalTitle" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" role="document">
@@ -396,7 +633,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label for="continentName">Map : </label> <select
+						<label for="availableMapsName">Map : </label> <select
 							class="form-control form-control-sm" id="availableMapsName">
 							<option></option>
 						</select>
@@ -416,6 +653,36 @@
 					<button id="playNow" type="button" class="btn btn-primary"
 						style="background-color: black; border-color: black">Play
 						Now</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal Army allocation -->
+	<div class="modal fade" id="mapSelectArmy" tabindex="-1" role="dialog"
+		aria-labelledby="mapSelectModalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Allocate
+						army</h5>
+				</div>
+				<div class="modal-body">
+					<div>
+						<label for="playerNo">Player No</label> <span id="playerNo"></span>
+					</div>
+					<label for="RemainingArmies">Remaining Armies : </label> <span
+						id="RemainingArmies"></span>
+					<p>Please select your country to allocate one army</p>
+					<label for="countriesForArmies">Countries : </label> <select
+						class="form-control form-control-sm" id="countriesForArmies">
+						<option></option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button id="armiesSelectionDone" type="button"
+						class="btn btn-primary"
+						style="background-color: black; border-color: black">Done</button>
 				</div>
 			</div>
 		</div>
