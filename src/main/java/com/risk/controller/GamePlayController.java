@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.risk.business.IManageMap;
 import com.risk.business.IManagePlayer;
+import com.risk.model.GamePlay;
 import com.risk.model.Player;
 
 /**
@@ -45,8 +46,10 @@ public class GamePlayController {
 	public List<Player> initStartUpPhase(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "playersNo", required = false) String playersNo,
 			@RequestParam(value = "fileName", required = false) String fileName) throws Exception {
-
-		List<Player> players = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName);
+		
+		GamePlay game_state = null;
+		game_state = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName);
+		List<Player> players = game_state.getGame_state();
 		return players;
 	}
 }
