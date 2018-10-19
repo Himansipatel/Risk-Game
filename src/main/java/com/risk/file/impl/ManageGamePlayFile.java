@@ -155,7 +155,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 			player_game_info.setId(Integer.parseInt(value));
 		} else if (key.equalsIgnoreCase("Name")) {
 			player_game_info.setName(value);
-		} else if (key.equalsIgnoreCase("Armies")) {
+		} else if (key.equalsIgnoreCase("Armies Stock")) {
 			player_game_info.setArmy_stock(Integer.parseInt(value));
 		}
 	}
