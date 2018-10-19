@@ -1,8 +1,6 @@
 package com.risk.business;
 
-import java.util.List;
-
-import com.risk.model.Player;
+import com.risk.model.GamePlay;
 
 /**
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -18,5 +16,5 @@ public interface IManagePlayer {
 	 * @param map_name       Selected Map for playing the game.
 	 * @return Entire Player List which will be rendered for Playing.
 	 */
-	List<Player> createPlayer(int num_of_players, String map_name);
+	GamePlay createPlayer(int num_of_players, String map_name);
 }

@@ -32,9 +32,12 @@ public class ManagePlayer implements IManagePlayer {
 	/**
 	 * @see com.risk.business.IManagePlayer#createPlayer(int, java.lang.String)
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
+	 *         Modifications of function performed by Mayank Jariwala
 	 */
 	@Override
-	public List<Player> createPlayer(int num_of_players, String file_name) {
+	public GamePlay createPlayer(int num_of_players, String file_name) {
+		GamePlay game_state = null;
 		player_info_list = new ArrayList<Player>();
 		int army_stock = getArmyStock(num_of_players);
 		for (int i = 1; i <= num_of_players; i++) {
@@ -53,8 +56,8 @@ public class ManagePlayer implements IManagePlayer {
 		Map map = new Map();
 		map = manage_map_object.getFullMap(file_name);
 		assingTerritoriesToPlayers(map);
-		writePlayerToFile(player_info_list, file_name);
-		return player_info_list;
+		game_state = writePlayerToFile(player_info_list, file_name);
+		return game_state;
 	}
 
 	/**
@@ -62,24 +65,30 @@ public class ManagePlayer implements IManagePlayer {
 	 * into the Game Play File to be saved/loaded.
 	 * 
 	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
+	 *         Modifications done by Mayank Jariwala
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param player_info_list This is the entire Player Object which will be
 	 *                         converted to a Game Play File Object and then written
 	 *                         on to a GamePlay File.
 	 * @param file_name        Name of the Map file to be stored in Resource Folder
 	 *                         and GamePlay File.
-	 * @return File write status
+	 * @return GamePlay File Object
 	 */
-	private boolean writePlayerToFile(List<Player> player_info_list, String file_name) {
+	private GamePlay writePlayerToFile(List<Player> player_info_list, String file_name) {
 		List<Player> player_list_at_file = convertPlayerToFileLayer(player_info_list);
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
 		String game_phase = "Startup";
-		GamePlay gamePlay = new GamePlay();
-		gamePlay.setFile_name(file_name);
-		gamePlay.setGame_phase(game_phase);
-		gamePlay.setGame_state(player_list_at_file);
-		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(gamePlay);
-		return file_write_message;
+		file_name = (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name) + "_"
+				+ String.valueOf(System.currentTimeMillis());
+		GamePlay game_state = new GamePlay();
+		game_state.setFile_name(file_name);
+		game_state.setGame_phase(game_phase);
+		game_state.setGame_state(player_list_at_file);
+		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(game_state);
+		if (file_write_message)
+			return game_state;
+		else
+			return null;
 	}
 
 	/**
