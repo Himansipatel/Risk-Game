@@ -12,6 +12,7 @@ import java.util.Set;
 import org.springframework.stereotype.Service;
 
 import com.risk.business.IManageMap;
+import com.risk.file.IManageFile;
 import com.risk.file.impl.ManageFile;
 import com.risk.model.Continent;
 import com.risk.model.Map;
@@ -19,11 +20,8 @@ import com.risk.model.Territory;
 import com.risk.model.file.File;
 
 /**
- * This class is responsible for handling all Map related functionalities like :
- * Translating GUI Map into a File Map which can be parsed and stored in a Map
- * File. Translating File Map into a GUI Map which can be rendered on UI. Map
- * related validations like duplicate territories or continents and checking
- * discontinuities in the map.
+ * This class is the Concrete Implementation for interface IManageMap.
+ * 
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
  * @version 0.0.1
  */
@@ -39,8 +37,8 @@ public class ManageMap implements IManageMap {
 	 */
 	@Override
 	public Map getFullMap(String fileName) {
-		ManageFile file_object = new ManageFile(fileName);
-		file = file_object.retreiveFileObject();
+		IManageFile file_manager = new ManageFile(fileName);		
+		file = file_manager.retreiveFileObject();
 		map = convertFileToMap(file);
 		return map;
 	}
@@ -90,7 +88,7 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#checkNonExistingNeighbour(com.risk.model.Map)
+	 * @see com.risk.business.IManageMap#checkInvalidNeighbour(com.risk.model.Map)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override	
@@ -152,7 +150,11 @@ public class ManageMap implements IManageMap {
 			java.util.Map.Entry<String, Continent> continent = iterator.next();
 			territories.addAll(continent.getValue().getTerritories());
 		}
-
+		
+		if (territories.isEmpty()) {
+			return "Invalid Map Input";
+		}
+		
 		/**
 		 * If some territory does not have any neighbor then we can immediately arrive
 		 * at a conclusion that Map is disconnected.
@@ -174,7 +176,7 @@ public class ManageMap implements IManageMap {
 
 		if (!error_flag) {
 			start_node = territories.get(0).getName();
-			territory_visited = find_link(start_node, neighbours_link, territory_visited);
+			territory_visited = findLink(start_node, neighbours_link, territory_visited);
 			message = "Disconnected Territories:";
 			for (Iterator<Entry<String, Boolean>> iterator = territory_visited.entrySet().iterator(); iterator
 					.hasNext();) {
@@ -196,7 +198,7 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#saveMap(com.risk.model.gui.Map)
+	 * @see com.risk.business.IManageMap#saveMap(com.risk.model.gui.Map,String)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
@@ -361,7 +363,7 @@ public class ManageMap implements IManageMap {
 	 * @return HashMap<String, Boolean> : Resultant HashMap telling which all
 	 *         territories could be visited and which not.
 	 */
-	private HashMap<String, Boolean> find_link(String start_node, HashMap<String, List<String>> neighbours_link,
+	private HashMap<String, Boolean> findLink(String start_node, HashMap<String, List<String>> neighbours_link,
 			HashMap<String, Boolean> territory_visited) {
 		if (territory_visited.get(start_node) != null && !territory_visited.get(start_node)) {
 			territory_visited.put(start_node, true);
@@ -371,7 +373,7 @@ public class ManageMap implements IManageMap {
 		while (neighbour.hasNext()) {
 			String next_neighbour = neighbour.next();
 			if (territory_visited.get(next_neighbour) != null && !territory_visited.get(next_neighbour)) {
-				find_link(next_neighbour, neighbours_link, territory_visited);
+				findLink(next_neighbour, neighbours_link, territory_visited);
 			}
 		}
 		return territory_visited;
@@ -381,7 +383,7 @@ public class ManageMap implements IManageMap {
 	 * This method parses the Map Object and converts it to a File Object.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map : Object Representation of the Map File.
+	 * @param map Object Representation of the Map File.
 	 * @return File file : File Object Representing the Map File to be saved/loaded.
 	 */
 	private File convertMapToFile(Map map) {
@@ -442,12 +444,11 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * This method parses the File Object and converts it to a Map Object.
-	 * 
-	 * @param file : File Object Representing the Map File to be saved/loaded.
-	 * @return Map map : Object Representation of the Map File.
+	 * @see com.risk.business.IManageMap#convertFileToMap(File)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
-	private Map convertFileToMap(File file) {
+	@Override	
+	public Map convertFileToMap(File file) {
 
 		map = new Map();
 		Continent map_continent;

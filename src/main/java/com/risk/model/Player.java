@@ -3,7 +3,12 @@ package com.risk.model;
 import java.util.List;
 
 /**
+ * <b>GamePlay Player File Model</b> - Stores information about all players
+ * playing in game.
+ * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+ * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a> -
+ *         Added Model Description
  * @version 0.0.1
  */
 public class Player {
