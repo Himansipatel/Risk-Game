@@ -47,6 +47,14 @@
 						var currentPhase = "REINFORCEMENT";
 						var currentMapName = "";
 						var noOfPlayingPlayer = "";
+						var whichPlayerChance = 0;
+						
+						$("#player1Reinforcement").attr("disabled", "disabled");
+						$("#player2Reinforcement").attr("disabled", "disabled");
+						$("#player3Reinforcement").attr("disabled", "disabled");
+						$("#player4Reinforcement").attr("disabled", "disabled");
+						$("#player5Reinforcement").attr("disabled", "disabled");
+						$("#player6Reinforcement").attr("disabled", "disabled");
 
 						//css change
 						$("#countriesDesc_next").css("color", "black");
@@ -567,16 +575,91 @@
 								data : a,
 								contentType : "application/json",
 								success : function(data) {
+									currentPhase = "ATTACK";
+									whichPlayerChance = 1;debugger;
+									armiesStockOfPlayer1 = 3;
 									alert("success saving map");
+									checkForNextPhaseAndDisplayOption();
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
-									debugger;
 									alert("Invalid GameState. Please check");
 								}
 							});
 						}
-
+						
+						function displayReinforcementButtonForPlayer(){
+							switch(String(whichPlayerChance)){
+							case "1":
+								$("#player1Reinforcement").removeAttr("disabled");
+								break;
+							case "2":
+								$("#player2Reinforcement").removeAttr("disabled");
+								break;
+							case "3":
+								$("#player3Reinforcement").removeAttr("disabled");
+								break;
+							case "4":
+								$("#player4Reinforcement").removeAttr("disabled");
+								break;
+							case "5":
+								$("#player5Reinforcement").removeAttr("disabled");
+								break;
+							case "6":
+								$("#player6Reinforcement").removeAttr("disabled");
+								break;
+							}
+						}
+						
+						function checkForNextPhaseAndDisplayOption(){
+							//current phase will always be the start of next phase 
+							if(currentPhase == "ATTACK"){
+								displayReinforcementButtonForPlayer();	
+							}else if(currentPhase == "FORTIFICATION"){
+								//TO DO
+							}else if(currentPhase == "REINFORCEMENT"){
+								//TO DO
+							}
+						}
+						
+						function fillReinforcementModal(no){
+							$('#countriesForReinforcement').find('option').remove();	
+							//hardcoded
+							var player1DTable = player1DataTable.rows().data();
+							$("#reinforcementRemainingArmies").text(armiesStockOfPlayer1);
+							for (var i = 0; i < player1DTable.length; i++) {
+								$('#countriesForReinforcement').append($('<option>', {
+									value : player1DTable[i][0],
+									text : player1DTable[i][0]
+								}));
+							}
+						}
+												
+						$('#player1Reinforcement').on('click', function() {debugger;
+							fillReinforcementModal("1");
+							$('#reinforcementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						});
+						
+						$('#armiesSelectionForReinforcementDone').on('click', function() {debugger;
+							if(armiesStockOfPlayer1>0){
+								armiesStockOfPlayer1 = armiesStockOfPlayer1-1;
+								var country = $(
+								"#countriesForReinforcement option:selected")
+								.val();
+								addArmy(player1DataTable, country);
+								$("#reinforcementRemainingArmies").text(armiesStockOfPlayer1);
+								if(armiesStockOfPlayer1==0){
+									$('#reinforcementModal').modal('toggle');
+									saveGameState();
+								}
+								return;								
+							}
+							$('#reinforcementModal').modal('toggle');
+							saveGameState();
+						});
 					});
 </script>
 
@@ -647,6 +730,9 @@
 					</tr>
 				</tfoot>
 			</table>
+			<button id="player1Reinforcement" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Reinforce</button>
 		</div>
 		<div id="p2">
 			<h3>Player 2 :</h3>
@@ -666,6 +752,9 @@
 					</tr>
 				</tfoot>
 			</table>
+			<button id="player2Reinforcement" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Reinforce</button>
 		</div>
 		<div id="p3">
 			<h3>Player 3 :</h3>
@@ -685,6 +774,9 @@
 					</tr>
 				</tfoot>
 			</table>
+			<button id="player3Reinforcement" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Reinforce</button>
 		</div>
 		<div id="p4">
 			<h3>Player 4 :</h3>
@@ -704,6 +796,9 @@
 					</tr>
 				</tfoot>
 			</table>
+			<button id="player4Reinforcement" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Reinforce</button>
 		</div>
 		<div id="p5">
 			<h3>Player 5 :</h3>
@@ -723,6 +818,9 @@
 					</tr>
 				</tfoot>
 			</table>
+			<button id="player5Reinforcement" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Reinforce</button>
 		</div>
 		<div id="p6">
 			<h3>Player 6 :</h3>
@@ -742,6 +840,9 @@
 					</tr>
 				</tfoot>
 			</table>
+			<button id="player6Reinforcement" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Reinforce</button>
 		</div>
 	</div>
 
@@ -811,6 +912,40 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Modal Reinforcement -->
+	<div class="modal fade" id="reinforcementModal" tabindex="-1"
+		role="dialog" aria-labelledby="reinforcementModalTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Reinforcement
+						Phase</h5>
+				</div>
+				<div class="modal-body">
+					<div>
+						<label for="ReinforcementPlayerNo">Allocate the armies for
+							reinforcement</label>
+					</div>
+					<label for="reinforcementRemainingArmies">Remaining Armies
+						: </label> <span id="reinforcementRemainingArmies"></span>
+					<p>Please select your country to allocate one army</p>
+					<label for="countriesForReinforcement">Countries : </label> <select
+						class="form-control form-control-sm"
+						id="countriesForReinforcement">
+						<option></option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button id="armiesSelectionForReinforcementDone" type="button"
+						class="btn btn-primary"
+						style="background-color: black; border-color: black">Reinforce</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<button id="check" type="button" class="btn btn-primary"
 		style="background-color: black; border-color: black">check</button>
 </body>
