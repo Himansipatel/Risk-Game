@@ -66,9 +66,12 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 				player_file_writer.println();
 				player_file_writer.println("[Cards]");
 //				Getting cards occupied by each player and writing it to file
-				for (int k = 0; k < player_list.get(player_index).getCard_list().size(); k++)
-					player_file_writer.println(player_list.get(player_index).getCard_list().get(k).getTerritory_name()
-							+ "," + player_list.get(player_index).getCard_list().get(k).getArmy_type());
+				if (player_list.get(player_index).getCard_list() != null) {
+					for (int k = 0; k < player_list.get(player_index).getCard_list().size(); k++)
+						player_file_writer
+								.println(player_list.get(player_index).getCard_list().get(k).getTerritory_name() + ","
+										+ player_list.get(player_index).getCard_list().get(k).getArmy_type());
+				}
 				player_file_writer.println();
 			}
 			if (player_file_writer.checkError()) {
@@ -154,7 +157,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 			player_game_info.setId(Integer.parseInt(value));
 		} else if (key.equalsIgnoreCase("Name")) {
 			player_game_info.setName(value);
-		} else if (key.equalsIgnoreCase("Armies")) {
+		} else if (key.equalsIgnoreCase("Armies Stock")) {
 			player_game_info.setArmy_stock(Integer.parseInt(value));
 		}
 	}

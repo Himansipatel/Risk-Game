@@ -1,22 +1,21 @@
 package com.risk.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.risk.business.IManageGamePlay;
 import com.risk.business.IManageMap;
 import com.risk.business.IManagePlayer;
 import com.risk.model.GamePlay;
-import com.risk.model.Player;
 
 /**
  * GamePlay Controller is a part of MVC Controller which handle the actions and
@@ -36,6 +35,9 @@ public class GamePlayController {
 
 	@Autowired
 	IManagePlayer iManagePlayer;
+
+	@Autowired
+	IManageGamePlay iManageGamePlay;
 
 	/**
 	 * This function renders the gamePlay.jsp file on which players can start
@@ -69,13 +71,21 @@ public class GamePlayController {
 	 */
 	@RequestMapping(value = "/initStartUpPhase", method = RequestMethod.GET)
 	@ResponseBody
-	public List<Player> initStartUpPhase(HttpServletRequest request, HttpServletResponse response,
+	public GamePlay initStartUpPhase(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "playersNo", required = false) String playersNo,
 			@RequestParam(value = "fileName", required = false) String fileName) throws Exception {
 
 		GamePlay game_state = null;
 		game_state = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName);
-		List<Player> players = game_state.getGame_state();
-		return players;
+		return game_state;
+	}
+
+	@RequestMapping(value = "/saveGameState", method = RequestMethod.POST)
+	@ResponseBody
+	public GamePlay submitGameState(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody GamePlay gamePlay) throws Exception {
+		System.out.println(gamePlay);
+		gamePlay = iManageGamePlay.savePhase(gamePlay);
+		return gamePlay;
 	}
 }

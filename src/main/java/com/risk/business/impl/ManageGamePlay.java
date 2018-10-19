@@ -14,6 +14,7 @@ import com.risk.business.IManageGamePlay;
 import com.risk.business.IManageMap;
 import com.risk.file.IManageFile;
 import com.risk.file.impl.ManageFile;
+import com.risk.file.impl.ManageGamePlayFile;
 import com.risk.model.Continent;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
@@ -23,8 +24,8 @@ import com.risk.model.Territory;
 import com.risk.model.file.File;
 
 /**
- * This is the GameController Class for managing the flow of game, taking into 
- * consideration the Rules of Game RISK.
+ * This class is the Concrete Implementation for interface IManageGamePlay.
+ * 
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
  * @version 0.0.1
  */
@@ -39,12 +40,13 @@ public class ManageGamePlay implements IManageGamePlay {
 	public GamePlay savePhase(GamePlay game_state) {
 
 		IManageMap  map_manager  = new ManageMap();
-		IManageFile file_manager = new ManageFile(game_state.getFile_name());		
+		String[] file_name = game_state.getFile_name().split("_");
+		IManageFile file_manager = new ManageFile(file_name[0].concat(".map"));		
 		File file = file_manager.retreiveFileObject();
 
 		Map map = map_manager.convertFileToMap(file);
-		//ManageGamePlayFile game_file = new ManageGamePlayFile();
-		//game_file.saveGameStateToDisk(game_state);
+		ManageGamePlayFile game_file = new ManageGamePlayFile();
+		game_file.saveGameStateToDisk(game_state);
 		switch (game_state.getGame_phase()) {
 
 		case "REINFORCEMENT":	
@@ -67,11 +69,16 @@ public class ManageGamePlay implements IManageGamePlay {
 	 */
 	@Override
 	public GamePlay loadPhase(GamePlay game_state) {
-
+		
 		return null;
 	}
-
-	private List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map){
+	
+	/**
+	 * @see com.risk.business.IManageGamePlay#calculateArmiesReinforce(List<Player>, com.risk.model.Map)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Override
+	public List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map){
 
 		List<Continent> continents = new ArrayList<>();
 		List<Territory> territories;
@@ -124,7 +131,7 @@ public class ManageGamePlay implements IManageGamePlay {
 				army_count = 3;
 			}
 			army_count = army_count + players_army.get(player.getId());
-			player.setArmy_stock(army_count);
+			players_army.replace(player.getId(), army_count);
 		}		
 		
 		//Verifying if a player holds the entire continent and updating its army stock.

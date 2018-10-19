@@ -6,6 +6,12 @@ import com.risk.model.Map;
 import com.risk.model.file.File;
 
 /**
+ * This interface is responsible for handling all Map related functionalities like :
+ * Translating GUI Map into a File Map which can be parsed and stored in a Map
+ * File. Translating File Map into a GUI Map which can be rendered on UI. Map
+ * related validations like duplicate territories or continents and checking
+ * discontinuities in the map.
+ * 
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
  * @version 0.0.1
  */
