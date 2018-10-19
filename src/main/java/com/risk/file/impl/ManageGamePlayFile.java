@@ -56,7 +56,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 				player_file_writer.println("[Player]");
 				player_file_writer.println("Id=" + player_list.get(player_index).getId());
 				player_file_writer.println("Name=" + player_list.get(player_index).getName());
-				player_file_writer.println("Armies Stock=" + player_list.get(player_index).getId());
+				player_file_writer.println("Armies Stock=" + player_list.get(player_index).getArmy_stock());
 				player_file_writer.println("[Territories]");
 //				Getting territories occupied by each player and writing it to file
 				for (int j = 0; j < player_list.get(player_index).getTerritory_list().size(); j++)

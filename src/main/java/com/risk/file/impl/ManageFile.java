@@ -183,8 +183,8 @@ public class ManageFile implements IManageFile {
 			String[] key_value = territory_info.split(",");
 			int length = key_value.length;
 			territory.setName(key_value[0].trim());
-			territory.setX_coordinate(Integer.parseInt(key_value[1].trim()));
-			territory.setY_coordinate(Integer.parseInt(key_value[2].trim()));
+			territory.setX_coordinate(Integer.parseInt(key_value[1]));
+			territory.setY_coordinate(Integer.parseInt(key_value[2]));
 			territory.setPart_of_continent(key_value[3].trim());
 			for (int i = 4; i < length; i++) {
 				adjacent_territories.add(key_value[i].trim());
