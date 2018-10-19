@@ -20,18 +20,6 @@ public interface IManageMap {
 	Map getFullMap(String fileName);
 
 	/**
-	 * This method is an abstraction for the process of converting A Map Object
-	 * into the Map File to be saved/loaded.
-	 * 
-	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map This is the entire Map Object which will be converted to a File
-	 * 			  Object and then written on to a Map File.
-	 * @param file_name Name of the Map file to be stored in Resource Folder. 
-	 * @return File write status. 
-	 */	
-	boolean writeMapToFile(Map map, String file_name); 
-
-	/**
 	 * This method checks the World Map Object for any duplicate territories.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>

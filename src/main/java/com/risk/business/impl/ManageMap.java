@@ -46,11 +46,16 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#writeMapToFile(com.risk.model.Map, java.lang.String)
+	 * This method is an abstraction for the process of converting A Map Object
+	 * into the Map File to be saved/loaded.
+	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 */
-	@Override
-	public boolean writeMapToFile(Map map, String file_name) {
+	 * @param map This is the entire Map Object which will be converted to a File
+	 * 			  Object and then written on to a Map File.
+	 * @param file_name Name of the Map file to be stored in Resource Folder. 
+	 * @return File write status. 
+	 */	
+	private boolean writeMapToFile(Map map, String file_name) {
 		file = convertMapToFile(map);
 		ManageFile manage_file = new ManageFile();
 		Boolean file_write_message = manage_file.saveFileToDisk(file, file_name);
@@ -64,6 +69,9 @@ public class ManageMap implements IManageMap {
 	@Override
 	public String checkDuplicateTerritory(Map map) {
 		String message = "";
+		if (map == null) {
+			return "Invalid Map Input";
+		}
 		List<Territory> territories    = new ArrayList<>();
 		Set<String> unique_territories = new HashSet<>();
 
@@ -89,7 +97,9 @@ public class ManageMap implements IManageMap {
 	public String checkInvalidNeighbour(Map map) {
 
 		String message = "";
-
+		if (map == null) {
+			return "Invalid Map Input";
+		}
 		List<Territory> territories = new ArrayList<>();		
 		Set<String> full_neighbour_list = new HashSet<>();		
 		Set<String> full_territory_list = new HashSet<>();
@@ -106,9 +116,10 @@ public class ManageMap implements IManageMap {
 				full_neighbour_list.add(neighbour);
 			}
 		}
-
+		
+		full_neighbour_list.removeAll(Arrays.asList("", null));
 		full_neighbour_list.removeAll(full_territory_list);
-		if (full_neighbour_list.size() > 0) {
+		if (!full_neighbour_list.isEmpty()) {
 			message = "Invalid Territories used as a neighbor: ";
 			for (String string : full_neighbour_list) {
 				message = message.concat(string).concat("-");
@@ -124,7 +135,10 @@ public class ManageMap implements IManageMap {
 	 */
 	@Override
 	public String checkDiscontinuity(Map map) {
-
+		
+		if (map == null) {
+			return "Invalid Map Input";
+		}
 		boolean error_flag = false;
 		String message = "";
 		String start_node;
@@ -189,7 +203,7 @@ public class ManageMap implements IManageMap {
 	public Boolean saveMap(com.risk.model.gui.Map map, String file_name) throws Exception {
 		String message = guiMapToFile(map,file_name);
 		if (message != "") {
-			throw new Exception("");
+			throw new Exception(message);
 		}
 		return true;
 	}
@@ -250,7 +264,13 @@ public class ManageMap implements IManageMap {
 		map_model.setContinents(map_parsed);
 		String message = "";
 		message = checkDiscontinuity(map_model);
+		if (message.equalsIgnoreCase("")) {
+			return message;
+		}
 		message = checkDuplicateTerritory(map_model);
+		if (message.equalsIgnoreCase("")) {
+			return message;
+		}
 		message = checkInvalidNeighbour(map_model);		
 		if (message.equalsIgnoreCase("")) {
 			Boolean write_file_status = writeMapToFile(map_model, file_name);

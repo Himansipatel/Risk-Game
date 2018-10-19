@@ -48,7 +48,7 @@ public class ManageFile implements IManageFile {
 
 	public ManageFile() {
 		try {
-			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageFile/index.log");
+			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageFile.log");
 			logger.addHandler(fh);
 			logger.setUseParentHandlers(false);
 			SimpleFormatter formatter = new SimpleFormatter();
@@ -80,7 +80,7 @@ public class ManageFile implements IManageFile {
 		current_section_in_file = null;
 		continent_object_list = new ArrayList<Continent>();
 		territory_object_list = new ArrayList<Territory>();
-		try (BufferedReader map_file_object = new BufferedReader(new FileReader("src/main/resource/" + file_name))) {
+		try (BufferedReader map_file_object = new BufferedReader(new FileReader("src/main/resource/Maps/" + file_name))) {
 			while ((line = map_file_object.readLine()) != null) {
 				if (line.length() > 0) {
 					// Later Change this Part to function
@@ -124,7 +124,7 @@ public class ManageFile implements IManageFile {
 		boolean file_writer_message = false;
 		file_name = file_name.endsWith(".map") ? file_name : file_name + ".map";
 		try (PrintStream map_file_writer = new PrintStream(
-				new BufferedOutputStream(new FileOutputStream("src/main/resource/" + file_name)))) {
+				new BufferedOutputStream(new FileOutputStream("src/main/resource/Maps/" + file_name)))) {
 			logger.info("Performing File Write Operation (saveFileToDisk::ManageFile)");
 			map_file_writer.println("[Map]");
 			map_file_writer.println("author=" + file.getMap().getAuthor());
@@ -174,7 +174,7 @@ public class ManageFile implements IManageFile {
 	@Override
 	public List<String> fetchMapFilesFromResource() {
 		List<String> list_of_map_files = new ArrayList<>();
-		java.io.File resource_folder = new java.io.File("src/main/resource");
+		java.io.File resource_folder = new java.io.File("src/main/resource/Maps");
 		java.io.File[] listOfMapFiles = resource_folder.listFiles();
 		if (listOfMapFiles.length > 0) {
 			for (java.io.File file : listOfMapFiles) {
@@ -190,7 +190,7 @@ public class ManageFile implements IManageFile {
 	 * This function is use to set value of territory model entities at file layer
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param territory_info
+	 * @param territory_info Information Regarding Territory
 	 */
 	private void setValuesToFileLayerTerritoryObject(String territory_info) {
 		if (territory_info.length() > 0) {
@@ -216,7 +216,7 @@ public class ManageFile implements IManageFile {
 	 * This function is use to set value of continent model entities at file layer
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param continent_info
+	 * @param continent_info Information Regarding Continent
 	 */
 	private void setValuesToFileLayerContientObject(String continent_info) {
 		Continent continent = new Continent();
@@ -230,13 +230,13 @@ public class ManageFile implements IManageFile {
 	 * This function is use to set value of map model entities at file layer
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param map_info
+	 * @param map_info The basic information about Map
 	 */
 	private void setValuesToFileLayerMapObject(String map_info) {
 		String[] key_value = map_info.split("=");
 		if (key_value[0].equalsIgnoreCase("author")) {
 			filelayer_map_object.setAuthor(key_value[1]);
-		} else if (key_value[0].equalsIgnoreCase("imgae")) {
+		} else if (key_value[0].equalsIgnoreCase("image")) {
 			filelayer_map_object.setImage(key_value[1]);
 		} else if (key_value[0].equalsIgnoreCase("wrap")) {
 			filelayer_map_object.setWrap(key_value[1]);
