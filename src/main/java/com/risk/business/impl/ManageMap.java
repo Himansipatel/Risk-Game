@@ -274,7 +274,7 @@ public class ManageMap implements IManageMap {
 			return message;
 		}
 		message = checkInvalidNeighbour(map_model);		
-		if (!message.equals("")) {
+		if (message.equals("")) {
 			Boolean write_file_status = writeMapToFile(map_model, file_name);
 			if (!write_file_status) {
 				message = "File Save Failed.";
