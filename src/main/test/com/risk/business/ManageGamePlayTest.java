@@ -32,9 +32,9 @@ public class ManageGamePlayTest {
 	}
 
 	/**
-	 * Test to check if army stock allocation for reinforcement phase is working fine.
-	 *  
-	 * @see com.risk.business.IManageGamePlay#calculateArmiesReinforce(List<Player>, com.risk.model.Map)
+	 * Test to check if army stock allocation for reinforcement phase is working
+	 * fine.
+	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Test
@@ -44,21 +44,21 @@ public class ManageGamePlayTest {
 		GamePlay game_state = new GamePlay();
 		game_state = game_file.fetchGameState("India_Reinforce_Test.txt");
 
-		IManageMap  map_manager  = new ManageMap();
+		IManageMap map_manager = new ManageMap();
 		String[] file_name_construct = game_state.getFile_name().split("_");
-		String[] file_name           = file_name_construct[0].split("=");
-		IManageFile file_manager = new ManageFile(file_name[1].concat(".map"));		
+		String[] file_name = file_name_construct[0].split("=");
+		IManageFile file_manager = new ManageFile(file_name[1].concat(".map"));
 		File file = file_manager.retreiveFileObject();
 		Map map = map_manager.convertFileToMap(file);
-		
-		List<Player> game_state_new = manageGamePlay.calculateArmiesReinforce(game_state.getGame_state(),map);
-		
-		//Player 1 captures entire "southern states" Continent - Score = 5.
-		//Initial army stock 20 - New Stock after calculation = 35.
+
+		List<Player> game_state_new = manageGamePlay.calculateArmiesReinforce(game_state.getGame_state(), map);
+
+		// Player 1 captures entire "southern states" Continent - Score = 5.
+		// Initial army stock 20 - New Stock after calculation = 35.
 		assertEquals(35, game_state_new.get(0).getArmy_stock());
-		
-		//Player 2 captures entire "north east" Continent - Score = 5.
-		//Initial army stock 10 - New Stock after calculation = 19.
+
+		// Player 2 captures entire "north east" Continent - Score = 5.
+		// Initial army stock 10 - New Stock after calculation = 19.
 		assertEquals(19, game_state_new.get(1).getArmy_stock());
 	}
 

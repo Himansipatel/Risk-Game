@@ -74,7 +74,7 @@ public class ManageGamePlay implements IManageGamePlay {
 	}
 	
 	/**
-	 * @see com.risk.business.IManageGamePlay#calculateArmiesReinforce(List<Player>, com.risk.model.Map)
+	 * @see com.risk.business.IManageGamePlay#calculateArmiesReinforce(java.util.List, com.risk.model.Map)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
