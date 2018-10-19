@@ -38,8 +38,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
-	 * @see com.risk.file.IManageGamePlayFile#savePlayerInfoToDisk(java.util.List,
-	 *      java.lang.String)
+	 * @see com.risk.file.IManageGamePlayFile#saveGameStateToDisk(GamePlay)
 	 */
 	public Boolean saveGameStateToDisk(GamePlay gamePlay) {
 		boolean file_writer_message = false;
@@ -87,7 +86,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 	 * This function is use to load the state of ongoing and saved state of game.
 	 * 
 	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
-	 * @see com.risk.file.IManageGamePlayFile#loadGameState(java.lang.String)
+	 * @see com.risk.file.IManageGamePlayFile#fetchGameState(java.lang.String)
 	 */
 	public GamePlay fetchGameState(String file_name) {
 		List<Player> players_list = new ArrayList<>();

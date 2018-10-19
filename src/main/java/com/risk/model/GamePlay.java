@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
 * This class represents the Game Play state at any point of time.
-* @author Zinnia Rana</a>
+* @author <a href="zinnia.rana.22@gmai.com">Zinnia Rana</a>
 * @version 0.0.1
 */
 
