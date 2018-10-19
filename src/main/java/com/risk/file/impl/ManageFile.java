@@ -48,7 +48,7 @@ public class ManageFile implements IManageFile {
 
 	public ManageFile() {
 		try {
-			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageFile/index.log");
+			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageFile.log");
 			logger.addHandler(fh);
 			logger.setUseParentHandlers(false);
 			SimpleFormatter formatter = new SimpleFormatter();
@@ -174,7 +174,7 @@ public class ManageFile implements IManageFile {
 	@Override
 	public List<String> fetchMapFilesFromResource() {
 		List<String> list_of_map_files = new ArrayList<>();
-		java.io.File resource_folder = new java.io.File("src/main/resource");
+		java.io.File resource_folder = new java.io.File("src/main/resource/Maps");
 		java.io.File[] listOfMapFiles = resource_folder.listFiles();
 		if (listOfMapFiles.length > 0) {
 			for (java.io.File file : listOfMapFiles) {

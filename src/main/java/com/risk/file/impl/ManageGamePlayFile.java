@@ -19,7 +19,7 @@ import com.risk.model.file.PlayerFile;
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a> -
- *         Added Class Description , Logger and checkError Functionality
+ *         Added Class Description , Logger and checkError Function
  * @version 0.0.1
  */
 @Service
@@ -29,7 +29,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 
 	public ManageGamePlayFile() {
 		try {
-			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageGamePlayFile/index.log");
+			FileHandler fh = new FileHandler("src/main/resource/Logs/ManageGamePlayFile.log");
 			logger.addHandler(fh);
 			logger.setUseParentHandlers(false);
 			SimpleFormatter formatter = new SimpleFormatter();
@@ -49,7 +49,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 
 		boolean file_writer_message = false;
 		file_name = String.valueOf(System.currentTimeMillis())
-				+ (file_name.endsWith(".map") ? file_name.split(".")[0] : file_name);
+				+ (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name);
 		try (PrintStream player_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/gameplay/" + file_name + ".txt")))) {
 //			Fetching all Current Players Object Playing in the Game
