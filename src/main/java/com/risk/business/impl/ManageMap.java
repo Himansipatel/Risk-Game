@@ -88,7 +88,7 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#checkNonExistingNeighbour(com.risk.model.Map)
+	 * @see com.risk.business.IManageMap#checkInvalidNeighbour(com.risk.model.Map)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override	
@@ -198,7 +198,7 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#saveMap(com.risk.model.gui.Map)
+	 * @see com.risk.business.IManageMap#saveMap(com.risk.model.gui.Map,String)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
@@ -266,15 +266,15 @@ public class ManageMap implements IManageMap {
 		map_model.setContinents(map_parsed);
 		String message = "";
 		message = checkDiscontinuity(map_model);
-		if (message.equalsIgnoreCase("")) {
+		if (!message.equals("")) {
 			return message;
 		}
 		message = checkDuplicateTerritory(map_model);
-		if (message.equalsIgnoreCase("")) {
+		if (!message.equals("")) {
 			return message;
 		}
 		message = checkInvalidNeighbour(map_model);		
-		if (message.equalsIgnoreCase("")) {
+		if (message.equals("")) {
 			Boolean write_file_status = writeMapToFile(map_model, file_name);
 			if (!write_file_status) {
 				message = "File Save Failed.";
@@ -444,7 +444,7 @@ public class ManageMap implements IManageMap {
 	}
 
 	/**
-	 * @see com.risk.business.IManageMap#convertFileToMap(java.lang.String)
+	 * @see com.risk.business.IManageMap#convertFileToMap(File)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override	

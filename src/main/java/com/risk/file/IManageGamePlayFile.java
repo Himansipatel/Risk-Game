@@ -20,7 +20,7 @@ public interface IManageGamePlayFile {
 	/**
 	 * This function is use to write player data to new or existing Game Play file.
 	 * 
-	 * @param gamePlay
+	 * @param gamePlay game_state State of Game during any phase
 	 * @return File Save Status Message
 	 */
 	Boolean saveGameStateToDisk(GamePlay gamePlay);

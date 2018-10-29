@@ -279,7 +279,7 @@
 							alert("success saving map");
 						},
 						error : function(XMLHttpRequest, textStatus,
-								errorThrown) {debugger;
+								errorThrown) {
 							alert("Invalid Map. Please check");
 						}
 					});

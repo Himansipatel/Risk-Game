@@ -10,16 +10,22 @@ import java.util.HashMap;
  */
 
 public class Map {
-	
+
 	/**
 	 * Map is represented by a collection of continents.
 	 */
 	private HashMap<String, Continent> continents;
 
+	/**
+	 * @return the continents
+	 */
 	public HashMap<String, Continent> getContinents() {
 		return continents;
 	}
 
+	/**
+	 * @param continents the continents to set
+	 */
 	public void setContinents(HashMap<String, Continent> continents) {
 		this.continents = continents;
 	}

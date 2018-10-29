@@ -44,10 +44,11 @@ public class GamePlayController {
 	 * playing their game.
 	 * 
 	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
-	 * @param request
-	 * @param response
+	 * @param request  Request Payload
+	 * @param response An object to assist a servlet in sending a response to the
+	 *                 client
 	 * @return Web Page of Game Play
-	 * @throws Exception
+	 * @throws Exception NullPointerException when model object is null
 	 */
 	@RequestMapping(value = "/getPlayView", method = RequestMethod.GET)
 	public ModelAndView getGamePlayView(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -60,12 +61,13 @@ public class GamePlayController {
 	 * players and game play map.
 	 * 
 	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
-	 * @param request
-	 * @param response
-	 * @param playersNo
-	 * @param fileName
+	 * @param request   Request Payload
+	 * @param response  An object to assist a servlet in sending a response to the
+	 *                  client
+	 * @param playersNo Number of Playing Players
+	 * @param fileName  GamePlay Map to be loaded
 	 * @return List of Player Object
-	 * @throws Exception
+	 * @throws Exception NullPointerException when game state object is null
 	 */
 	@RequestMapping(value = "/initStartUpPhase", method = RequestMethod.GET)
 	@ResponseBody
