@@ -48,7 +48,7 @@
 						var currentMapName = "";
 						var noOfPlayingPlayer = "";
 						var whichPlayerChance = 0;
-						
+
 						$("#player1Reinforcement").attr("disabled", "disabled");
 						$("#player2Reinforcement").attr("disabled", "disabled");
 						$("#player3Reinforcement").attr("disabled", "disabled");
@@ -165,7 +165,18 @@
 												}),
 										url : "maps/map",
 										success : function(data) {
-											parseMapData(data);
+											if (data != null) {
+												if (data.status == null
+														|| data.status == '') {
+													parseMapData(data);
+												}
+												if (data.status != null
+														&& data.status != '') {
+													alert(data.status);
+												}
+											} else {
+												alert("Error while loading map");
+											}
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -491,7 +502,11 @@
 							});
 						}
 
-						function initStartUpPhase() {
+						function initStartUpPhase(allocationType) {
+							var allocType = 'm';
+							if (allocationType) {
+								allocType = 'a';
+							}
 							showLoading();
 							$
 									.ajax({
@@ -503,7 +518,8 @@
 															.text(),
 													fileName : $(
 															"#availableMapsName option:selected")
-															.text()
+															.text(),
+													allocationType : allocType
 												}),
 										url : "gamePlay/initStartUpPhase",
 										success : function(data) {
@@ -515,7 +531,9 @@
 													"#noOfPlayer option:selected")
 													.val();
 											stopLoading();
-											startArmyAllocation();
+											if (!allocationType) {
+												startArmyAllocation();
+											}
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -525,11 +543,18 @@
 									});
 						}
 
-						$('#playNow').on('click', function() {
+						$('#manualAllocate').on('click', function() {
 							fetchMap();
-							initStartUpPhase();
+							initStartUpPhase(false);
 							$('#mapSelectModal').modal('toggle');
 						});
+
+						$('#autoAllocate').on('click', function() {
+							fetchMap();
+							initStartUpPhase(true);
+							$('#mapSelectModal').modal('toggle');
+						});
+
 						$('#check').on('click', function() {
 							saveGameState();
 						});
@@ -585,54 +610,63 @@
 								}
 							});
 						}
-						
-						function displayReinforcementButtonForPlayer(){
-							switch(String(whichPlayerChance)){
+
+						function displayReinforcementButtonForPlayer() {
+							switch (String(whichPlayerChance)) {
 							case "1":
-								$("#player1Reinforcement").removeAttr("disabled");
+								$("#player1Reinforcement").removeAttr(
+										"disabled");
 								break;
 							case "2":
-								$("#player2Reinforcement").removeAttr("disabled");
+								$("#player2Reinforcement").removeAttr(
+										"disabled");
 								break;
 							case "3":
-								$("#player3Reinforcement").removeAttr("disabled");
+								$("#player3Reinforcement").removeAttr(
+										"disabled");
 								break;
 							case "4":
-								$("#player4Reinforcement").removeAttr("disabled");
+								$("#player4Reinforcement").removeAttr(
+										"disabled");
 								break;
 							case "5":
-								$("#player5Reinforcement").removeAttr("disabled");
+								$("#player5Reinforcement").removeAttr(
+										"disabled");
 								break;
 							case "6":
-								$("#player6Reinforcement").removeAttr("disabled");
+								$("#player6Reinforcement").removeAttr(
+										"disabled");
 								break;
 							}
 						}
-						
-						function checkForNextPhaseAndDisplayOption(){
+
+						function checkForNextPhaseAndDisplayOption() {
 							//current phase will always be the start of next phase 
-							if(currentPhase == "ATTACK"){
-								displayReinforcementButtonForPlayer();	
-							}else if(currentPhase == "FORTIFICATION"){
+							if (currentPhase == "ATTACK") {
+								displayReinforcementButtonForPlayer();
+							} else if (currentPhase == "FORTIFICATION") {
 								//TO DO
-							}else if(currentPhase == "REINFORCEMENT"){
+							} else if (currentPhase == "REINFORCEMENT") {
 								//TO DO
 							}
 						}
-						
-						function fillReinforcementModal(no){
-							$('#countriesForReinforcement').find('option').remove();	
+
+						function fillReinforcementModal(no) {
+							$('#countriesForReinforcement').find('option')
+									.remove();
 							//hardcoded
 							var player1DTable = player1DataTable.rows().data();
-							$("#reinforcementRemainingArmies").text(armiesStockOfPlayer1);
+							$("#reinforcementRemainingArmies").text(
+									armiesStockOfPlayer1);
 							for (var i = 0; i < player1DTable.length; i++) {
-								$('#countriesForReinforcement').append($('<option>', {
-									value : player1DTable[i][0],
-									text : player1DTable[i][0]
-								}));
+								$('#countriesForReinforcement').append(
+										$('<option>', {
+											value : player1DTable[i][0],
+											text : player1DTable[i][0]
+										}));
 							}
 						}
-												
+
 						$('#player1Reinforcement').on('click', function() {
 							fillReinforcementModal("1");
 							$('#reinforcementModal').modal({
@@ -640,24 +674,33 @@
 								keyboard : false
 							});
 						});
-						
-						$('#armiesSelectionForReinforcementDone').on('click', function() {
-							if(armiesStockOfPlayer1>0){
-								armiesStockOfPlayer1 = armiesStockOfPlayer1-1;
-								var country = $(
-								"#countriesForReinforcement option:selected")
-								.val();
-								addArmy(player1DataTable, country);
-								$("#reinforcementRemainingArmies").text(armiesStockOfPlayer1);
-								if(armiesStockOfPlayer1==0){
-									$('#reinforcementModal').modal('toggle');
-									saveGameState();
-								}
-								return;								
-							}
-							$('#reinforcementModal').modal('toggle');
-							saveGameState();
-						});
+
+						$('#armiesSelectionForReinforcementDone')
+								.on(
+										'click',
+										function() {
+											if (armiesStockOfPlayer1 > 0) {
+												armiesStockOfPlayer1 = armiesStockOfPlayer1 - 1;
+												var country = $(
+														"#countriesForReinforcement option:selected")
+														.val();
+												addArmy(player1DataTable,
+														country);
+												$(
+														"#reinforcementRemainingArmies")
+														.text(
+																armiesStockOfPlayer1);
+												if (armiesStockOfPlayer1 == 0) {
+													$('#reinforcementModal')
+															.modal('toggle');
+													saveGameState();
+												}
+												return;
+											}
+											$('#reinforcementModal').modal(
+													'toggle');
+											saveGameState();
+										});
 					});
 </script>
 
@@ -850,11 +893,12 @@
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLongTitle">Select Map
-						and Players</h5>
+					<h5 class="modal-title" id="exampleModalLongTitle">Startup
+						Phase</h5>
 
 				</div>
 				<div class="modal-body">
+					<h6>Select Map and Players :</h6>
 					<div class="form-group">
 						<label for="availableMapsName">Map : </label> <select
 							class="form-control form-control-sm" id="availableMapsName">
@@ -873,9 +917,15 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button id="playNow" type="button" class="btn btn-primary"
-						style="background-color: black; border-color: black">Play
-						Now</button>
+					<button id="autoAllocate" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black"
+						data-toggle="tooltip" data-placement="top"
+						title="random allocation of initial armies">Auto Allocate</button>
+					<button id="manualAllocate" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black"
+						data-toggle="tooltip" data-placement="top"
+						title="manual allocation of initial armies">Manual
+						Allocate</button>
 				</div>
 			</div>
 		</div>

@@ -72,8 +72,9 @@ public class GamePlayController {
 	@RequestMapping(value = "/initStartUpPhase", method = RequestMethod.GET)
 	@ResponseBody
 	public GamePlay initStartUpPhase(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "playersNo", required = false) String playersNo,
-			@RequestParam(value = "fileName", required = false) String fileName) throws Exception {
+			@RequestParam(value = "playersNo", required = true) String playersNo,
+			@RequestParam(value = "fileName", required = true) String fileName,
+			@RequestParam(value = "allocationType", required = true) String allocationType) throws Exception {
 
 		GamePlay game_state = null;
 		game_state = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName);
