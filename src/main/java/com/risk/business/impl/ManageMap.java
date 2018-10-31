@@ -502,6 +502,19 @@ public class ManageMap implements IManageMap {
 				continents.put(continent.getName(), map_continent);
 			}
 			map.setContinents(continents);
+			String message  = "";
+			message 	    = checkDiscontinuity(map);
+			if (message != "") {
+				map.setStatus(message);
+			}
+			message 		= checkDuplicateTerritory(map);
+			if (message != "") {
+				map.setStatus(message);
+			}
+			message 		= checkInvalidNeighbour(map);
+			if (message != "") {
+				map.setStatus(message);
+			}
 			return map;
 		} else {
 			return null;
