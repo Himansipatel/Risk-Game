@@ -30,13 +30,14 @@ public class ManagePlayer implements IManagePlayer {
 	private List<Player> player_info_list;
 
 	/**
-	 * @see com.risk.business.IManagePlayer#createPlayer(int, java.lang.String)
+	 * @see com.risk.business.IManagePlayer#createPlayer(int, java.lang.String,
+	 *      java.lang.String)
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
 	 *         Modifications of function performed by Mayank Jariwala
 	 */
 	@Override
-	public GamePlay createPlayer(int num_of_players, String file_name) {
+	public GamePlay createPlayer(int num_of_players, String file_name, String army_allocation_type) {
 		GamePlay game_state = null;
 		player_info_list = new ArrayList<Player>();
 		int army_stock = getArmyStock(num_of_players);
@@ -55,9 +56,56 @@ public class ManagePlayer implements IManagePlayer {
 		ManageMap manage_map_object = new ManageMap();
 		Map map = new Map();
 		map = manage_map_object.getFullMap(file_name);
+//		System.out.println("heyyyyy"+map.getStatus());
+//		if (map != null && map.getStatus().equalsIgnoreCase("")) {
+//			assingTerritoriesToPlayers(map);
+//			if (army_allocation_type.equalsIgnoreCase("M")) {
+//				assignArmiesOnTerritories(army_stock);
+//			}
+//			game_state = writePlayerToFile(player_info_list, file_name);
+//		} else if (map != null && map.getStatus() != "") {
+//			game_state = new GamePlay();
+//			// game_state.setStatus(map.getStatus());
+//		} else if (map == null) {
+//			game_state = new GamePlay();
+//			// game_state.setStatus("Invalid Map");
+//		}
 		assingTerritoriesToPlayers(map);
+		if (army_allocation_type.equalsIgnoreCase("A")) {
+			assignArmiesOnTerritories(army_stock);
+		}
 		game_state = writePlayerToFile(player_info_list, file_name);
 		return game_state;
+	}
+
+	/**
+	 * This method is used for assigning armies on territories
+	 * 
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * 
+	 * @param army_stock number of armies assigned to territories
+	 */
+	private void assignArmiesOnTerritories(int army_stock) {
+		for (int player_ingo_list_size = 0; player_ingo_list_size < player_info_list.size(); player_ingo_list_size++) {
+			player_info_list.get(player_ingo_list_size).setArmy_stock(0);
+			int i = 0;
+			for (int territory_list_size = 0; territory_list_size < player_info_list.get(player_ingo_list_size)
+					.getTerritory_list().size(); territory_list_size++) {
+				if (i < army_stock) {
+					int sum_armies = player_info_list.get(player_ingo_list_size).getTerritory_list()
+							.get(territory_list_size).getNumber_of_armies() + 1;
+					player_info_list.get(player_ingo_list_size).getTerritory_list().get(territory_list_size)
+							.setNumber_of_armies(sum_armies);
+					if (territory_list_size + 1 == player_info_list.get(player_ingo_list_size).getTerritory_list()
+							.size()) {
+						territory_list_size = -1;
+					}
+					i++;
+				} else {
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -148,15 +196,15 @@ public class ManagePlayer implements IManagePlayer {
 	private int getArmyStock(int num_of_players) {
 		int army_stock = 0;
 		if (num_of_players == 2) {
-			army_stock = 25;
+			army_stock = 40;
 		} else if (num_of_players == 3) {
-			army_stock = 20;
+			army_stock = 35;
 		} else if (num_of_players == 4) {
-			army_stock = 15;
+			army_stock = 30;
 		} else if (num_of_players == 5) {
-			army_stock = 10;
+			army_stock = 25;
 		} else if (num_of_players == 6) {
-			army_stock = 5;
+			army_stock = 20;
 		}
 		return army_stock;
 	}
@@ -219,5 +267,14 @@ public class ManagePlayer implements IManagePlayer {
 			}
 		}
 		return total_territory_list;
+	}
+
+	public static void main(String[] args) {
+		int num_of_player = 3;
+		String file_name = "World.map";
+		String army_allocation_type = "A";
+		ManagePlayer mp = new ManagePlayer();
+		GamePlay gp = mp.createPlayer(num_of_player, file_name, army_allocation_type);
+
 	}
 }

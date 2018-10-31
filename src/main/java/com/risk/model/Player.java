@@ -17,6 +17,22 @@ public class Player {
 	private int army_stock;
 	private List<GamePlayTerritory> territory_list;
 	private List<Card> card_list;
+//	To identify how many card set is traded 
+	private int trade_count;
+
+	/**
+	 * @return the trade_count
+	 */
+	public int getTrade_count() {
+		return trade_count;
+	}
+
+	/**
+	 * @param trade_count the trade_count to set
+	 */
+	public void setTrade_count(int trade_count) {
+		this.trade_count = trade_count;
+	}
 
 	/**
 	 * @return the id
