@@ -54,27 +54,23 @@ public class ManagePlayer implements IManagePlayer {
 			player_info_list.add(p);
 		}
 		ManageMap manage_map_object = new ManageMap();
+		ManageGamePlay game_manager = new ManageGamePlay();
 		Map map = new Map();
 		map = manage_map_object.getFullMap(file_name);
-//		System.out.println("heyyyyy"+map.getStatus());
-//		if (map != null && map.getStatus().equalsIgnoreCase("")) {
-//			assingTerritoriesToPlayers(map);
-//			if (army_allocation_type.equalsIgnoreCase("M")) {
-//				assignArmiesOnTerritories(army_stock);
-//			}
-//			game_state = writePlayerToFile(player_info_list, file_name);
-//		} else if (map != null && map.getStatus() != "") {
-//			game_state = new GamePlay();
-//			// game_state.setStatus(map.getStatus());
-//		} else if (map == null) {
-//			game_state = new GamePlay();
-//			// game_state.setStatus("Invalid Map");
-//		}
-		assingTerritoriesToPlayers(map);
-		if (army_allocation_type.equalsIgnoreCase("A")) {
-			assignArmiesOnTerritories(army_stock);
+		if (map != null && map.getStatus().equalsIgnoreCase("")) {
+			assingTerritoriesToPlayers(map);
+			if (army_allocation_type.equalsIgnoreCase("A")) {
+				assignArmiesOnTerritories(army_stock);
+			}
+			game_state = writePlayerToFile(player_info_list, file_name);
+		} else if (map != null && map.getStatus() != "") {
+			game_state = new GamePlay();
+			game_state.setStatus(map.getStatus());
+		} else {
+			game_state = new GamePlay();
+			game_state.setStatus("Invalid Map");
 		}
-		game_state = writePlayerToFile(player_info_list, file_name);
+		game_manager.calculateArmiesReinforce(game_state.getGame_state(), map);
 		return game_state;
 	}
 
@@ -267,14 +263,5 @@ public class ManagePlayer implements IManagePlayer {
 			}
 		}
 		return total_territory_list;
-	}
-
-	public static void main(String[] args) {
-		int num_of_player = 3;
-		String file_name = "World.map";
-		String army_allocation_type = "A";
-		ManagePlayer mp = new ManagePlayer();
-		GamePlay gp = mp.createPlayer(num_of_player, file_name, army_allocation_type);
-
 	}
 }

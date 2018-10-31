@@ -503,6 +503,7 @@ public class ManageMap implements IManageMap {
 			}
 			map.setContinents(continents);
 			String message  = "";
+			map.setStatus(message);
 			message 	    = checkDiscontinuity(map);
 			if (message != "") {
 				map.setStatus(message);
