@@ -37,22 +37,22 @@ public class ManageMap implements IManageMap {
 	 */
 	@Override
 	public Map getFullMap(String fileName) {
-		IManageFile file_manager = new ManageFile(fileName);		
+		IManageFile file_manager = new ManageFile(fileName);
 		file = file_manager.retreiveFileObject();
 		map = convertFileToMap(file);
 		return map;
 	}
 
 	/**
-	 * This method is an abstraction for the process of converting A Map Object
-	 * into the Map File to be saved/loaded.
+	 * This method is an abstraction for the process of converting A Map Object into
+	 * the Map File to be saved/loaded.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param map This is the entire Map Object which will be converted to a File
-	 * 			  Object and then written on to a Map File.
-	 * @param file_name Name of the Map file to be stored in Resource Folder. 
-	 * @return File write status - True - file written successfully. 
-	 */	
+	 * @param map       This is the entire Map Object which will be converted to a
+	 *                  File Object and then written on to a Map File.
+	 * @param file_name Name of the Map file to be stored in Resource Folder.
+	 * @return File write status - True - file written successfully.
+	 */
 	private boolean writeMapToFile(Map map, String file_name) {
 		file = convertMapToFile(map);
 		ManageFile manage_file = new ManageFile();
@@ -70,7 +70,7 @@ public class ManageMap implements IManageMap {
 		if (map == null) {
 			return "Invalid Map Input";
 		}
-		List<Territory> territories    = new ArrayList<>();
+		List<Territory> territories = new ArrayList<>();
 		Set<String> unique_territories = new HashSet<>();
 
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
@@ -91,15 +91,15 @@ public class ManageMap implements IManageMap {
 	 * @see com.risk.business.IManageMap#checkInvalidNeighbour(com.risk.model.Map)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
-	@Override	
+	@Override
 	public String checkInvalidNeighbour(Map map) {
 
 		String message = "";
 		if (map == null) {
 			return "Invalid Map Input";
 		}
-		List<Territory> territories = new ArrayList<>();		
-		Set<String> full_neighbour_list = new HashSet<>();		
+		List<Territory> territories = new ArrayList<>();
+		Set<String> full_neighbour_list = new HashSet<>();
 		Set<String> full_territory_list = new HashSet<>();
 
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
@@ -114,7 +114,7 @@ public class ManageMap implements IManageMap {
 				full_neighbour_list.add(neighbour);
 			}
 		}
-		
+
 		full_neighbour_list.removeAll(Arrays.asList("", null));
 		full_neighbour_list.removeAll(full_territory_list);
 		if (!full_neighbour_list.isEmpty()) {
@@ -133,7 +133,7 @@ public class ManageMap implements IManageMap {
 	 */
 	@Override
 	public String checkDiscontinuity(Map map) {
-		
+
 		if (map == null) {
 			return "Invalid Map Input";
 		}
@@ -150,11 +150,11 @@ public class ManageMap implements IManageMap {
 			java.util.Map.Entry<String, Continent> continent = iterator.next();
 			territories.addAll(continent.getValue().getTerritories());
 		}
-		
+
 		if (territories.isEmpty()) {
 			return "Invalid Map Input";
 		}
-		
+
 		/**
 		 * If some territory does not have any neighbor then we can immediately arrive
 		 * at a conclusion that Map is disconnected.
@@ -176,8 +176,8 @@ public class ManageMap implements IManageMap {
 
 		if (!error_flag) {
 			start_node = territories.get(0).getName();
-			if (territories.size()==1) {
-				return "Only one territory is there in the map:"+territories.get(0).getName();
+			if (territories.size() == 1) {
+				return "Only one territory is there in the map:" + territories.get(0).getName();
 			}
 			territory_visited = findLink(start_node, neighbours_link, territory_visited);
 			message = "Disconnected Territories:";
@@ -189,8 +189,8 @@ public class ManageMap implements IManageMap {
 				}
 			}
 			if (message.length() > 25) {
-				message = message.substring(0,message.length() - 1);
-			}else {
+				message = message.substring(0, message.length() - 1);
+			} else {
 
 				message = "";
 			}
@@ -206,10 +206,10 @@ public class ManageMap implements IManageMap {
 	 */
 	@Override
 	public com.risk.model.gui.Map saveMap(com.risk.model.gui.Map map, String file_name) throws Exception {
-		String message = guiMapToFile(map,file_name);
+		String message = guiMapToFile(map, file_name);
 		if (message != "") {
 			map.setStatus(message);
-		}else {
+		} else {
 			map.setStatus("Successfully saved.");
 		}
 		return map;
@@ -232,7 +232,8 @@ public class ManageMap implements IManageMap {
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param map GUI Object Representation of the World Map.
-	 * @return String Status or Error Message for validations before saving map file.
+	 * @return String Status or Error Message for validations before saving map
+	 *         file.
 	 */
 	private String guiMapToFile(com.risk.model.gui.Map map, String file_name) {
 
@@ -278,12 +279,12 @@ public class ManageMap implements IManageMap {
 		if (!message.equals("")) {
 			return message;
 		}
-		message = checkInvalidNeighbour(map_model);		
+		message = checkInvalidNeighbour(map_model);
 		if (message.equals("")) {
 			Boolean write_file_status = writeMapToFile(map_model, file_name);
 			if (write_file_status) {
 				message = "Successfully saved.";
-			}else {
+			} else {
 				message = "Error while writing map to file.";
 			}
 			return message;
@@ -315,7 +316,7 @@ public class ManageMap implements IManageMap {
 	 */
 	private com.risk.model.gui.Map fileToGuiMap(String file_name) {
 
-		List<com.risk.model.gui.Continent> continents_gui  = new ArrayList<>();
+		List<com.risk.model.gui.Continent> continents_gui = new ArrayList<>();
 		List<com.risk.model.gui.Territory> territories_gui = new ArrayList<>();
 
 		com.risk.model.gui.Continent continent_gui;
@@ -323,40 +324,49 @@ public class ManageMap implements IManageMap {
 
 		map = getFullMap(file_name);
 		if (map != null) {
-			String message  = "";
-			message 	    = checkDiscontinuity(map);
+			String message = "";
+			message = checkDiscontinuity(map);
 			if (message != "") {
 				map.setStatus(message);
+			}else {
+				message = checkDuplicateTerritory(map);
+				if (message != "") {
+					map.setStatus(message);
+				}else {
+					message = checkInvalidNeighbour(map);
+					if (message != "") {
+						map.setStatus(message);
+					}					
+				}				
 			}
-			message 		= checkDuplicateTerritory(map);
-			if (message != "") {
-				map.setStatus(message);
-			}
-			message 		= checkInvalidNeighbour(map);
-			if (message != "") {
-				map.setStatus(message);
-			}
-		}
 
-		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
-				.hasNext();) {
-			java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
-			continent_gui = new com.risk.model.gui.Continent(continent_entry.getKey(),
-					Integer.toString(continent_entry.getValue().getScore()));
-			continents_gui.add(continent_gui);
-			for (Territory territory : continent_entry.getValue().getTerritories()) {
-				String neighbours = String.join(";", territory.getNeighbours());
-				territory_gui = new com.risk.model.gui.Territory(territory.getName(), continent_entry.getKey(),
-						neighbours);
-				territories_gui.add(territory_gui);
+			for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
+					.hasNext();) {
+				java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
+				continent_gui = new com.risk.model.gui.Continent(continent_entry.getKey(),
+						Integer.toString(continent_entry.getValue().getScore()));
+				continents_gui.add(continent_gui);
+				for (Territory territory : continent_entry.getValue().getTerritories()) {
+					String neighbours = String.join(";", territory.getNeighbours());
+					territory_gui = new com.risk.model.gui.Territory(territory.getName(), continent_entry.getKey(),
+							neighbours);
+					territories_gui.add(territory_gui);
+				}
 			}
-		}
 
-		if (continents_gui.size() > 0 && territories_gui.size() > 0) {
-			com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(continents_gui, territories_gui);
+			if (continents_gui.size() > 0 && territories_gui.size() > 0) {
+				com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(continents_gui, territories_gui);
+				map_gui.setStatus(map.getStatus());
+				return map_gui;
+			} else {
+				com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(null, null);
+				map_gui.setStatus("Error in parsing Map File.");
+				return map_gui;
+			}
+		}else {
+			com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(null, null);
+			map_gui.setStatus("Error in parsing Map File.");
 			return map_gui;
-		} else {
-			return null;
 		}
 	}
 
@@ -460,7 +470,7 @@ public class ManageMap implements IManageMap {
 	 * @see com.risk.business.IManageMap#convertFileToMap(File)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
-	@Override	
+	@Override
 	public Map convertFileToMap(File file) {
 
 		map = new Map();

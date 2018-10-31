@@ -114,8 +114,17 @@
 								type : "GET",
 								data: $.param({ fileName: selectedMap }),
 								url : "maps/map",
-								success : function(data) {
-									parseMapData(data);
+								success : function(data) {debugger;
+									if(data !=null){
+										if(data.status == null || data.status ==''){
+											parseMapData(data);
+										}
+										if(data.status !=null && data.status != ''){
+											alert(data.status);
+										}
+									}else{
+										alert("Error while loading map");
+									}
 									$('#loadMapModal').modal('toggle');
 									stopLoading();
 								},
@@ -276,7 +285,16 @@
 					    data: a,
 					    contentType: "application/json",
 						success : function(data) {
-							alert("success saving map");
+							if(data !=null){
+								if(data.status == null || data.status ==''){
+									alert("success saving map");
+								}
+								if(data.status !=null && data.status != ''){
+									alert(data.status);
+								}
+							}else{
+								alert("Error while saving map");
+							}
 						},
 						error : function(XMLHttpRequest, textStatus,
 								errorThrown) {

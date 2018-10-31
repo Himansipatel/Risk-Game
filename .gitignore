@@ -6,4 +6,6 @@
 *.2
 *.1
 *.log
+*.map
+src/main/resource/Maps/*.*
 src/main/resource
