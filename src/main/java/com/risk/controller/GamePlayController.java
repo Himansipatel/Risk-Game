@@ -81,6 +81,18 @@ public class GamePlayController {
 		return game_state;
 	}
 
+	/**
+	 * This function will save the map state and return the map state with next
+	 * phase and next player turn.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request  Request Payload
+	 * @param response An object to assist a servlet in sending a response to the
+	 *                 client
+	 * @param gamePlay game state to save
+	 * @return game play state after update with next phase and player
+	 * @throws Exception NullPointerException when game state object is null
+	 */
 	@RequestMapping(value = "/saveGameState", method = RequestMethod.POST)
 	@ResponseBody
 	public GamePlay submitGameState(HttpServletRequest request, HttpServletResponse response,
