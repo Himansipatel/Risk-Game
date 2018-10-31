@@ -10,10 +10,11 @@ import java.util.List;
  */
 public class Map {
 
-	String currentMap;
-	List<Continent> continents;
-	List<Territory> territories;
-
+	private String currentMap;
+	private List<Continent> continents;
+	private List<Territory> territories;
+	private String status;
+	
 	public Map() {
 		super();
 	}
@@ -46,5 +47,13 @@ public class Map {
 
 	public void setCurrentMap(String currentMap) {
 		this.currentMap = currentMap;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }
