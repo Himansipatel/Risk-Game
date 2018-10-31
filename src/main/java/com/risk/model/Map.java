@@ -11,18 +11,24 @@ import java.util.HashMap;
 
 public class Map {
 
+
 	/**
 	 * Map is represented by a collection of continents.
 	 */
 	private HashMap<String, Continent> continents;
-
+	
+	/**
+	 * Contains the status message for validity of a map.
+	 */	
+	private String status;
+	
 	/**
 	 * @return the continents
 	 */
 	public HashMap<String, Continent> getContinents() {
 		return continents;
 	}
-
+	
 	/**
 	 * @param continents the continents to set
 	 */
@@ -30,4 +36,18 @@ public class Map {
 		this.continents = continents;
 	}
 
+	/**
+	 * @return the status message for map validity
+	 */
+	public String getStatus() {
+		return status;
+	}
+	
+	/**
+	 * @param status the status message for map validity to be set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 }

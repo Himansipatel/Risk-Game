@@ -66,10 +66,10 @@ public interface IManageMap {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param map       GUI Object Representation of the World Map.
 	 * @param file_name Name of the Map file to be stored in Resource Folder.
-	 * @return False If its an invalid Map otherwise True.
-	 * @throws Exception input/ouput exception
+	 * @return GUI Map otherwise with a status update for valid or invalid save.
+	 * @throws Exception input/output exception
 	 */
-	Boolean saveMap(com.risk.model.gui.Map map, String file_name) throws Exception;
+	com.risk.model.gui.Map saveMap(com.risk.model.gui.Map map, String file_name) throws Exception;
 
 	/**
 	 * This method retrieves an existing World Map File from Resource Folder and

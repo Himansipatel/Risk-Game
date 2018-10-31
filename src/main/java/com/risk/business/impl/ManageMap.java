@@ -51,7 +51,7 @@ public class ManageMap implements IManageMap {
 	 * @param map This is the entire Map Object which will be converted to a File
 	 * 			  Object and then written on to a Map File.
 	 * @param file_name Name of the Map file to be stored in Resource Folder. 
-	 * @return File write status. 
+	 * @return File write status - True - file written successfully. 
 	 */	
 	private boolean writeMapToFile(Map map, String file_name) {
 		file = convertMapToFile(map);
@@ -176,6 +176,9 @@ public class ManageMap implements IManageMap {
 
 		if (!error_flag) {
 			start_node = territories.get(0).getName();
+			if (territories.size()==1) {
+				return "Only one territory is there in the map:"+territories.get(0).getName();
+			}
 			territory_visited = findLink(start_node, neighbours_link, territory_visited);
 			message = "Disconnected Territories:";
 			for (Iterator<Entry<String, Boolean>> iterator = territory_visited.entrySet().iterator(); iterator
@@ -202,12 +205,14 @@ public class ManageMap implements IManageMap {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public Boolean saveMap(com.risk.model.gui.Map map, String file_name) throws Exception {
+	public com.risk.model.gui.Map saveMap(com.risk.model.gui.Map map, String file_name) throws Exception {
 		String message = guiMapToFile(map,file_name);
 		if (message != "") {
-			throw new Exception(message);
+			map.setStatus(message);
+		}else {
+			map.setStatus("Successfully saved.");
 		}
-		return true;
+		return map;
 	}
 
 	/**
@@ -276,8 +281,10 @@ public class ManageMap implements IManageMap {
 		message = checkInvalidNeighbour(map_model);		
 		if (message.equals("")) {
 			Boolean write_file_status = writeMapToFile(map_model, file_name);
-			if (!write_file_status) {
-				message = "File Save Failed.";
+			if (write_file_status) {
+				message = "Successfully saved.";
+			}else {
+				message = "Error while writing map to file.";
 			}
 			return message;
 		} else {
@@ -308,7 +315,7 @@ public class ManageMap implements IManageMap {
 	 */
 	private com.risk.model.gui.Map fileToGuiMap(String file_name) {
 
-		List<com.risk.model.gui.Continent> continents_gui = new ArrayList<>();
+		List<com.risk.model.gui.Continent> continents_gui  = new ArrayList<>();
 		List<com.risk.model.gui.Territory> territories_gui = new ArrayList<>();
 
 		com.risk.model.gui.Continent continent_gui;
@@ -318,10 +325,16 @@ public class ManageMap implements IManageMap {
 		if (map != null) {
 			String message  = "";
 			message 	    = checkDiscontinuity(map);
+			if (message != "") {
+				map.setStatus(message);
+			}
 			message 		= checkDuplicateTerritory(map);
+			if (message != "") {
+				map.setStatus(message);
+			}
 			message 		= checkInvalidNeighbour(map);
 			if (message != "") {
-				return null;
+				map.setStatus(message);
 			}
 		}
 
