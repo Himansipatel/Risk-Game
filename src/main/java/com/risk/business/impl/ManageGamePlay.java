@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.jdt.internal.compiler.ast.CaseStatement;
 import org.springframework.stereotype.Service;
 
 import com.risk.business.IManageGamePlay;
@@ -64,14 +65,59 @@ public class ManageGamePlay implements IManageGamePlay {
 	}
 
 	/**
-	 * @see com.risk.business.IManageGamePlay#loadPhase(GamePlay)
+	 * @see com.risk.business.IManageGamePlay#managePhase(GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public GamePlay loadPhase(GamePlay game_state) {
-		
-		return null;
+	public GamePlay managePhase(GamePlay game_state) {		
+
+		if (game_state!=null) {
+
+			IManageMap  map_manager  = new ManageMap();
+			String[] file_name = game_state.getFile_name().split("_");
+			IManageFile file_manager = new ManageFile(file_name[0].concat(".map"));		
+			File file = file_manager.retreiveFileObject();
+			Map map = map_manager.convertFileToMap(file);
+			
+			if (map!=null) {
+				return game_state; 
+			}
+			//ManageGamePlayFile game_file = new ManageGamePlayFile();
+			//game_file.saveGameStateToDisk(game_state);
+
+			switch (game_state.getGame_phase()) {
+
+			case "STARTUP":
+				game_state.setGame_state(calculateArmiesReinforce(game_state.getGame_state(),map));
+				setCurrentPlayer(game_state);
+				game_state.setStatus("");
+				break;
+
+			case "REINFORCE":
+				
+				break;
+
+			case "ATTACK":
+
+				break;
+
+			case "FORTIFICATION":
+
+				break;
+
+			default:
+				break;
+			}
+			return game_state;
+		}else {
+			return game_state;
+		}
 	}
+
+	private void setCurrentPlayer(GamePlay game_state) {
+		
+	}
+	
 	
 	/**
 	 * @see com.risk.business.IManageGamePlay#calculateArmiesReinforce(java.util.List, com.risk.model.Map)
@@ -105,7 +151,7 @@ public class ManageGamePlay implements IManageGamePlay {
 			}
 			player_territories.put(player.getId(), territories_player);
 		}		
-		
+
 		//Preparing List of all players along with their current army stock.
 		for (Player player : gameplay) {
 			players_army.put(player.getId(), player.getArmy_stock());
@@ -133,7 +179,7 @@ public class ManageGamePlay implements IManageGamePlay {
 			army_count = army_count + players_army.get(player.getId());
 			players_army.replace(player.getId(), army_count);
 		}		
-		
+
 		//Verifying if a player holds the entire continent and updating its army stock.
 		for (Iterator<Entry<Integer, SortedSet<String>>> iterator_player = player_territories.entrySet().iterator(); iterator_player.hasNext();) {
 			java.util.Map.Entry<Integer, SortedSet<String>> player = iterator_player.next();
