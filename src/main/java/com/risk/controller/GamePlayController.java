@@ -77,7 +77,7 @@ public class GamePlayController {
 			@RequestParam(value = "allocationType", required = true) String allocationType) throws Exception {
 
 		GamePlay game_state = null;
-		game_state = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName);
+		game_state = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName, allocationType);
 		return game_state;
 	}
 
