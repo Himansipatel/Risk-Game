@@ -17,7 +17,10 @@ public class Player {
 	private int army_stock;
 	private List<GamePlayTerritory> territory_list;
 	private List<Card> card_list;
-//	To identify how many card set is traded 
+	
+	/**
+	 * To identify how many card sets are traded for a particular Player. 
+	 */
 	private int trade_count;
 
 	/**
@@ -103,4 +106,17 @@ public class Player {
 	public void setCard_list(List<Card> card_list) {
 		this.card_list = card_list;
 	}
+
+	/**
+	 * This method is called to execute reinforcement phase for a particular player and updates the state of the game 
+	 * accordingly. It also handles the trading of cards during game play.
+	 * 
+	 * @param  game_play state of the game i.e. entire game related info when reinforcement starts for a player.
+	 * @return GamePlay  updated state of the game after reinforcement phase ends.
+	 * 
+	 */
+	public GamePlay reInforce(GamePlay game_play) {
+		return game_play;
+	}	
+	
 }
