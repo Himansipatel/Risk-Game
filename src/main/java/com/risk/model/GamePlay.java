@@ -24,28 +24,38 @@ public class GamePlay {
 	/**
 	 * Map object for the current game play
 	 */
-	private com.risk.model.Map map;	
-	
+	private com.risk.model.Map map;
+
 	/**
 	 * Currently active phase during game play
 	 */
 	private String game_phase;
-	
+
 	/**
-	 * Currently active player during game play. 
+	 * Currently active player during game play.
 	 */
-	private int    current_player;
-	
+	private int current_player;
+
 	/**
 	 * List of Cards which are free and are not held by any player.
 	 */
 	private List<Card> free_cards;
-	
+
 	/**
-	 * Status message for GamePlay. Contains messages from various validations during GamePlay.
+	 * Status message for GamePlay. Contains messages from various validations
+	 * during GamePlay.
 	 */
 	private String status;
-	
+
+	private static Attack attack;
+
+	/**
+	 * @return the attack instance
+	 */
+	public static Attack getAttack() {
+		return attack.getAttackInstance();
+	}
+
 	/**
 	 * @return the game_state
 	 */
@@ -90,21 +100,21 @@ public class GamePlay {
 
 	/**
 	 * @return the status of the game state with any error message if they exist
-	 */	
+	 */
 	public String getStatus() {
 		return status;
 	}
 
 	/**
 	 * @param status Any messages to be displayed while rendering the game state.
-	 */	
+	 */
 	public void setStatus(String status) {
 		this.status = status;
 	}
 
 	/**
 	 * @return the currently active player in the game state
-	 */		
+	 */
 	public int getCurrent_player() {
 		return current_player;
 	}
@@ -118,30 +128,30 @@ public class GamePlay {
 
 	/**
 	 * @return the current list of free cards
-	 */			
+	 */
 	public List<Card> getFree_cards() {
 		return free_cards;
 	}
 
 	/**
-	 * @param free_cards list of cards to be set as freely available cards. 
-	 */	
+	 * @param free_cards list of cards to be set as freely available cards.
+	 */
 	public void setFree_cards(List<Card> free_cards) {
 		this.free_cards = free_cards;
 	}
 
 	/**
 	 * @return the currently active map object
-	 */				
+	 */
 	public com.risk.model.Map getMap() {
 		return map;
 	}
 
 	/**
-	 * @param map the currently active map object. 
-	 */	
+	 * @param map the currently active map object.
+	 */
 	public void setMap(com.risk.model.Map map) {
 		this.map = map;
 	}
-	
+
 }
