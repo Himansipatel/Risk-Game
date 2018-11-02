@@ -5,16 +5,45 @@ import java.util.List;
 /**
  * This class represents the Game Play state at any point of time.
  * 
- * @author <a href="zinnia.rana.22@gmai.com">Zinnia Rana</a>
+ * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
  * @version 0.0.1
  */
 
 public class GamePlay {
-
+	
+	/**
+	 * State of the entire game at any point of time.
+	 */
 	private List<Player> game_state;
+	
+	/**
+	 * Map File name for the current game play
+	 */
 	private String file_name;
+
+	/**
+	 * Map object for the current game play
+	 */
+	private com.risk.model.Map map;	
+	
+	/**
+	 * Currently active phase during game play
+	 */
 	private String game_phase;
-	private String current_player;
+	
+	/**
+	 * Currently active player during game play. 
+	 */
+	private int    current_player;
+	
+	/**
+	 * List of Cards which are free and are not held by any player.
+	 */
+	private List<Card> free_cards;
+	
+	/**
+	 * Status message for GamePlay. Contains messages from various validations during GamePlay.
+	 */
 	private String status;
 	
 	/**
@@ -76,15 +105,43 @@ public class GamePlay {
 	/**
 	 * @return the currently active player in the game state
 	 */		
-	public String getCurrent_player() {
+	public int getCurrent_player() {
 		return current_player;
 	}
 
 	/**
 	 * @param current_player sets the currently active player in the game state
 	 */
-	public void setCurrent_player(String current_player) {
+	public void setCurrent_player(int current_player) {
 		this.current_player = current_player;
 	}
 
+	/**
+	 * @return the current list of free cards
+	 */			
+	public List<Card> getFree_cards() {
+		return free_cards;
+	}
+
+	/**
+	 * @param free_cards list of cards to be set as freely available cards. 
+	 */	
+	public void setFree_cards(List<Card> free_cards) {
+		this.free_cards = free_cards;
+	}
+
+	/**
+	 * @return the currently active map object
+	 */				
+	public com.risk.model.Map getMap() {
+		return map;
+	}
+
+	/**
+	 * @param map the currently active map object. 
+	 */	
+	public void setMap(com.risk.model.Map map) {
+		this.map = map;
+	}
+	
 }

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,7 @@ import com.risk.model.file.File;
  * @version 0.0.1
  */
 @Service
-public class ManageGamePlay implements IManageGamePlay {
+public class ManageGamePlay implements IManageGamePlay, Observer {
 
 	/**
 	 * @see com.risk.business.IManageGamePlay#savePhase(GamePlay)
@@ -74,32 +76,46 @@ public class ManageGamePlay implements IManageGamePlay {
 			String[] file_name = game_state.getFile_name().split("_");
 			IManageFile file_manager = new ManageFile(file_name[0].concat(".map"));		
 			File file = file_manager.retreiveFileObject();
+			Player player = new Player();
 			Map map = map_manager.convertFileToMap(file);
-			
-			if (map!=null) {
+
+			if (map==null) {
+				game_state.setStatus("Inavlid Map.");
 				return game_state; 
+			}else if(!map.getStatus().equalsIgnoreCase("")) {
+				game_state.setStatus(map.getStatus());
+				return game_state;
 			}
-			//ManageGamePlayFile game_file = new ManageGamePlayFile();
-			//game_file.saveGameStateToDisk(game_state);
 
 			switch (game_state.getGame_phase()) {
 
 			case "STARTUP":
 				game_state.setGame_state(calculateArmiesReinforce(game_state.getGame_state(),map));
-				setCurrentPlayer(game_state);
-				game_state.setStatus("");
+				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
 			case "REINFORCE":
-				
+				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
+				game_state = player.reInforce(game_state);
 				break;
 
-			case "ATTACK":
+			case "TRADE_CARDS":
+				game_state = player.reInforce(game_state);
+				break;
 
+				
+			case "ATTACK_ON":
+				break;
+			
+			case "ATTACK_ARMY_MOVE":
+				break;
+				
+			case "ATTACK_END":
+				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
 			case "FORTIFICATION":
-
+				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
 			default:
@@ -111,11 +127,46 @@ public class ManageGamePlay implements IManageGamePlay {
 		}
 	}
 
-	private void setCurrentPlayer(GamePlay game_state) {
-		
+	/**
+	 * This method decides the next player and the phase during game-play.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param game_state State of the game at point of time holding the entire info
+	 *                   about game-play. Like the current phase and player.
+	 * @param game_phase Name of the phase which is ending.
+	 */	
+	private void setCurrentPlayerAndPhase(GamePlay game_state, String game_phase) {	
+
+		switch (game_phase) {
+
+		case "STARTUP":
+			game_state.setCurrent_player(1);
+			game_state.setGame_phase("REINFORCE");
+			break;
+
+		case "REINFORCE":
+			game_state.setGame_phase("ATTACK_ON");
+			break;
+			
+		case "ATTACK_END": 
+			game_state.setGame_phase("FORTIFICATION");
+			break;
+
+		case "FORTIFICATION":
+			if (game_state.getCurrent_player() + 1 > game_state.getGame_state().size()) {
+				game_state.setCurrent_player(1);
+			}else {
+				game_state.setCurrent_player(game_state.getCurrent_player() + 1);
+			}
+			game_state.setGame_phase("REINFORCE");
+			break;
+
+		default:
+			break;
+		}
 	}
-	
-	
+
+
 	/**
 	 * @see com.risk.business.IManageGamePlay#calculateArmiesReinforce(java.util.List, com.risk.model.Map)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -199,6 +250,17 @@ public class ManageGamePlay implements IManageGamePlay {
 
 		return gameplay;
 
+	}
+
+	/**
+	 * This method here serves for the implementation of Observer Pattern in our Project. It handles multiple phases during 
+	 * game play as per risk rules. As the GUI captures events for a particular phase it triggers an state change for GamePlay Object
+	 * and any trigger for GamePlay object is being observed by ManageGamePlay as an observer. 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */	
+	@Override
+	public void update(Observable o, Object arg) {
+		managePhase((GamePlay)arg); 
 	}
 
 }
