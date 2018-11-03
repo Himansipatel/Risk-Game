@@ -1,15 +1,17 @@
 package com.risk.model;
 
 import java.util.List;
+import java.util.Observable;
 
 /**
  * This class represents the Game Play state at any point of time.
  * 
  * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
+ * @author <a href="apoorv.semwal20@gmail.com">Apoorv Semwal</a>
  * @version 0.0.1
  */
 
-public class GamePlay {
+public class GamePlay extends Observable{
 	
 	/**
 	 * State of the entire game at any point of time.
@@ -47,6 +49,11 @@ public class GamePlay {
 	 */
 	private String status;
 
+	/**
+	 * Represents the info captured during trading of cards.
+	 */	
+	private CardTrade card_trade;
+	
 	private static Attack attack;
 
 	/**
@@ -64,10 +71,15 @@ public class GamePlay {
 	}
 
 	/**
+	 * Any change in the state of GamePlay based on actions at UI, will trigger calling of update method in ManageGamePlay 
+	 * which is acting as the Observer.
+	 *  
 	 * @param game_state the game_state to set
 	 */
 	public void setGame_state(List<Player> game_state) {
 		this.game_state = game_state;
+		setChanged();
+		notifyObservers(this);
 	}
 
 	/**
@@ -153,5 +165,19 @@ public class GamePlay {
 	public void setMap(com.risk.model.Map map) {
 		this.map = map;
 	}
+
+	/**
+	 * @return the card trading model capturing data about the cards being traded.
+	 */					
+	public CardTrade getCard_trade() {
+		return card_trade;
+	}
+
+	/**
+	 * @param card_trade card trading model capturing data about the cards being traded. 
+	 */	
+	public void setCard_trade(CardTrade card_trade) {
+		this.card_trade = card_trade;
+	}	
 
 }
