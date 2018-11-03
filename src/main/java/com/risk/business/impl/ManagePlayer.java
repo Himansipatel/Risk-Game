@@ -1,14 +1,18 @@
 package com.risk.business.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
 import com.risk.business.IManagePlayer;
 import com.risk.file.impl.ManageGamePlayFile;
+import com.risk.model.Attack;
 import com.risk.model.Card;
 import com.risk.model.Continent;
 import com.risk.model.GamePlay;
@@ -18,10 +22,15 @@ import com.risk.model.Player;
 import com.risk.model.Territory;
 
 /**
- * This class is responsible for setting up Startup Phase of the Game
- * ,converting list of current player object to game play file object.
+ * This class is responsible for managing players state for each game phases.
+ * 
+ * <b><i>Attack Related Functions</i></b>
+ * <li>Valid Attack</li>
+ * <li>Roll Dice</li>
+ * <li>Main Attack(attack function)</li>
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+ * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
  * @version 0.0.1
  */
 @Service
@@ -78,23 +87,21 @@ public class ManagePlayer implements IManagePlayer {
 	 * This method is used for assigning armies on territories
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
-	 * 
 	 * @param army_stock number of armies assigned to territories
 	 */
 	private void assignArmiesOnTerritories(int army_stock) {
-		for (int player_ingo_list_size = 0; player_ingo_list_size < player_info_list.size(); player_ingo_list_size++) {
-			player_info_list.get(player_ingo_list_size).setArmy_stock(0);
+		for (int player_index = 0; player_index < player_info_list.size(); player_index++) {
+			player_info_list.get(player_index).setArmy_stock(0);
 			int i = 0;
-			for (int territory_list_size = 0; territory_list_size < player_info_list.get(player_ingo_list_size)
-					.getTerritory_list().size(); territory_list_size++) {
+			for (int territory_list_index = 0; territory_list_index < player_info_list.get(player_index)
+					.getTerritory_list().size(); territory_list_index++) {
 				if (i < army_stock) {
-					int sum_armies = player_info_list.get(player_ingo_list_size).getTerritory_list()
-							.get(territory_list_size).getNumber_of_armies() + 1;
-					player_info_list.get(player_ingo_list_size).getTerritory_list().get(territory_list_size)
+					int sum_armies = player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
+							.getNumber_of_armies() + 1;
+					player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.setNumber_of_armies(sum_armies);
-					if (territory_list_size + 1 == player_info_list.get(player_ingo_list_size).getTerritory_list()
-							.size()) {
-						territory_list_size = -1;
+					if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
+						territory_list_index = -1;
 					}
 					i++;
 				} else {
@@ -263,5 +270,337 @@ public class ManagePlayer implements IManagePlayer {
 			}
 		}
 		return total_territory_list;
+	}
+
+	/**
+	 * 
+	 * @see com.risk.business.IManagePlayer#attack(com.risk.model.GamePlay)
+	 * 
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
+	 */
+	@Override
+	public GamePlay attack(GamePlay game_play) {
+		int attacker_id = 0;
+		int defender_id = 0;
+		String attack_message = "";
+		// Counter Variable : Keep track of territory found for attacker and defender
+		int found_territory = 0;
+		List<GamePlayTerritory> attacker_territory_list = new ArrayList<>();
+		List<GamePlayTerritory> defender_territory_list = new ArrayList<>();
+		List<String> attack_message_list = new ArrayList<>();
+		// Local Variable : To get actual army values from getter
+		int attacker_terrtiory_armies = 0;
+		int defender_territory_armies = 0;
+		String attacker_territory_name = GamePlay.getAttack().getAttacker_territory();
+		String defender_territory_name = GamePlay.getAttack().getDefender_territory();
+		List<Player> players_list = game_play.getGame_state();
+		for (Player player : players_list) {
+			List<GamePlayTerritory> territory_list = player.getTerritory_list();
+			for (GamePlayTerritory territory : territory_list) {
+				// Attacker Territory Object
+				if (territory.getTerritory_name().equalsIgnoreCase(attacker_territory_name)) {
+					attacker_id = player.getId();
+					attacker_terrtiory_armies = territory.getNumber_of_armies();
+					attacker_territory_list.add(territory);
+					found_territory++;
+				}
+				// Defender Territory Object
+				if (territory.getTerritory_name().equalsIgnoreCase(defender_territory_name)) {
+					defender_id = player.getId();
+					defender_territory_armies = territory.getNumber_of_armies();
+					defender_territory_list.add(territory);
+					found_territory++;
+				}
+				if (found_territory == 2) {
+					break;
+				}
+			}
+		}
+
+		int attacker_dice_no = GamePlay.getAttack().getAttacker_dice_no();
+		int defender_dice_no = GamePlay.getAttack().getDefender_dice_no();
+		String valid_attack_message = checkForValidAttack(attacker_terrtiory_armies, defender_territory_armies,
+				attacker_dice_no, defender_dice_no);
+		if (valid_attack_message.trim().length() == 0) {
+			// Roll Dice
+			List<Integer> attack_result = rollDiceDecision(attacker_dice_no, defender_dice_no);
+			for (int i = 0; i < attack_result.size(); i++) {
+				int result = attack_result.get(i);
+				if (result == 1) {
+					// Attacker Won
+					GamePlayTerritory def_obj = defender_territory_list.get(0);
+					def_obj.setNumber_of_armies(def_obj.getNumber_of_armies() - 1);
+					attack_message = attacker_id + " Won !!";
+					attack_message_list.add(attack_message);
+					if (def_obj.getNumber_of_armies() == 0) {
+						attacker_territory_list.add(def_obj);
+						attack_message = attacker_id + " Occupies Defender Territory";
+						attack_message_list.add(attack_message);
+					}
+				} else {
+					// Defender Won
+					GamePlayTerritory att_obj = attacker_territory_list.get(0);
+					att_obj.setNumber_of_armies(att_obj.getNumber_of_armies() - 1);
+					attack_message = defender_id + " Won !!";
+					attack_message_list.add(attack_message);
+				}
+			}
+
+			// Iterating Attacker Territory List for performing actions regarding dice
+			// result
+			for (GamePlayTerritory att_territory : attacker_territory_list) {
+				for (Player player : players_list) {
+					if (player.getId() == attacker_id) {
+						List<GamePlayTerritory> territory_list = player.getTerritory_list();
+						for (int j = 0; j < territory_list.size(); j++) {
+							if (att_territory.getTerritory_name()
+									.equalsIgnoreCase(territory_list.get(j).getTerritory_name())) {
+								territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
+							} else if (!territory_list.contains(att_territory)) {
+								territory_list.add(att_territory);
+							}
+						}
+					}
+				}
+			}
+
+			// Iterating Defender Territory List for performing actions regarding dice
+			// result
+			for (GamePlayTerritory deff_territory : defender_territory_list) {
+				for (Player player : players_list) {
+					if (player.getId() == defender_id) {
+						List<GamePlayTerritory> territory_list = player.getTerritory_list();
+						for (GamePlayTerritory territory : territory_list) {
+							if (deff_territory.getTerritory_name().equalsIgnoreCase(territory.getTerritory_name())) {
+								if (deff_territory.getNumber_of_armies() == 0) {
+									territory_list.remove(territory);
+									game_play.setGame_phase("ATTACK_MOVE_ON");
+								} else {
+									territory.setNumber_of_armies(deff_territory.getNumber_of_armies());
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+			attack_message = String.join(",", attack_message_list);
+			System.out.println(attack_message);
+			game_play.setStatus(attack_message);
+		} else {
+			game_play.setStatus(valid_attack_message);
+		}
+		return game_play;
+	}
+
+	/**
+	 * This method perform validation regarding attack.
+	 * 
+	 * @param attacker_territory_armies
+	 * @param defender_territory_armies
+	 * @param attacker_dice_no          : No. of dice attacker decided to roll
+	 * @param defender_dice_no          : No. of dice defender decided to roll
+	 * @return Attack Result Message
+	 */
+	private String checkForValidAttack(int attacker_territory_armies, int defender_territory_armies,
+			int attacker_dice_no, int defender_dice_no) {
+		
+		String message = "";
+		if (attacker_territory_armies <= attacker_dice_no || attacker_territory_armies == 1) {
+			if (attacker_territory_armies - 1 == 0) {
+				message = "Invalid Attack By Attacker (You can't attack with this territory)";
+			} else {
+				message = "Invalid Attack By Attacker (You can roll max " + (attacker_territory_armies - 1) + " dice)";
+			}
+		}
+
+		if (defender_territory_armies < defender_dice_no) {
+			message = "Invalid Defend(You can roll max " + defender_territory_armies + " dice )";
+		}
+
+		return message;
+	}
+
+	/**
+	 * This method rolls dice for both player and return dice result for respective
+	 * round as list.
+	 * 
+	 * @param attacker_dice_no : No. of dice attacker decided to roll
+	 * @param defender_dice_no : No. of dice defender decided to roll
+	 * @return List of Attack Result
+	 */
+	private List<Integer> rollDiceDecision(int attacker_dice_no, int defender_dice_no) {
+		List<Integer> dice_roll_result = new ArrayList<>();
+		String dice_case = attacker_dice_no + "_" + defender_dice_no;
+		switch (dice_case) {
+		case "1_1":
+			dice_roll_result = rollDiceOneOnOne();
+			break;
+		case "1_2":
+			dice_roll_result = rollDiceOneOnTwo();
+			break;
+		case "2_1":
+			dice_roll_result = rollDiceTwoOnOne();
+			break;
+		case "2_2":
+			dice_roll_result = rollDiceTwoOnTwo();
+			break;
+		case "3_1":
+			dice_roll_result = rollDiceThreeOnOne();
+			break;
+		case "3_2":
+			dice_roll_result = rollDiceThreeOnTwo();
+			break;
+		default:
+			break;
+		}
+		return dice_roll_result;
+	}
+
+	/**
+	 * This method roll dice for the case of one attacker army v/s one defender
+	 * army.
+	 * 
+	 * @return Attack Result List
+	 */
+	private List<Integer> rollDiceOneOnOne() {
+		Random random = new Random();
+		int dice_result_flag = 0;
+		int attacker_dice_result = random.nextInt(6);
+		int defender_dice_result = random.nextInt(6);
+		if (attacker_dice_result > defender_dice_result) {
+			dice_result_flag = 1;
+		} else if (attacker_dice_result <= defender_dice_result) {
+			dice_result_flag = 0;
+		}
+		return Arrays.asList(dice_result_flag);
+	}
+
+	/**
+	 * This method roll dice for the case of one attacker army v/s two defender
+	 * army.
+	 * 
+	 * @return Attack Result List
+	 */
+	private List<Integer> rollDiceOneOnTwo() {
+		Random random = new Random();
+		int dice_result_flag = 0;
+		int attacker_dice_result = random.nextInt(6);
+		int defender_dice_result = Math.max(random.nextInt(6), random.nextInt(6));
+		if (attacker_dice_result > defender_dice_result) {
+			dice_result_flag = 1;
+		} else if (attacker_dice_result <= defender_dice_result) {
+			dice_result_flag = 0;
+		}
+		return Arrays.asList(dice_result_flag);
+	}
+
+	/**
+	 * This method roll dice for the case of two attacker army v/s one defender
+	 * army.
+	 * 
+	 * @return Attack Result List
+	 */
+	private List<Integer> rollDiceTwoOnOne() {
+		Random random = new Random();
+		int dice_result_flag = 0;
+		int attacker_dice_result = Math.max(random.nextInt(6), random.nextInt(6));
+		int defender_dice_result = random.nextInt(6);
+		if (attacker_dice_result > defender_dice_result) {
+			dice_result_flag = 1;
+		} else if (attacker_dice_result <= defender_dice_result) {
+			dice_result_flag = 0;
+		}
+		return Arrays.asList(dice_result_flag);
+	}
+
+	/**
+	 * This method roll dice for the case of two attacker army v/s two defender
+	 * army.
+	 * 
+	 * @return Attack Result List
+	 */
+	private List<Integer> rollDiceTwoOnTwo() {
+		Random random = new Random();
+		HashMap<String, List<Integer>> dice_result_list = new HashMap<>();
+		int attacker_roll_one = random.nextInt(6);
+		int attacker_roll_two = random.nextInt(6);
+		dice_result_list.put("attacker", Arrays.asList(attacker_roll_one, attacker_roll_two));
+		int defender_roll_one = random.nextInt(6);
+		int defender_roll_two = random.nextInt(6);
+		dice_result_list.put("defender", Arrays.asList(defender_roll_one, defender_roll_two));
+		int attacker_max = Collections.max(dice_result_list.get("attacker"));
+		int defender_max = Collections.max(dice_result_list.get("defender"));
+		int max_result = attacker_max > defender_max ? 1 : 0;
+		int attacker_min = Collections.min(dice_result_list.get("attacker"));
+		int defender_min = Collections.min(dice_result_list.get("defender"));
+		int min_result = attacker_min > defender_min ? 1 : 0;
+		dice_result_list.clear();
+		return Arrays.asList(max_result, min_result);
+	}
+
+	/**
+	 * This method roll dice for the case of three attacker army v/s two defender
+	 * army.
+	 * 
+	 * @return Attack Result List
+	 */
+	private List<Integer> rollDiceThreeOnTwo() {
+		Random random = new Random();
+		List<Integer> attacker_list = new ArrayList<>();
+		List<Integer> defender_list = new ArrayList<>();
+
+		attacker_list.add(random.nextInt(6));
+		attacker_list.add(random.nextInt(6));
+		attacker_list.add(random.nextInt(6));
+
+		defender_list.add(random.nextInt(6));
+		defender_list.add(random.nextInt(6));
+
+		int attacker_max = Collections.max(attacker_list);
+		attacker_list.remove((attacker_list.indexOf(attacker_max)));
+		int defender_max = Collections.max(defender_list);
+		defender_list.remove((defender_list.indexOf(defender_max)));
+		int first_result = attacker_max > defender_max ? 1 : 0;
+
+		int attacker_second_max = Collections.max(attacker_list);
+		attacker_list.remove((attacker_list.indexOf(attacker_second_max)));
+		int defender_second_max = Collections.max(defender_list);
+		defender_list.remove((defender_list.indexOf(defender_second_max)));
+		int second_result = attacker_second_max > defender_second_max ? 1 : 0;
+		return Arrays.asList(first_result, second_result);
+	}
+
+	/**
+	 * This method roll dice for the case of three attacker army v/s one defender
+	 * army.
+	 * 
+	 * @return Attack Result List
+	 */
+	private List<Integer> rollDiceThreeOnOne() {
+		Random random = new Random();
+		int dice_result_flag = 0;
+		int attacker_dice_result = Math.max(Math.max(random.nextInt(6), random.nextInt(6)), random.nextInt(6));
+		int defender_dice_result = random.nextInt(6);
+		if (attacker_dice_result > defender_dice_result) {
+			dice_result_flag = 1;
+		} else if (attacker_dice_result <= defender_dice_result) {
+			dice_result_flag = 0;
+		}
+		return Arrays.asList(dice_result_flag);
+	}
+
+	public static void main(String[] args) {
+		ManagePlayer managePlayer = new ManagePlayer();
+		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "A");
+		Attack attack = GamePlay.getAttack();
+		attack.setAttacker_territory("Neuchtel");
+		attack.setDefender_territory("Varduz");
+		attack.setAttacker_dice_no(3);
+		attack.setDefender_dice_no(2);
+//		Scanner s = new Scanner(System.in);
+//		String ans = s.nextLine();
+		gamePlay = managePlayer.attack(gamePlay);
 	}
 }
