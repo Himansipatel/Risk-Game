@@ -19,4 +19,18 @@ public interface IManagePlayer {
 	 * @return Entire Player List which will be rendered for Playing.
 	 */
 	GamePlay createPlayer(int num_of_players, String map_name, String army_allocation_type);
+	
+	/**
+	 * This function is an main function of attack which initially check for each
+	 * attack validation and get results and based on result it perform certain
+	 * actions like populating message , increment/decrement armies from respective
+	 * player and last if attacker occupy defender territory then add defender
+	 * territory to attacker territory list and remove from defender territory list
+	 * 
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @param game_play : GamePlay Object
+	 * @return GamePlay Object
+	 */
+	GamePlay attack(GamePlay game_play);
 }
