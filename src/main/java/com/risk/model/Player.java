@@ -2,6 +2,8 @@ package com.risk.model;
 
 import java.util.List;
 
+import com.risk.business.impl.ManagePlayer;
+
 /**
  * <b>GamePlay Player File Model</b> - Stores information about all players
  * playing in game.
@@ -17,9 +19,9 @@ public class Player {
 	private int army_stock;
 	private List<GamePlayTerritory> territory_list;
 	private List<Card> card_list;
-	
+
 	/**
-	 * To identify how many card sets are traded for a particular Player. 
+	 * To identify how many card sets are traded for a particular Player.
 	 */
 	private int trade_count;
 
@@ -108,15 +110,22 @@ public class Player {
 	}
 
 	/**
-	 * This method is called to execute reinforcement phase for a particular player and updates the state of the game 
-	 * accordingly. It also handles the trading of cards during game play.
+	 * This method is called to execute reinforcement phase for a particular player
+	 * and updates the state of the game accordingly. It also handles the trading of
+	 * cards during game play.
 	 * 
-	 * @param  game_play state of the game i.e. entire game related info when reinforcement starts for a player.
-	 * @return GamePlay  updated state of the game after reinforcement phase ends.
+	 * @param game_play state of the game i.e. entire game related info when
+	 *                  reinforcement starts for a player.
+	 * @return GamePlay updated state of the game after reinforcement phase ends.
 	 * 
 	 */
 	public GamePlay reInforce(GamePlay game_play) {
 		return game_play;
-	}	
-	
+	}
+
+	public GamePlay attack(GamePlay game_play) {
+		ManagePlayer manage_player = new ManagePlayer();
+		game_play = manage_player.attack(game_play);
+		return game_play;
+	}
 }
