@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -163,8 +164,8 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						
 						if (player.getId()==current_player) {
 							
-							update_traded_armies(player);
-							update_card_lists(player, game_state.getFree_cards(), trade_card);
+							updateTradedArmies(player);
+							updateCardLists(player, game_state.getFree_cards(), trade_card);
 							
 							/**
 							 * Check if the Player controls any territory which is present in one of the cards being traded.
@@ -201,13 +202,38 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		return game_state;
 	}	
 	
+	/**
+	 * This method assigns a random card to a player and removes that card from the free stock.
+	 *    
+	 * @param game_state Overall game_state to be updated after this move
+	 */
+	public void addCardToPlayer(GamePlay game_state) {
+		
+		if (game_state!=null) {
+			
+			for (Player player : game_state.getGame_state()) {
+				
+				if (player.getId()==game_state.getCurrent_player()) {
+					
+					Random rand = new Random();
+					int idx = rand.nextInt(game_state.getFree_cards().size());					
+					
+					player.getCard_list().add(game_state.getFree_cards().get(idx));
+					game_state.getFree_cards().remove(idx);
+					
+					break;
+				}
+			}
+		}
+	}
 
+	
 	/**
 	 * This method updates the player's army count during the trade of cards.
 	 * 
 	 * @param player State of the current Player. 
 	 */
-	private void update_traded_armies(Player player) {
+	private void updateTradedArmies(Player player) {
 		if (player.getTrade_count()==0) {
 			player.setArmy_stock(player.getArmy_stock() + 4);
 			player.setTrade_count(1);
@@ -239,7 +265,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * @param free_cards List of cards which are free for allocation
 	 * @param traded_cards The set of three cards being traded.
 	 */
-	private void update_card_lists(Player player, List<Card> free_cards, CardTrade traded_cards) {
+	private void updateCardLists(Player player, List<Card> free_cards, CardTrade traded_cards) {
 		free_cards.add(traded_cards.getCard1());
 		free_cards.add(traded_cards.getCard2());
 		free_cards.add(traded_cards.getCard3());
