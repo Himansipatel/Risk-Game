@@ -14,6 +14,7 @@ import com.risk.business.IManagePlayer;
 import com.risk.file.impl.ManageGamePlayFile;
 import com.risk.model.Attack;
 import com.risk.model.Card;
+import com.risk.model.CardTrade;
 import com.risk.model.Continent;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
@@ -37,6 +38,7 @@ import com.risk.model.Territory;
 public class ManagePlayer implements IManagePlayer {
 
 	private List<Player> player_info_list;
+	private Map map;
 
 	/**
 	 * @see com.risk.business.IManagePlayer#createPlayer(int, java.lang.String,
@@ -47,7 +49,7 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	@Override
 	public GamePlay createPlayer(int num_of_players, String file_name, String army_allocation_type) {
-		GamePlay game_state = null;
+		GamePlay game_play = new GamePlay();
 		player_info_list = new ArrayList<Player>();
 		int army_stock = getArmyStock(num_of_players);
 		for (int i = 1; i <= num_of_players; i++) {
@@ -60,27 +62,26 @@ public class ManagePlayer implements IManagePlayer {
 			p.setArmy_stock(army_stock);
 			p.setTerritory_list(gameplay_territory_list);
 			p.setCard_list(card_list);
+			p.setTrade_count(0);
 			player_info_list.add(p);
 		}
 		ManageMap manage_map_object = new ManageMap();
 		ManageGamePlay game_manager = new ManageGamePlay();
-		Map map = new Map();
+		map = new Map();
 		map = manage_map_object.getFullMap(file_name);
 		if (map != null && map.getStatus().equalsIgnoreCase("")) {
 			assingTerritoriesToPlayers(map);
 			if (army_allocation_type.equalsIgnoreCase("A")) {
 				assignArmiesOnTerritories(army_stock);
+				game_manager.calculateArmiesReinforce(game_play.getGame_state(), map);
 			}
-			game_state = writePlayerToFile(player_info_list, file_name);
+			game_play = writePlayerToFile(player_info_list, file_name, army_allocation_type);
 		} else if (map != null && map.getStatus() != "") {
-			game_state = new GamePlay();
-			game_state.setStatus(map.getStatus());
+			game_play.setStatus(map.getStatus());
 		} else {
-			game_state = new GamePlay();
-			game_state.setStatus("Invalid Map");
+			game_play.setStatus("Invalid Map");
 		}
-		game_manager.calculateArmiesReinforce(game_state.getGame_state(), map);
-		return game_state;
+		return game_play;
 	}
 
 	/**
@@ -95,17 +96,24 @@ public class ManagePlayer implements IManagePlayer {
 			int i = 0;
 			for (int territory_list_index = 0; territory_list_index < player_info_list.get(player_index)
 					.getTerritory_list().size(); territory_list_index++) {
-				if (i < army_stock) {
+				if (army_stock >= player_info_list.get(player_index).getTerritory_list().size()) {
+					if (i < army_stock) {
+						int sum_armies = player_info_list.get(player_index).getTerritory_list()
+								.get(territory_list_index).getNumber_of_armies() + 1;
+						player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
+								.setNumber_of_armies(sum_armies);
+						if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
+							territory_list_index = -1;
+						}
+						i++;
+					} else {
+						break;
+					}
+				} else {
 					int sum_armies = player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.getNumber_of_armies() + 1;
 					player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.setNumber_of_armies(sum_armies);
-					if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
-						territory_list_index = -1;
-					}
-					i++;
-				} else {
-					break;
 				}
 			}
 		}
@@ -125,21 +133,89 @@ public class ManagePlayer implements IManagePlayer {
 	 *                         and GamePlay File.
 	 * @return GamePlay File Object
 	 */
-	private GamePlay writePlayerToFile(List<Player> player_info_list, String file_name) {
+	private GamePlay writePlayerToFile(List<Player> player_info_list, String file_name, String allocation_type) {
 		List<Player> player_list_at_file = convertPlayerToFileLayer(player_info_list);
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
-		String game_phase = "Startup";
+		String game_phase;
+		int current_player = 1;
+		if (allocation_type.equalsIgnoreCase("A")) {
+			game_phase = "REINFORCE";
+		} else {
+			game_phase = "STARTUP";
+		}
 		file_name = (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name) + "_"
 				+ String.valueOf(System.currentTimeMillis());
-		GamePlay game_state = new GamePlay();
-		game_state.setFile_name(file_name);
-		game_state.setGame_phase(game_phase);
-		game_state.setGame_state(player_list_at_file);
-		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(game_state);
+		GamePlay game_play = new GamePlay();
+		game_play.setFile_name(file_name);
+		game_play.setCurrent_player(current_player);
+		game_play.setGame_phase(game_phase);
+		game_play.setGame_state(player_list_at_file);
+		game_play.setMap(map);
+		game_play.setCard_trade(new CardTrade());
+		List<Card> free_cards = getFreeCards();
+		game_play.setFree_cards(free_cards);
+
+		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(game_play);
 		if (file_write_message)
-			return game_state;
+			return game_play;
 		else
 			return null;
+	}
+
+	/**
+	 * This method set cards according to territory and army name
+	 * 
+	 * @return
+	 */
+	private List<Card> getFreeCards() {
+		List<Card> card_list = new ArrayList<>();
+		List<GamePlayTerritory> territories = getTerritories(map);
+		List<List<String>> card_type_list = new ArrayList<>();
+		List<String> Infantry = new ArrayList<>();
+		List<String> Cavalry = new ArrayList<>();
+		List<String> Artillery = new ArrayList<>();
+		Infantry.add("Infantry");
+		Cavalry.add("Cavalry");
+		Artillery.add("Artillery");
+		card_type_list.add(Infantry);
+		card_type_list.add(Cavalry);
+		card_type_list.add(Artillery);
+		int total_card_type = card_type_list.size();
+		int count = -1;
+		for (int i = 0; i < territories.size(); i++) {
+			count++;
+			if (card_type_list.get(count) != null) {
+				try {
+					card_type_list.get(count).add(territories.get(i).getTerritory_name());
+
+				} catch (NullPointerException e) {
+					e.printStackTrace();
+				}
+			} else {
+				continue;
+			}
+			if (count == total_card_type - 1) {
+				count = -1;
+			}
+
+		}
+		for (int i = 0; i < card_type_list.size(); i++) {
+			String army_type = null;
+			for (int j = 0; j < card_type_list.get(i).size(); j++) {
+
+				if (j == 0) {
+					army_type = card_type_list.get(i).get(j);
+				} else {
+					Card card = new Card();
+					card.setTerritory_name(card_type_list.get(i).get(j));
+					card.setArmy_type(army_type);
+					card_list.add(card);
+				}
+			}
+		}
+
+		return card_list;
+
 	}
 
 	/**
@@ -255,7 +331,6 @@ public class ManagePlayer implements IManagePlayer {
 		List<Territory> temp_territory_list;
 		String continent_name;
 		ArrayList<GamePlayTerritory> total_territory_list = new ArrayList<GamePlayTerritory>();
-
 		for (Entry<String, Continent> m : continents.entrySet()) {
 			continent_name = m.getKey();
 			map_continent = m.getValue();
@@ -284,17 +359,21 @@ public class ManagePlayer implements IManagePlayer {
 		int attacker_id = 0;
 		int defender_id = 0;
 		String attack_message = "";
+
 		// Counter Variable : Keep track of territory found for attacker and defender
 		int found_territory = 0;
 		List<GamePlayTerritory> attacker_territory_list = new ArrayList<>();
 		List<GamePlayTerritory> defender_territory_list = new ArrayList<>();
 		List<String> attack_message_list = new ArrayList<>();
+		Attack attack = GamePlay.getAttack();
+
 		// Local Variable : To get actual army values from getter
 		int attacker_terrtiory_armies = 0;
 		int defender_territory_armies = 0;
 		String attacker_territory_name = GamePlay.getAttack().getAttacker_territory();
 		String defender_territory_name = GamePlay.getAttack().getDefender_territory();
 		List<Player> players_list = game_play.getGame_state();
+
 		for (Player player : players_list) {
 			List<GamePlayTerritory> territory_list = player.getTerritory_list();
 			for (GamePlayTerritory territory : territory_list) {
@@ -317,9 +396,13 @@ public class ManagePlayer implements IManagePlayer {
 				}
 			}
 		}
-
-		int attacker_dice_no = GamePlay.getAttack().getAttacker_dice_no();
-		int defender_dice_no = GamePlay.getAttack().getDefender_dice_no();
+		int attacker_dice_no = 0;
+		int defender_dice_no = 0;
+		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ALL_OUT")) {
+			setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
+		}
+		attacker_dice_no = GamePlay.getAttack().getAttacker_dice_no();
+		defender_dice_no = GamePlay.getAttack().getDefender_dice_no();
 		String valid_attack_message = checkForValidAttack(attacker_terrtiory_armies, defender_territory_armies,
 				attacker_dice_no, defender_dice_no);
 		if (valid_attack_message.trim().length() == 0) {
@@ -391,7 +474,37 @@ public class ManagePlayer implements IManagePlayer {
 		} else {
 			game_play.setStatus(valid_attack_message);
 		}
+		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ALL_OUT")
+				&& attacker_territory_list.get(0).getNumber_of_armies() > 1) {
+			setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
+			attack(game_play);
+		}
 		return game_play;
+	}
+
+	/**
+	 * This function decide how many maximum dice attacker and defender can roll max
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param attacker_territory_list : List of Territories Attacker owes
+	 * @param defender_territory_list : List of Territories Defender owes
+	 * @param attack
+	 */
+	private void setAttackerDefenderDiceNo(List<GamePlayTerritory> attacker_territory_list,
+			List<GamePlayTerritory> defender_territory_list, Attack attack) {
+		int attacker_dice = attacker_territory_list.get(0).getNumber_of_armies() - 1;
+		int defender_dice = defender_territory_list.get(0).getNumber_of_armies();
+		if (attacker_dice >= 3) {
+			attack.setAttacker_dice_no(3);
+		} else {
+			attack.setAttacker_dice_no(attacker_dice);
+		}
+		if (defender_dice >= 2) {
+			attack.setDefender_dice_no(2);
+		} else {
+			attack.setDefender_dice_no(defender_dice);
+		}
 	}
 
 	/**
@@ -405,7 +518,7 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	private String checkForValidAttack(int attacker_territory_armies, int defender_territory_armies,
 			int attacker_dice_no, int defender_dice_no) {
-		
+
 		String message = "";
 		if (attacker_territory_armies <= attacker_dice_no || attacker_territory_armies == 1) {
 			if (attacker_territory_armies - 1 == 0) {
@@ -589,18 +702,5 @@ public class ManagePlayer implements IManagePlayer {
 			dice_result_flag = 0;
 		}
 		return Arrays.asList(dice_result_flag);
-	}
-
-	public static void main(String[] args) {
-		ManagePlayer managePlayer = new ManagePlayer();
-		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "A");
-		Attack attack = GamePlay.getAttack();
-		attack.setAttacker_territory("Neuchtel");
-		attack.setDefender_territory("Varduz");
-		attack.setAttacker_dice_no(3);
-		attack.setDefender_dice_no(2);
-//		Scanner s = new Scanner(System.in);
-//		String ans = s.nextLine();
-		gamePlay = managePlayer.attack(gamePlay);
 	}
 }
