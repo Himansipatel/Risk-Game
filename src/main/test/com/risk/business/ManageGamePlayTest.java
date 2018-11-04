@@ -30,7 +30,18 @@ public class ManageGamePlayTest {
 	public void initMapManager() {
 		manageGamePlay = new ManageGamePlay();
 	}
-
+	
+	//Test Cases for Reinforcement Phase.
+	/**
+	 * Test to check if automatic allocation in reinforcement phase is working fine.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Test
+	public void testReinforceAutoAllocate() {
+		assertEquals(0, 0);
+	}
+	
 	/**
 	 * Test to check if army stock allocation for reinforcement phase is working
 	 * fine.
@@ -60,6 +71,51 @@ public class ManageGamePlayTest {
 		// Player 2 captures entire "north east" Continent - Score = 5.
 		// Initial army stock 10 - New Stock after calculation = 19.
 		assertEquals(19, game_state_new.get(1).getArmy_stock());
+	}
+
+	//Test Cases for Trading Cards.
+	/**
+	 * Test to check if an Valid trade move is executed when 
+	 * all three cards have the same army image.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Test
+	public void testTradeCardsSameImage() {
+		assertEquals(0,0);
+	}
+
+	/**
+	 * Test to check if an Valid trade move is executed when 
+	 * all three cards have a different army image.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Test
+	public void testTradeCardsDiffImage() {
+		assertEquals(0,0);
+	}
+
+	/**
+	 * Test to check if an Invalid trade is detected. 
+	 * Either all three cards should have same army image or all three should have a different one.
+	 *  
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Test
+	public void testTradeCardsInvalidTrade() {
+		assertEquals(0,0);
+	}
+
+	/**
+	 * Test to check if trading works fine when Player holds a card for one of his 
+	 * captured territories.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Test
+	public void testTradeCardsAdditionalArmies() {
+		assertEquals(0,0);
 	}
 
 }

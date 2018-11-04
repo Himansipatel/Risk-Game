@@ -9,12 +9,16 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
 import org.springframework.stereotype.Service;
+
 import com.risk.business.IManageGamePlay;
 import com.risk.business.IManageMap;
 import com.risk.file.IManageFile;
 import com.risk.file.impl.ManageFile;
 import com.risk.file.impl.ManageGamePlayFile;
+import com.risk.model.Card;
+import com.risk.model.CardTrade;
 import com.risk.model.Continent;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
@@ -72,12 +76,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 		if (game_state!=null) {
 
-			IManageMap  map_manager  = new ManageMap();
-			String[] file_name = game_state.getFile_name().split("_");
-			IManageFile file_manager = new ManageFile(file_name[0].concat(".map"));		
-			File file = file_manager.retreiveFileObject();
+			//IManageMap  map_manager  = new ManageMap();
+			//String[] file_name = game_state.getFile_name().split("_");
+			//IManageFile file_manager = new ManageFile(file_name[0].concat(".map"));		
+			//File file = file_manager.retreiveFileObject();
 			Player player = new Player();
-			Map map = map_manager.convertFileToMap(file);
+			//Map map = map_manager.convertFileToMap(file);
+			Map map = game_state.getMap();
 
 			if (map==null) {
 				game_state.setStatus("Inavlid Map.");
@@ -100,10 +105,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				break;
 
 			case "TRADE_CARDS":
-				game_state = player.reInforce(game_state);
+				game_state = tradeCards(game_state);
 				break;
 
-				
 			case "ATTACK_ON":
 				break;
 			
@@ -127,6 +131,129 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 	}
 
+	/**
+	 * This method handles the trading of cards during reinforcement phase of the game-play.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param  game_state State of the game at point of time holding the entire info
+	 *                    about game-play. Like the current phase and player.
+	 * @return game_state after updating info on trading of cards.
+	 */	
+	private GamePlay tradeCards(GamePlay game_state) {	
+		
+		CardTrade trade_card = game_state.getCard_trade();
+		if (trade_card!=null) {
+			if (trade_card.getCard1() == null || trade_card.getCard2() == null || trade_card.getCard3() == null) {
+				game_state.setStatus("Trading requires a minimum of three cards to be selected.");
+			}else {
+				
+				/**
+				 * First part of condition (before OR) checks if all images on the three cards are same and the second part 
+				 * (after OR) checks if all the three are different.
+				 */
+				if (    (trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
+					     && trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type()))
+					||  (!trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())	
+						&& !trade_card.getCard2().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type())
+						&& !trade_card.getCard3().getArmy_type().equalsIgnoreCase(trade_card.getCard1().getArmy_type()))){
+					
+					int current_player = game_state.getCurrent_player();
+					
+					for (Player player : game_state.getGame_state()) {
+						
+						if (player.getId()==current_player) {
+							
+							update_traded_armies(player);
+							update_card_lists(player, game_state.getFree_cards(), trade_card);
+							
+							/**
+							 * Check if the Player controls any territory which is present in one of the cards being traded.
+							 */
+							List<GamePlayTerritory> player_territory_list = player.getTerritory_list();
+							
+							if (player_territory_list != null) {
+								
+								for (GamePlayTerritory gamePlayTerritory : player_territory_list) {
+									
+									if (   gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard1().getTerritory_name())
+										|| gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
+										|| gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
+										
+										/**
+										 * An additional two armies given if the Player controls any territory 
+										 * which is present in one of the cards being traded.
+										 */
+										gamePlayTerritory.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);			
+										break;
+									}
+								}
+							}
+							break;
+						}
+					}
+				}else {
+					game_state.setStatus("Either all three cards should have same image or all three different.");
+				}
+			}
+		}else {
+			game_state.setStatus("Inavlid Trade State during Gameplay");
+		}
+		return game_state;
+	}	
+	
+
+	/**
+	 * This method updates the player's army count during the trade of cards.
+	 * 
+	 * @param player State of the current Player. 
+	 */
+	private void update_traded_armies(Player player) {
+		if (player.getTrade_count()==0) {
+			player.setArmy_stock(player.getArmy_stock() + 4);
+			player.setTrade_count(1);
+		}else if (player.getTrade_count()==1) {
+			player.setArmy_stock(player.getArmy_stock() + 6);
+			player.setTrade_count(2);											
+		}else if (player.getTrade_count()==2) {
+			player.setArmy_stock(player.getArmy_stock() + 8);
+			player.setTrade_count(3);											
+		}else if (player.getTrade_count()==3) {
+			player.setArmy_stock(player.getArmy_stock() + 10);
+			player.setTrade_count(4);											
+		}else if (player.getTrade_count()==4) {
+			player.setArmy_stock(player.getArmy_stock() + 12);
+			player.setTrade_count(5);											
+		}else if (player.getTrade_count()==5) {
+			player.setArmy_stock(player.getArmy_stock() + 15);
+			player.setTrade_count(6);											
+		}else if (player.getTrade_count()>5) {
+			player.setArmy_stock(player.getArmy_stock() + 15 + ((player.getTrade_count() - 5) * 5) );
+			player.setTrade_count(player.getTrade_count()+1);																						
+		}		
+	}
+		
+	/**
+	 * This method updates the player's card list and well as the free card list after the trading is over.
+	 * 
+	 * @param player State of the current Player.
+	 * @param free_cards List of cards which are free for allocation
+	 * @param traded_cards The set of three cards being traded.
+	 */
+	private void update_card_lists(Player player, List<Card> free_cards, CardTrade traded_cards) {
+		free_cards.add(traded_cards.getCard1());
+		free_cards.add(traded_cards.getCard2());
+		free_cards.add(traded_cards.getCard3());
+		Iterator<Card> i = player.getCard_list().iterator();
+		while (i.hasNext()) {
+			Card card = (Card) i.next();
+			if (   (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard1().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard1().getTerritory_name())) 
+				|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard2().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard2().getTerritory_name()))
+				|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard3().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard3().getTerritory_name()))) {
+				i.remove();				
+			}
+		}
+	}
+	
 	/**
 	 * This method decides the next player and the phase during game-play.
 	 * 
