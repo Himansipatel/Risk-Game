@@ -54,13 +54,11 @@ public class GamePlay extends Observable{
 	 */	
 	private CardTrade card_trade;
 	
-	private static Attack attack;
-
 	/**
 	 * @return the attack instance
 	 */
 	public static Attack getAttack() {
-		return attack.getAttackInstance();
+		return Attack.getAttackInstance();
 	}
 
 	/**
