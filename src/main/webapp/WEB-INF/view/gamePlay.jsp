@@ -48,6 +48,7 @@
 						var currentMapName = "";
 						var noOfPlayingPlayer = "";
 						var whichPlayerChance = 0;
+						var data_game;
 
 						$("#player1Reinforcement").attr("disabled", "disabled");
 						$("#player2Reinforcement").attr("disabled", "disabled");
@@ -554,6 +555,7 @@
 												}),
 										url : "gamePlay/initStartUpPhase",
 										success : function(data) {
+											data_game = data;
 											parseGamePlayData(data.game_state);
 											currentMapName = (data.file_name);
 											//set currentPhase also(later)
@@ -623,36 +625,56 @@
 								var playerD = makePlayerData(i);
 								playerArray.push(playerD);
 							}
+
 							var game_Play = {
 								game_state : playerArray,
 								file_name : currentMapName,
-								game_phase : currentPhase
+								game_phase : currentPhase,
+								fortify : data_game.fortify,
+								map : data_game.map,
+								current_player : data_game.current_player,
+								free_cards : data_game.free_cards,
+								status : data_game.status,
+								card_trade : data_game.card_trade,
+								attack : data_game.attack
 							};
 							var a = JSON.stringify(game_Play);
-							$.ajax({
-								type : "POST",
-								url : "gamePlay/saveGameState",
-								dataType : "json",
-								data : a,
-								contentType : "application/json",
-								success : function(data) {
-									clearGameState();
-									parseGamePlayData(data.game_state);
-									currentMapName = (data.file_name);
-									//set currentPhase also(later)
-									//read player no from data
-									alert(currentPhase + " ended");
-									currentPhase = data.game_phase;
-									whichPlayerChance = data.current_player;
-									checkForNextPhaseAndDisplayOption();
-									stopLoading();
-								},
-								error : function(XMLHttpRequest, textStatus,
-										errorThrown) {
-									stopLoading();
-									alert("Invalid GameState. Please check");
-								}
-							});
+							$
+									.ajax({
+										type : "POST",
+										url : "gamePlay/saveGameState",
+										dataType : "json",
+										data : a,
+										contentType : "application/json",
+										success : function(data) {
+											data_game = data;
+											clearGameState();
+											parseGamePlayData(data.game_state);
+											currentMapName = (data.file_name);
+											//set currentPhase also(later)
+											//read player no from data
+											if (currentPhase == 'ATTACK'
+													|| currentPhase == "ATTACK_ON"
+													|| currentPhase == "ATTACK_ALL_OUT"
+													|| currentPhase == "ATTACK_END") {
+												alert(data.status);
+											}
+											if (currentPhase != 'ATTACK'
+													&& currentPhase != "ATTACK_ON"
+													&& currentPhase != "ATTACK_ALL_OUT") {
+												alert(currentPhase + " ended");
+											}
+											currentPhase = data.game_phase;
+											whichPlayerChance = data.current_player;
+											checkForNextPhaseAndDisplayOption();
+											stopLoading();
+										},
+										error : function(XMLHttpRequest,
+												textStatus, errorThrown) {
+											stopLoading();
+											alert("Invalid GameState. Please check");
+										}
+									});
 						}
 
 						function displayReinforcementButtonForPlayer() {
@@ -824,7 +846,10 @@
 						}
 
 						function checkForNextPhaseAndDisplayOption() {
-							if (currentPhase == "ATTACK") {
+							if (currentPhase == "ATTACK"
+									|| currentPhase == "ATTACK_ON"
+									|| currentPhase == "ATTACK_ALL_OUT"
+									|| currentPhase == "ATTACK_END") {
 								displayAttackButtonForPlayer();
 							} else if (currentPhase == "FORTIFICATION") {
 								displayFortificationButtonForPlayer();
@@ -836,7 +861,7 @@
 						function fillReinforcementModal(no) {
 							$('#countriesForReinforcement').find('option')
 									.remove();
-							//hardcoded
+
 							var playerTable = fetchDataTableforCurrentPlayer(no);
 							playerTableData = playerTable.rows().data();
 							playerArmiesStock = getEachPlayerArmiesStock(no);
@@ -895,58 +920,90 @@
 						});
 
 						function fillAttackModal(no) {
-							$('#countriesForReinforcement').find('option')
-									.remove();
-							//hardcoded
-							var player1DTable = player1DataTable.rows().data();
-							$("#reinforcementRemainingArmies").text(
-									armiesStockOfPlayer1);
-							for (var i = 0; i < player1DTable.length; i++) {
-								$('#countriesForReinforcement').append(
+							$('#countriesFromAttack').find('option').remove();
+							$('#countriesForAttack').find('option').remove();
+
+							var playerTable = fetchDataTableforCurrentPlayer(no);
+							playerTableData = playerTable.rows().data();
+							for (var i = 0; i < playerTableData.length; i++) {
+								$('#countriesFromAttack').append(
 										$('<option>', {
-											value : player1DTable[i][0],
-											text : player1DTable[i][0]
+											value : playerTableData[i][0],
+											text : playerTableData[i][0]
 										}));
+								if (i == 0) {
+									fillAttackModalCountriesForAttack(playerTableData[i][0]);
+								}
 							}
 						}
 
+						function fillAttackModalCountriesForAttack(
+								sourceCountriesSelected) {
+							debugger;
+							$('#countriesForAttack').find('option').remove();
+							var countryData = countryDataTable.rows().data();
+							//find neighbours
+							for (var i = 0; i < countryData.length; i++) {
+								if (countryData[i][0] == sourceCountriesSelected) {
+									var array = countryData[i][2].split(';');
+									for (var j = 0; j < array.length; j++) {
+										$('#countriesForAttack').append(
+												$('<option>', {
+													value : array[j],
+													text : array[j]
+												}));
+									}
+									break;
+								}
+							}
+						}
+
+						$("#countriesFromAttack")
+								.change(
+										function() {
+											var sourceCountriesSelected = $(
+													"#countriesFromAttack option:selected")
+													.val();
+											fillAttackModalCountriesForAttack(sourceCountriesSelected);
+										});
+
 						$('#player1Attack').on('click', function() {
-							fillReinforcementModal("1");
+							fillAttackModal("1");
 							$('#attackModal').modal({
 								backdrop : 'static',
 								keyboard : false
 							});
 						});
 						$('#player2Attack').on('click', function() {
-							fillReinforcementModal("2");
+							fillAttackModal("2");
 							$('#attackModal').modal({
 								backdrop : 'static',
 								keyboard : false
 							});
 						})
 						$('#player3Attack').on('click', function() {
-							fillReinforcementModal("3");
+							fillAttackModal("3");
 							$('#attackModal').modal({
 								backdrop : 'static',
 								keyboard : false
 							});
 						})
 						$('#player4Attack').on('click', function() {
-							fillReinforcementModal("4");
+							fillAttackModal("4");
 							$('#attackModal').modal({
 								backdrop : 'static',
 								keyboard : false
 							});
 						})
 						$('#player5Attack').on('click', function() {
-							fillReinforcementModal("5");
+							fillAttackModal("5");
 							$('#attackModal').modal({
 								backdrop : 'static',
 								keyboard : false
 							});
 						})
 						$('#player6Attack').on('click', function() {
-							fillReinforcementModal("6");
+							fillAttackModal("6");
 							$('#attackModal').modal({
 								backdrop : 'static',
 								keyboard : false
@@ -981,6 +1038,36 @@
 											hideReinforcementButtonForPlayer();
 											saveGameState();
 										});
+
+						function attack(attackType) {
+							data_game.attack = {};
+							data_game.attack.attacker_territory = $(
+									"#countriesFromAttack option:selected")
+									.val();
+							data_game.attack.defender_territory = $(
+									"#countriesFromAttack option:selected")
+									.val();
+							data_game.attack.attacker_dice_no = $(
+									"#noOfDiceAttacker").val();
+							data_game.attack.defender_dice_no = $(
+									"#noOfDiceDefender").val();
+							currentPhase = attackType;
+							$('#attackModal').modal('toggle');
+							//hideReinforcementButtonForPlayer();
+							saveGameState();
+						}
+
+						$('#attack').on('click', function() {
+							attack('ATTACK_ON');
+						});
+						$('#attackAllOut').on('click', function() {
+							attack('ATTACK_ALL_OUT');
+						});
+						$('#attackEnd').on('click', function() {
+							hideAttackButtonForPlayer();
+							attack('ATTACK_END');
+
+						});
 					});
 </script>
 
@@ -1316,10 +1403,14 @@
 				<div class="modal-header">
 					<h5 class="modal-title" id="exampleModalLongTitle">Attack
 						Phase</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
 				</div>
 				<div class="modal-body">
 					<div>
-						<label>Attack dude</label>
+						<label></label>
 					</div>
 					<div class='row'>
 						<div class='col-sm-6'>
@@ -1338,17 +1429,33 @@
 							</select>
 						</div>
 					</div>
+					<div class='row'>
+						<div class='col-sm-6'>
+							<label for="noOfDiceAttacker">Number of Dice (Attacker)</label> <input
+								type="text" class="form-control" id="noOfDiceAttacker">
+						</div>
+						<div class='col-sm-6'>
+							<label for="noOfDiceDefender">Number of Dice (Defender)</label> <input
+								type="text" class="form-control" id="noOfDiceDefender">
+						</div>
+					</div>
 				</div>
+
 				<div class="modal-footer">
 					<button id="attack" type="button" class="btn btn-primary"
 						style="background-color: black; border-color: black">Attack</button>
-					<button id="attackcomplete" type="button" class="btn btn-primary"
-						style="background-color: black; border-color: black">Complete
-						Attack</button>
+					<button id="attackAllOut" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">All
+						out</button>
+					<button id="attackEnd" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Attack
+						End</button>
 				</div>
 			</div>
 		</div>
 	</div>
+
+
 
 	<button id="check" type="button" class="btn btn-primary"
 		style="background-color: black; border-color: black">check</button>

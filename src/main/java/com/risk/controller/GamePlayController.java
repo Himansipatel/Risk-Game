@@ -120,6 +120,7 @@ public class GamePlayController {
 		gamePlay.setFree_cards(gamePlayFromView.getFree_cards());
 		gamePlay.setGame_phase(gamePlayFromView.getGame_phase());
 		gamePlay.setStatus(gamePlayFromView.getStatus());
+		gamePlay.setAttack(gamePlayFromView.getAttack());
 		gamePlay.setGame_state(gamePlayFromView.getGame_state());
 	}
 }
