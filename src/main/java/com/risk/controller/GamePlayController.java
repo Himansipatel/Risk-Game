@@ -1,5 +1,7 @@
 package com.risk.controller;
 
+import java.util.Observer;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -39,6 +41,8 @@ public class GamePlayController {
 	@Autowired
 	IManageGamePlay iManageGamePlay;
 
+	static GamePlay gamePlay;
+
 	/**
 	 * This function renders the gamePlay.jsp file on which players can start
 	 * playing their game.
@@ -76,9 +80,9 @@ public class GamePlayController {
 			@RequestParam(value = "fileName", required = true) String fileName,
 			@RequestParam(value = "allocationType", required = true) String allocationType) throws Exception {
 
-		GamePlay game_state = null;
-		game_state = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName, allocationType);
-		return game_state;
+		gamePlay = iManagePlayer.createPlayer(Integer.parseInt(playersNo), fileName, allocationType);
+		gamePlay.addObserver((Observer) iManageGamePlay);
+		return gamePlay;
 	}
 
 	/**
@@ -96,8 +100,26 @@ public class GamePlayController {
 	@RequestMapping(value = "/saveGameState", method = RequestMethod.POST)
 	@ResponseBody
 	public GamePlay submitGameState(HttpServletRequest request, HttpServletResponse response,
-			@RequestBody GamePlay gamePlay) throws Exception {
-		gamePlay = iManageGamePlay.savePhase(gamePlay);
+			@RequestBody GamePlay gamePlayFromView) throws Exception {
+		// gamePlay = iManageGamePlay.savePhase(gamePlay);
+		abstractView(gamePlayFromView);
 		return gamePlay;
+	}
+
+	/**
+	 * This function provides the abstract view for observer design pattern.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param gamePlay game state to save
+	 */
+	private void abstractView(GamePlay gamePlayFromView) {
+		gamePlay.setMap(gamePlayFromView.getMap());
+		gamePlay.setCard_trade(gamePlayFromView.getCard_trade());
+		gamePlay.setCurrent_player(gamePlayFromView.getCurrent_player());
+		gamePlay.setFile_name(gamePlayFromView.getFile_name());
+		gamePlay.setFree_cards(gamePlayFromView.getFree_cards());
+		gamePlay.setGame_phase(gamePlayFromView.getGame_phase());
+		gamePlay.setStatus(gamePlayFromView.getStatus());
+		gamePlay.setGame_state(gamePlayFromView.getGame_state());
 	}
 }
