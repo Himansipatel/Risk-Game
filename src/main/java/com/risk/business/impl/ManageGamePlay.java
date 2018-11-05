@@ -77,12 +77,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 		if (game_state!=null) {
 
-			//IManageMap  map_manager  = new ManageMap();
-			//String[] file_name = game_state.getFile_name().split("_");
-			//IManageFile file_manager = new ManageFile(file_name[0].concat(".map"));		
-			//File file = file_manager.retreiveFileObject();
 			Player player = new Player();
-			//Map map = map_manager.convertFileToMap(file);
 			Map map = game_state.getMap();
 
 			if (map==null) {
@@ -100,7 +95,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
-			case "REINFORCE":
+			case "REINFORCEMENT":
 				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				game_state = player.reInforce(game_state);
 				break;
@@ -110,16 +105,20 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				break;
 
 			case "ATTACK_ON":
+				player.attack(game_state);
 				break;
 			
 			case "ATTACK_ARMY_MOVE":
+				player.attack(game_state);
 				break;
 				
 			case "ATTACK_END":
+				player.attack(game_state);
 				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
 			case "FORTIFICATION":
+				//player.fortify(game_state);
 				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
@@ -297,7 +296,11 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			game_state.setGame_phase("REINFORCE");
 			break;
 
-		case "REINFORCE":
+		case "REINFORCEMENT":
+			game_state.setGame_phase("ATTACK");
+			break;
+
+		case "ATTACK_ON": 
 			game_state.setGame_phase("ATTACK_ON");
 			break;
 			
