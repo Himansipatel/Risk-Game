@@ -33,4 +33,17 @@ public interface IManagePlayer {
 	 * @return GamePlay Object
 	 */
 	GamePlay attack(GamePlay game_play);
+	
+	/**
+	 * This function is an main function of fortify which initially check for each
+	 * fortification validation and get results and based on result it perform certain
+	 * actions like populating message , increment/decrement armies from respective
+	 * player and fortification is performed if destination is valid adjacency territory of source
+	 * and check valid army count available in source territory and update army stock accordingly
+	 * 
+	 * @author <a href="mailto:zinnia.rana.22@gmail.com">Zinnia Rana</a>
+	 * @param game_play : GamePlay Object
+	 * @return GamePlay Object
+	 */
+	GamePlay fortify(GamePlay game_play);
 }

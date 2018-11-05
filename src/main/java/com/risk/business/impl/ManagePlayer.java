@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -342,6 +343,59 @@ public class ManagePlayer implements IManagePlayer {
 			}
 		}
 		return total_territory_list;
+	}
+
+	/**
+	 * 
+	 * @see com.risk.business.IManagePlayer#fortify(com.risk.model.GamePlay)
+	 * 
+	 * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
+	 */
+	@Override
+	public GamePlay fortify(GamePlay game_play) {
+		// Attacker can move armies between adjacent territories
+		int destination_territory_armies = 0;
+		int source_territory_armies = 0;
+		String source_territory = game_play.getFortify().getSource_territory();
+		String destination_territory = game_play.getFortify().getDestination_territory();
+		int armyCount = game_play.getFortify().getArmy_count();
+		List<Player> players_list = game_play.getGame_state();
+		for (Player player : players_list) {
+			List<GamePlayTerritory> territory_list = player.getTerritory_list();
+			for (GamePlayTerritory each_territory : territory_list) {
+				if (each_territory.getTerritory_name().equalsIgnoreCase(source_territory)) {
+					// Attacker Territory Object
+					source_territory_armies = each_territory.getNumber_of_armies();
+				}
+				if (each_territory.getTerritory_name().equalsIgnoreCase(destination_territory)) {
+					// Attacker Territory Object
+					destination_territory_armies = each_territory.getNumber_of_armies();
+				}
+			}
+		}
+		if (source_territory.equalsIgnoreCase(destination_territory)) {
+			game_play.setStatus("Fortification cannot be performed because same territory is selected in destination");
+			return game_play;
+		} else if (source_territory_armies <= armyCount) {
+			game_play.setStatus("Source Territory is not having minimum armies to transfer");
+			return game_play;
+		} else {
+			for (Iterator<Entry<String, Continent>> iterator = game_play.getMap().getContinents().entrySet()
+					.iterator(); iterator.hasNext();) {
+				java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
+				for (Territory territory : continent_entry.getValue().getTerritories()) {
+					String neighbours = String.join(";", territory.getNeighbours());
+					if (source_territory.equalsIgnoreCase(territory.getName())) {
+						if (destination_territory == neighbours) {
+							source_territory_armies = source_territory_armies - armyCount;
+							destination_territory_armies = destination_territory_armies + armyCount;
+						}
+
+					}
+				}
+			}
+		}
+		return game_play;
 	}
 
 	/**
