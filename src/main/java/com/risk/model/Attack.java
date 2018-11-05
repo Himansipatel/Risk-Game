@@ -4,8 +4,9 @@
 package com.risk.model;
 
 /**
+ * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
- *
+ * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
  */
 public class Attack {
 
@@ -13,16 +14,10 @@ public class Attack {
 	private String defender_territory;
 	private int attacker_dice_no;
 	private int defender_dice_no;
-	private static Attack attack;
-	
-	private Attack() {}
 
-	public static Attack getAttackInstance() {
-		if (attack == null)
-			attack = new Attack();
-		return attack;
+	public Attack() {
 	}
-	
+
 	/**
 	 * @return the attacker_territory
 	 */

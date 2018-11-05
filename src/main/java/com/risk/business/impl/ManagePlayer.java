@@ -356,9 +356,9 @@ public class ManagePlayer implements IManagePlayer {
 		// Attacker can move armies between adjacent territories
 		int destination_territory_armies = 0;
 		int source_territory_armies = 0;
-		String source_territory = game_play.getFortify().getSource_territory();
-		String destination_territory = game_play.getFortify().getDestination_territory();
-		int armyCount = game_play.getFortify().getArmy_count();
+		String source_territory = game_play.getFortification().getSource_territory();
+		String destination_territory = game_play.getFortification().getDestination_territory();
+		int army_count = game_play.getFortification().getArmy_count();
 		List<Player> players_list = game_play.getGame_state();
 		for (Player player : players_list) {
 			List<GamePlayTerritory> territory_list = player.getTerritory_list();
@@ -374,30 +374,34 @@ public class ManagePlayer implements IManagePlayer {
 			}
 		}
 		if (source_territory.equalsIgnoreCase(destination_territory)) {
-			game_play.setStatus("Fortification cannot be performed because same territory is selected in destination");
+			game_play.setStatus("Fortification cannot be performed because same territory is selected in destination.");
 			return game_play;
-		} else if (source_territory_armies <= armyCount) {
-			game_play.setStatus("Source Territory is not having minimum armies to transfer");
+		} else if (source_territory_armies <= army_count) {
+			game_play.setStatus(source_territory + " is not having minimum armies to transfer");
 			return game_play;
 		} else {
 			for (Iterator<Entry<String, Continent>> iterator = game_play.getMap().getContinents().entrySet()
 					.iterator(); iterator.hasNext();) {
 				java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
 				for (Territory territory : continent_entry.getValue().getTerritories()) {
-					String neighbours = String.join(";", territory.getNeighbours());
 					if (source_territory.equalsIgnoreCase(territory.getName())) {
-						if (destination_territory == neighbours) {
-							source_territory_armies = source_territory_armies - armyCount;
-							destination_territory_armies = destination_territory_armies + armyCount;
-						}
-
+						for (String each_neighbour_territory : territory.getNeighbours())
+							if (destination_territory.equalsIgnoreCase(each_neighbour_territory)) {
+								source_territory_armies = source_territory_armies - army_count;
+								destination_territory_armies = destination_territory_armies + army_count;
+								game_play.setStatus("Fortification Successful");
+								break;
+							} else {
+								game_play.setStatus("Invalid Fortification - " + destination_territory
+										+ " is not a Neighbouring Territory");
+							}
 					}
 				}
 			}
 		}
 		return game_play;
 	}
-
+	
 	/**
 	 * 
 	 * @see com.risk.business.IManagePlayer#attack(com.risk.model.GamePlay)
@@ -416,13 +420,13 @@ public class ManagePlayer implements IManagePlayer {
 		List<GamePlayTerritory> attacker_territory_list = new ArrayList<>();
 		List<GamePlayTerritory> defender_territory_list = new ArrayList<>();
 		List<String> attack_message_list = new ArrayList<>();
-		Attack attack = GamePlay.getAttack();
+		Attack attack = game_play.getAttack();
 
 		// Local Variable : To get actual army values from getter
 		int attacker_terrtiory_armies = 0;
 		int defender_territory_armies = 0;
-		String attacker_territory_name = GamePlay.getAttack().getAttacker_territory();
-		String defender_territory_name = GamePlay.getAttack().getDefender_territory();
+		String attacker_territory_name = game_play.getAttack().getAttacker_territory();
+		String defender_territory_name = game_play.getAttack().getDefender_territory();
 		List<Player> players_list = game_play.getGame_state();
 
 		for (Player player : players_list) {
@@ -452,8 +456,8 @@ public class ManagePlayer implements IManagePlayer {
 		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ALL_OUT")) {
 			setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
 		}
-		attacker_dice_no = GamePlay.getAttack().getAttacker_dice_no();
-		defender_dice_no = GamePlay.getAttack().getDefender_dice_no();
+		attacker_dice_no = game_play.getAttack().getAttacker_dice_no();
+		defender_dice_no = game_play.getAttack().getDefender_dice_no();
 		String valid_attack_message = checkForValidAttack(attacker_terrtiory_armies, defender_territory_armies,
 				attacker_dice_no, defender_dice_no);
 		if (valid_attack_message.trim().length() == 0) {

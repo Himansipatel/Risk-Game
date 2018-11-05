@@ -128,4 +128,18 @@ public class Player {
 		game_play = manage_player.attack(game_play);
 		return game_play;
 	}
+
+	/**
+	 * @see com.risk.business.IManagePlayer#fortify(com.risk.model.GamePlay)
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 *         Comments and Function added by Mayank Jariwala
+	 * @param game_play
+	 * @return GamePlay Object
+	 */
+	public GamePlay fortify(GamePlay game_play) {
+		ManagePlayer manage_player = new ManagePlayer();
+		game_play = manage_player.fortify(game_play);
+		return game_play;
+	}
 }

@@ -11,23 +11,13 @@ import java.util.Observable;
  * @version 0.0.1
  */
 
-public class GamePlay extends Observable{
-	private Fortification fortify;
-	/**
-	 * @return the game_state
-	 */
-	public Fortification getFortify(){
-		if(fortify==null)
-		{
-		 fortify = new Fortification();
-		}
-		return fortify;
-	}
+public class GamePlay extends Observable {
+
 	/**
 	 * State of the entire game at any point of time.
 	 */
 	private List<Player> game_state;
-	
+
 	/**
 	 * Map File name for the current game play
 	 */
@@ -61,14 +51,39 @@ public class GamePlay extends Observable{
 
 	/**
 	 * Represents the info captured during trading of cards.
-	 */	
-	private CardTrade card_trade;
-	
-	/**
-	 * @return the attack instance
 	 */
-	public static Attack getAttack() {
-		return Attack.getAttackInstance();
+	private CardTrade card_trade;
+
+	private Attack attack;
+
+	private Fortification fortification;
+
+	/**
+	 * @return the attack
+	 */
+	public Attack getAttack() {
+		return attack;
+	}
+
+	/**
+	 * @param attack the attack to set
+	 */
+	public void setAttack(Attack attack) {
+		this.attack = attack;
+	}
+
+	/**
+	 * @return the fortification
+	 */
+	public Fortification getFortification() {
+		return fortification;
+	}
+
+	/**
+	 * @param fortification the fortification to set
+	 */
+	public void setFortification(Fortification fortification) {
+		this.fortification = fortification;
 	}
 
 	/**
@@ -79,9 +94,9 @@ public class GamePlay extends Observable{
 	}
 
 	/**
-	 * Any change in the state of GamePlay based on actions at UI, will trigger calling of update method in ManageGamePlay 
-	 * which is acting as the Observer.
-	 *  
+	 * Any change in the state of GamePlay based on actions at UI, will trigger
+	 * calling of update method in ManageGamePlay which is acting as the Observer.
+	 * 
 	 * @param game_state the game_state to set
 	 */
 	public void setGame_state(List<Player> game_state) {
@@ -176,16 +191,17 @@ public class GamePlay extends Observable{
 
 	/**
 	 * @return the card trading model capturing data about the cards being traded.
-	 */					
+	 */
 	public CardTrade getCard_trade() {
 		return card_trade;
 	}
 
 	/**
-	 * @param card_trade card trading model capturing data about the cards being traded. 
-	 */	
+	 * @param card_trade card trading model capturing data about the cards being
+	 *                   traded.
+	 */
 	public void setCard_trade(CardTrade card_trade) {
 		this.card_trade = card_trade;
-	}	
+	}
 
 }
