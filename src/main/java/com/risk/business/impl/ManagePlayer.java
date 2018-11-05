@@ -138,7 +138,7 @@ public class ManagePlayer implements IManagePlayer {
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
 		String game_phase;
 		int current_player = 1;
-		game_phase = allocation_type.equalsIgnoreCase("A") ? "REINFORCE" : "STARTUP";
+		game_phase = allocation_type.equalsIgnoreCase("A") ? "REINFORCEMENT" : "STARTUP";
 		file_name = (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name) + "_"
 				+ String.valueOf(System.currentTimeMillis());
 		GamePlay game_play = new GamePlay();
@@ -321,7 +321,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @param map Map Object for retrieving Territories.
 	 * @return List of territories
 	 */
-	private List<GamePlayTerritory> getTerritories(Map map) {
+	public List<GamePlayTerritory> getTerritories(Map map) {
 		Continent map_continent;
 		Territory map_territory;
 		HashMap<String, Continent> continents = new HashMap<String, Continent>();
@@ -401,7 +401,7 @@ public class ManagePlayer implements IManagePlayer {
 		}
 		return game_play;
 	}
-	
+
 	/**
 	 * 
 	 * @see com.risk.business.IManagePlayer#attack(com.risk.model.GamePlay)
@@ -487,6 +487,7 @@ public class ManagePlayer implements IManagePlayer {
 
 			// Iterating Attacker Territory List for performing actions regarding dice
 			// result
+			boolean is_territory_occupied = false;
 			for (GamePlayTerritory att_territory : attacker_territory_list) {
 				for (Player player : players_list) {
 					if (player.getId() == attacker_id) {
@@ -497,8 +498,10 @@ public class ManagePlayer implements IManagePlayer {
 								territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
 							} else if (!territory_list.contains(att_territory)) {
 								territory_list.add(att_territory);
+								is_territory_occupied = true;
 							}
 						}
+						player.setAny_territory_occupied(is_territory_occupied);
 					}
 				}
 			}
@@ -524,7 +527,6 @@ public class ManagePlayer implements IManagePlayer {
 				}
 			}
 			attack_message = String.join(",", attack_message_list);
-			System.out.println(attack_message);
 			game_play.setStatus(attack_message);
 		} else {
 			game_play.setStatus(valid_attack_message);
@@ -535,6 +537,34 @@ public class ManagePlayer implements IManagePlayer {
 			attack(game_play);
 		}
 		return game_play;
+	}
+
+	/**
+	 * 
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param game_play
+	 * @return Card Object : A Single Card to player
+	 */
+	public void giveCardAtAttackEnd(GamePlay game_play) {
+		int current_player_id = game_play.getCurrent_player();
+		boolean is_territory_occupied = false;
+		for (int player_list_index = 0; player_list_index < game_play.getGame_state().size(); player_list_index++) {
+			if (current_player_id == game_play.getGame_state().get(player_list_index).getId()) {
+				is_territory_occupied = game_play.getGame_state().get(player_list_index).isAny_territory_occupied();
+			}
+		}
+		if (is_territory_occupied) {
+			if (game_play.getFree_cards().size() > 0) {
+				Card card = game_play.getFree_cards().get(0);
+				game_play.getFree_cards().remove(0);
+				for (int player_list_index = 0; player_list_index < game_play.getGame_state()
+						.size(); player_list_index++) {
+					if (current_player_id == game_play.getGame_state().get(player_list_index).getId()) {
+						game_play.getGame_state().get(player_list_index).getCard_list().add(card);
+					}
+				}
+			}
+		}
 	}
 
 	/**

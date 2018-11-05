@@ -6,14 +6,18 @@ package com.risk.business;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.risk.business.impl.ManagePlayer;
 import com.risk.model.Attack;
+import com.risk.model.Card;
 import com.risk.model.Fortification;
 import com.risk.model.GamePlay;
+import com.risk.model.GamePlayTerritory;
 
 /**
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -59,6 +63,35 @@ public class ManagePlayerTest {
 		assertTrue(containsWon(message));
 	}
 
+	@Test
+	public void checkValidCardCreationTest() {
+		ManagePlayer managePlayer = new ManagePlayer();
+		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "A");
+		List<GamePlayTerritory> map_territory_list = managePlayer.getTerritories(gamePlay.getMap());
+		int map_territory_list_size = map_territory_list.size();
+		List<Card> free_card_list = gamePlay.getFree_cards();
+		int free_card_list_size = free_card_list.size();
+		assertEquals(map_territory_list_size, free_card_list_size);
+	}
+
+	@Test
+	public void validateManuallyAssignArmyStock() {
+		ManagePlayer managePlayer = new ManagePlayer();
+		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "M");
+		for (int i = 0; i < gamePlay.getGame_state().size(); i++) {
+			assertEquals(40, gamePlay.getGame_state().get(i).getArmy_stock());
+		}
+
+	}
+
+	@Test
+	public void validateAutomaticallyAssignArmyStock() {
+		ManagePlayer managePlayer = new ManagePlayer();
+		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "A");
+		assertEquals(5, gamePlay.getGame_state().get(0).getArmy_stock());
+		assertEquals(6, gamePlay.getGame_state().get(1).getArmy_stock());
+	}
+	
 	/**
 	 * This test just check for <i>Invalid</i> fortification move to player <b>
 	 * Neighboring Territory </b>
