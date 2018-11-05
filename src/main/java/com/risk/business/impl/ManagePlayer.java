@@ -66,14 +66,12 @@ public class ManagePlayer implements IManagePlayer {
 			player_info_list.add(p);
 		}
 		ManageMap manage_map_object = new ManageMap();
-		ManageGamePlay game_manager = new ManageGamePlay();
 		map = new Map();
 		map = manage_map_object.getFullMap(file_name);
 		if (map != null && map.getStatus().equalsIgnoreCase("")) {
 			assingTerritoriesToPlayers(map);
 			if (army_allocation_type.equalsIgnoreCase("A")) {
 				assignArmiesOnTerritories(army_stock);
-				game_manager.calculateArmiesReinforce(game_play.getGame_state(), map);
 			}
 			game_play = writePlayerToFile(player_info_list, file_name, army_allocation_type);
 		} else if (map != null && map.getStatus() != "") {
@@ -135,14 +133,11 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	private GamePlay writePlayerToFile(List<Player> player_info_list, String file_name, String allocation_type) {
 		List<Player> player_list_at_file = convertPlayerToFileLayer(player_info_list);
+		ManageGamePlay game_manager = new ManageGamePlay();
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
 		String game_phase;
 		int current_player = 1;
-		if (allocation_type.equalsIgnoreCase("A")) {
-			game_phase = "REINFORCE";
-		} else {
-			game_phase = "STARTUP";
-		}
+		game_phase = allocation_type.equalsIgnoreCase("A") ? "REINFORCE" : "STARTUP";
 		file_name = (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name) + "_"
 				+ String.valueOf(System.currentTimeMillis());
 		GamePlay game_play = new GamePlay();
@@ -154,7 +149,9 @@ public class ManagePlayer implements IManagePlayer {
 		game_play.setCard_trade(new CardTrade());
 		List<Card> free_cards = getFreeCards();
 		game_play.setFree_cards(free_cards);
-
+		if (allocation_type.equalsIgnoreCase("A")) {
+			game_manager.calculateArmiesReinforce(game_play.getGame_state(), map);
+		}
 		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(game_play);
 		if (file_write_message)
 			return game_play;
