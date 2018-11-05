@@ -21,9 +21,29 @@ public class Player {
 	private List<Card> card_list;
 
 	/**
+	 * During Attack Phase If Player is occupying territory then flag will set to
+	 * true and will get one card as per risk rule at the end of attack.
+	 */
+	private boolean any_territory_occupied;
+
+	/**
 	 * To identify how many card sets are traded for a particular Player.
 	 */
 	private int trade_count;
+
+	/**
+	 * @return the any_territory_occupied
+	 */
+	public boolean isAny_territory_occupied() {
+		return any_territory_occupied;
+	}
+
+	/**
+	 * @param any_territory_occupied the any_territory_occupied to set
+	 */
+	public void setAny_territory_occupied(boolean any_territory_occupied) {
+		this.any_territory_occupied = any_territory_occupied;
+	}
 
 	/**
 	 * @return the trade_count
