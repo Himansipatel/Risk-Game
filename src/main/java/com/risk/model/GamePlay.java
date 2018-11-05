@@ -12,7 +12,17 @@ import java.util.Observable;
  */
 
 public class GamePlay extends Observable{
-	
+	private Fortification fortify;
+	/**
+	 * @return the game_state
+	 */
+	public Fortification getFortify(){
+		if(fortify==null)
+		{
+		 fortify = new Fortification();
+		}
+		return fortify;
+	}
 	/**
 	 * State of the entire game at any point of time.
 	 */
