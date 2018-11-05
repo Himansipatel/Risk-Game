@@ -55,6 +55,18 @@
 						$("#player4Reinforcement").attr("disabled", "disabled");
 						$("#player5Reinforcement").attr("disabled", "disabled");
 						$("#player6Reinforcement").attr("disabled", "disabled");
+						$("#player1Attack").attr("disabled", "disabled");
+						$("#player2Attack").attr("disabled", "disabled");
+						$("#player3Attack").attr("disabled", "disabled");
+						$("#player4Attack").attr("disabled", "disabled");
+						$("#player5Attack").attr("disabled", "disabled");
+						$("#player6Attack").attr("disabled", "disabled");
+						$("#player1Fortification").attr("disabled", "disabled");
+						$("#player2Fortification").attr("disabled", "disabled");
+						$("#player3Fortification").attr("disabled", "disabled");
+						$("#player4Fortification").attr("disabled", "disabled");
+						$("#player5Fortification").attr("disabled", "disabled");
+						$("#player6Fortification").attr("disabled", "disabled");
 
 						//css change
 						$("#countriesDesc_next").css("color", "black");
@@ -82,6 +94,25 @@
 										alert("Failure fetching map");
 									}
 								});
+
+						function clearGameState() {
+							var noOfPlayers = $("#noOfPlayer option:selected")
+									.val();
+							switch (String(noOfPlayers)) {
+							case "6":
+								player6DataTable.clear().draw();
+							case "5":
+								player5DataTable.clear().draw();
+							case "4":
+								player4DataTable.clear().draw();
+							case "3":
+								player3DataTable.clear().draw();
+							case "2":
+								player2DataTable.clear().draw();
+							case "1":
+								player1DataTable.clear().draw();
+							}
+						}
 
 						function parseMapData(data) {
 
@@ -234,18 +265,18 @@
 						}
 
 						function getEachPlayerArmiesStock(playerNo) {
-							switch (playerNo) {
-							case 1:
+							switch (String(playerNo)) {
+							case "1":
 								return armiesStockOfPlayer1;
-							case 2:
+							case "2":
 								return armiesStockOfPlayer2;
-							case 3:
+							case "3":
 								return armiesStockOfPlayer3;
-							case 4:
+							case "4":
 								return armiesStockOfPlayer4;
-							case 5:
+							case "5":
 								return armiesStockOfPlayer5;
-							case 6:
+							case "6":
 								return armiesStockOfPlayer6;
 							}
 						}
@@ -547,12 +578,18 @@
 							fetchMap();
 							initStartUpPhase(false);
 							$('#mapSelectModal').modal('toggle');
+							whichPlayerChance = 1;
+							//armiesStockOfPlayer1 = 3;
+							checkForNextPhaseAndDisplayOption();
 						});
 
 						$('#autoAllocate').on('click', function() {
 							fetchMap();
 							initStartUpPhase(true);
 							$('#mapSelectModal').modal('toggle');
+							whichPlayerChance = 1;
+							//armiesStockOfPlayer1 = 3;
+							checkForNextPhaseAndDisplayOption();
 						});
 
 						$('#check').on('click', function() {
@@ -580,6 +617,7 @@
 						}
 
 						function saveGameState() {
+							showLoading();
 							var playerArray = [];
 							for (var i = 1; i <= noOfPlayingPlayer; i++) {
 								var playerD = makePlayerData(i);
@@ -598,14 +636,20 @@
 								data : a,
 								contentType : "application/json",
 								success : function(data) {
-									currentPhase = "ATTACK";
-									whichPlayerChance = 1;
-									armiesStockOfPlayer1 = 3;
-									alert("success saving map");
+									clearGameState();
+									parseGamePlayData(data.game_state);
+									currentMapName = (data.file_name);
+									//set currentPhase also(later)
+									//read player no from data
+									alert(currentPhase + " ended");
+									currentPhase = data.game_phase;
+									whichPlayerChance = data.current_player;
 									checkForNextPhaseAndDisplayOption();
+									stopLoading();
 								},
 								error : function(XMLHttpRequest, textStatus,
 										errorThrown) {
+									stopLoading();
 									alert("Invalid GameState. Please check");
 								}
 							});
@@ -640,18 +684,217 @@
 							}
 						}
 
+						function displayAttackButtonForPlayer() {
+							switch (String(whichPlayerChance)) {
+							case "1":
+								$("#player1Attack").removeAttr("disabled");
+								break;
+							case "2":
+								$("#player2Attack").removeAttr("disabled");
+								break;
+							case "3":
+								$("#player3Attack").removeAttr("disabled");
+								break;
+							case "4":
+								$("#player4Attack").removeAttr("disabled");
+								break;
+							case "5":
+								$("#player5Attack").removeAttr("disabled");
+								break;
+							case "6":
+								$("#player6Attack").removeAttr("disabled");
+								break;
+							}
+						}
+
+						function displayFortificationButtonForPlayer() {
+							switch (String(whichPlayerChance)) {
+							case "1":
+								$("#player1Fortification").removeAttr(
+										"disabled");
+								break;
+							case "2":
+								$("#player2Fortification").removeAttr(
+										"disabled");
+								break;
+							case "3":
+								$("#player3Fortification").removeAttr(
+										"disabled");
+								break;
+							case "4":
+								$("#player4Fortification").removeAttr(
+										"disabled");
+								break;
+							case "5":
+								$("#player5Fortification").removeAttr(
+										"disabled");
+								break;
+							case "6":
+								$("#player6Fortification").removeAttr(
+										"disabled");
+								break;
+							}
+						}
+
+						function hideReinforcementButtonForPlayer() {
+							switch (String(whichPlayerChance)) {
+							case "1":
+								$("#player1Reinforcement").attr("disabled",
+										"disabled");
+								break;
+							case "2":
+								$("#player2Reinforcement").attr("disabled",
+										"disabled");
+								break;
+							case "3":
+								$("#player3Reinforcement").attr("disabled",
+										"disabled");
+								break;
+							case "4":
+								$("#player4Reinforcement").attr("disabled",
+										"disabled");
+								break;
+							case "5":
+								$("#player5Reinforcement").attr("disabled",
+										"disabled");
+								break;
+							case "6":
+								$("#player6Reinforcement").attr("disabled",
+										"disabled");
+								break;
+							}
+						}
+
+						function hideAttackButtonForPlayer() {
+							switch (String(whichPlayerChance)) {
+							case "1":
+								$("#player1Attack")
+										.attr("disabled", "disabled");
+								break;
+							case "2":
+								$("#player2Attack")
+										.attr("disabled", "disabled");
+								break;
+							case "3":
+								$("#player3Attack")
+										.attr("disabled", "disabled");
+								break;
+							case "4":
+								$("#player4Attack")
+										.attr("disabled", "disabled");
+								break;
+							case "5":
+								$("#player5Attack")
+										.attr("disabled", "disabled");
+								break;
+							case "6":
+								$("#player6Attack")
+										.attr("disabled", "disabled");
+								break;
+							}
+						}
+
+						function hideFortificationButtonForPlayer() {
+							switch (String(whichPlayerChance)) {
+							case "1":
+								$("#player1Fortification").attr("disabled",
+										"disabled");
+								break;
+							case "2":
+								$("#player2Fortification").attr("disabled",
+										"disabled");
+								break;
+							case "3":
+								$("#player3Fortification").attr("disabled",
+										"disabled");
+								break;
+							case "4":
+								$("#player4Fortification").attr("disabled",
+										"disabled");
+								break;
+							case "5":
+								$("#player5Fortification").attr("disabled",
+										"disabled");
+								break;
+							case "6":
+								$("#player6Fortification").attr("disabled",
+										"disabled");
+								break;
+							}
+						}
+
 						function checkForNextPhaseAndDisplayOption() {
-							//current phase will always be the start of next phase 
 							if (currentPhase == "ATTACK") {
-								displayReinforcementButtonForPlayer();
+								displayAttackButtonForPlayer();
 							} else if (currentPhase == "FORTIFICATION") {
-								//TO DO
+								displayFortificationButtonForPlayer();
 							} else if (currentPhase == "REINFORCEMENT") {
-								//TO DO
+								displayReinforcementButtonForPlayer();
 							}
 						}
 
 						function fillReinforcementModal(no) {
+							$('#countriesForReinforcement').find('option')
+									.remove();
+							//hardcoded
+							var playerTable = fetchDataTableforCurrentPlayer(no);
+							playerTableData = playerTable.rows().data();
+							playerArmiesStock = getEachPlayerArmiesStock(no);
+							$("#reinforcementRemainingArmies").text(
+									playerArmiesStock);
+							for (var i = 0; i < playerTableData.length; i++) {
+								$('#countriesForReinforcement').append(
+										$('<option>', {
+											value : playerTableData[i][0],
+											text : playerTableData[i][0]
+										}));
+							}
+						}
+
+						$('#player1Reinforcement').on('click', function() {
+							fillReinforcementModal("1");
+							$('#reinforcementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						});
+						$('#player2Reinforcement').on('click', function() {
+							fillReinforcementModal("2");
+							$('#reinforcementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player3Reinforcement').on('click', function() {
+							fillReinforcementModal("3");
+							$('#reinforcementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player4Reinforcement').on('click', function() {
+							fillReinforcementModal("4");
+							$('#reinforcementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player5Reinforcement').on('click', function() {
+							fillReinforcementModal("5");
+							$('#reinforcementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player6Reinforcement').on('click', function() {
+							fillReinforcementModal("6");
+							$('#reinforcementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						});
+
+						function fillAttackModal(no) {
 							$('#countriesForReinforcement').find('option')
 									.remove();
 							//hardcoded
@@ -667,9 +910,44 @@
 							}
 						}
 
-						$('#player1Reinforcement').on('click', function() {
+						$('#player1Attack').on('click', function() {
 							fillReinforcementModal("1");
-							$('#reinforcementModal').modal({
+							$('#attackModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						});
+						$('#player2Attack').on('click', function() {
+							fillReinforcementModal("2");
+							$('#attackModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player3Attack').on('click', function() {
+							fillReinforcementModal("3");
+							$('#attackModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player4Attack').on('click', function() {
+							fillReinforcementModal("4");
+							$('#attackModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player5Attack').on('click', function() {
+							fillReinforcementModal("5");
+							$('#attackModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player6Attack').on('click', function() {
+							fillReinforcementModal("6");
+							$('#attackModal').modal({
 								backdrop : 'static',
 								keyboard : false
 							});
@@ -693,12 +971,14 @@
 												if (armiesStockOfPlayer1 == 0) {
 													$('#reinforcementModal')
 															.modal('toggle');
+													hideReinforcementButtonForPlayer();
 													saveGameState();
 												}
 												return;
 											}
 											$('#reinforcementModal').modal(
 													'toggle');
+											hideReinforcementButtonForPlayer();
 											saveGameState();
 										});
 					});
@@ -774,6 +1054,11 @@
 			<button id="player1Reinforcement" type="button"
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Reinforce</button>
+			<button id="player1Attack" type="button" class="btn btn-primary"
+				style="background-color: black; border-color: black">Attack</button>
+			<button id="player1Fortification" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p2">
 			<h3>Player 2 :</h3>
@@ -796,6 +1081,11 @@
 			<button id="player2Reinforcement" type="button"
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Reinforce</button>
+			<button id="player2Attack" type="button" class="btn btn-primary"
+				style="background-color: black; border-color: black">Attack</button>
+			<button id="player2Fortification" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p3">
 			<h3>Player 3 :</h3>
@@ -818,6 +1108,11 @@
 			<button id="player3Reinforcement" type="button"
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Reinforce</button>
+			<button id="player3Attack" type="button" class="btn btn-primary"
+				style="background-color: black; border-color: black">Attack</button>
+			<button id="player3Fortification" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p4">
 			<h3>Player 4 :</h3>
@@ -840,6 +1135,11 @@
 			<button id="player4Reinforcement" type="button"
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Reinforce</button>
+			<button id="player4Attack" type="button" class="btn btn-primary"
+				style="background-color: black; border-color: black">Attack</button>
+			<button id="player4Fortification" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p5">
 			<h3>Player 5 :</h3>
@@ -862,6 +1162,11 @@
 			<button id="player5Reinforcement" type="button"
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Reinforce</button>
+			<button id="player5Attack" type="button" class="btn btn-primary"
+				style="background-color: black; border-color: black">Attack</button>
+			<button id="player5Fortification" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p6">
 			<h3>Player 6 :</h3>
@@ -884,6 +1189,11 @@
 			<button id="player6Reinforcement" type="button"
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Reinforce</button>
+			<button id="player6Attack" type="button" class="btn btn-primary"
+				style="background-color: black; border-color: black">Attack</button>
+			<button id="player6Fortification" type="button"
+				class="btn btn-primary"
+				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 	</div>
 
@@ -970,6 +1280,10 @@
 				<div class="modal-header">
 					<h5 class="modal-title" id="exampleModalLongTitle">Reinforcement
 						Phase</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
 				</div>
 				<div class="modal-body">
 					<div>
@@ -989,6 +1303,48 @@
 					<button id="armiesSelectionForReinforcementDone" type="button"
 						class="btn btn-primary"
 						style="background-color: black; border-color: black">Reinforce</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal Attack -->
+	<div class="modal fade" id="attackModal" tabindex="-1" role="dialog"
+		aria-labelledby="attackModalTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Attack
+						Phase</h5>
+				</div>
+				<div class="modal-body">
+					<div>
+						<label>Attack dude</label>
+					</div>
+					<div class='row'>
+						<div class='col-sm-6'>
+							<p>Please select your country from where you want to attack</p>
+							<label for="countriesFromAttack">Countries from attack: </label>
+							<select class="form-control form-control-sm"
+								id="countriesFromAttack">
+								<option></option>
+							</select>
+						</div>
+						<div class='col-sm-6'>
+							<p>Please select your country to attack</p>
+							<label for="countriesForAttack">Countries to attack : </label> <select
+								class="form-control form-control-sm" id="countriesForAttack">
+								<option></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button id="attack" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Attack</button>
+					<button id="attackcomplete" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Complete
+						Attack</button>
 				</div>
 			</div>
 		</div>
