@@ -1031,7 +1031,6 @@
 						});
 
 						function fillFortificationModal(no) {
-							debugger;
 							//clear modal values
 							$('#countriesForFortificationSource')
 									.find('option').remove();
@@ -1187,7 +1186,7 @@
 
 						});
 						
-						function fortify(fortifyType) {debugger;
+						function fortify(fortifyType) {
 							data_game.fortification = {};
 							data_game.fortification.source_territory = $(
 									"#countriesForFortificationSource option:selected")
@@ -1205,7 +1204,7 @@
 						$('#fortify').on('click', function() {
 							fortify('FORTIFICATION');
 						});
-						$('#fortifyEnd').on('click', function() {debugger;
+						$('#fortifyEnd').on('click', function() {
 							hideFortificationButtonForPlayer();
 							fortify('FORTIFICATION_END');
 
