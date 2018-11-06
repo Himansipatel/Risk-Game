@@ -1166,15 +1166,35 @@
 								break;
 							}
 						}
+						
+						function checkIfCardsIsMoreThanFour(){
+							var no = $('#playerIdReinforcement').val();
+							var card_list;
+							for(var i=0;i<data_game.game_state.length;i++){
+								if(data_game.game_state[i].id ==no){
+									card_list = data_game.game_state[i].card_list;
+									break;
+								}
+							}
+							if(card_list.length >4){
+								return true;
+							}else{
+								return false;
+							}
+						}
 
 						$('#armiesSelectionForReinforcementDone')
 								.on(
 										'click',
 										function() {
-										var no = $('#playerIdReinforcement').val();
-										playerArmiesStock = getEachPlayerArmiesStock(no);
-										var playerTable = fetchDataTableforCurrentPlayer(no);
-										playerTableData = playerTable.rows().data();
+											if(checkIfCardsIsMoreThanFour()){
+												alert("More than 4 cards. Please trade cards first");
+												return;
+											}
+											var no = $('#playerIdReinforcement').val();
+											playerArmiesStock = getEachPlayerArmiesStock(no);
+											var playerTable = fetchDataTableforCurrentPlayer(no);
+											playerTableData = playerTable.rows().data();
 											if (playerArmiesStock > 0) {
 												playerArmiesStock =playerArmiesStock -1;
 												decreaseArmiesStockOfCurrentPlayer(no);
@@ -1256,6 +1276,82 @@
 							fortify('FORTIFICATION_END');
 
 						});
+						
+						$('#tradeCards').on('click', function(){
+							$('#tradeCardsForPlayer')
+							.find('option').remove();
+							
+							var no = $('#playerIdReinforcement').val();
+							var card_list;
+							for(var i=0;i<data_game.game_state.length;i++){
+								if(data_game.game_state[i].id ==no){
+									card_list = data_game.game_state[i].card_list;
+									break;
+								}
+							}
+							
+							for (var i = 0; i < card_list.length; i++) {
+								var cardString = card_list[i].territory_name+"-"+card_list[i].army_type;
+								$('#tradeCardsForPlayer').append(
+										$('<option>', {
+											value : cardString,
+											text : cardString
+										}));
+							}
+							
+							$('#tradeCardsModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});														
+						});
+						
+						$('#tradeCardsDone').on('click', function(){
+						var selected=[];
+						 $('#tradeCardsForPlayer :selected').each(function(i, sel){ 
+							    selected.push($(sel).val());
+							});
+						 
+						 if(selected.length != 3){
+							 alert('Minimum 3 cards is required');
+							 return;
+						 }
+						 var card1={};
+						 var card2={};
+						 var card3={};
+						 var card_trade={};
+						for(var i = 0; i < selected.length ; i++){
+							var array = selected[i].split('-');
+							switch(String(i)){
+							case '0': card1 = {
+									territory_name : array[0],
+									army_type : array[1] 
+							};
+								break;
+							case '1': card2 = {
+									territory_name : array[0],
+									army_type : array[1] 
+							};
+								break;
+							case '2': card3 = {
+									territory_name : array[0],
+									army_type : array[1]
+							};
+								break;
+							}
+						}
+						
+						card_trade ={
+								card1 : card1,
+								card2 : card2,
+								card3 : card3
+						};
+						
+						data_game.card_trade = card_trade;
+						currentPhase = 'TRADE_CARDS';
+						$('#tradeCardsModal').modal('toggle');
+						$('#reinforcementModal').modal('toggle');
+						saveGameState();														
+					});
 					});
 </script>
 
@@ -1701,6 +1797,34 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Modal Trade Cards -->
+	<div class="modal fade" id="tradeCardsModal" tabindex="-1"
+		role="dialog" aria-labelledby="tradeCardsModalTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Trade Cards</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Please select three of your cards to trade</p>
+					<label for="tradeCardsForPlayer">Cards : </label> <select
+						class="form-control form-control-sm" id="tradeCardsForPlayer"
+						multiple>
+						<option></option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button id="tradeCardsDone" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">trade</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
-</html>
 </html>
