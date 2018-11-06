@@ -121,6 +121,7 @@ public class GamePlayController {
 		gamePlay.setGame_phase(gamePlayFromView.getGame_phase());
 		gamePlay.setStatus(gamePlayFromView.getStatus());
 		gamePlay.setAttack(gamePlayFromView.getAttack());
+		gamePlay.setFortification(gamePlayFromView.getFortification());
 		gamePlay.setGame_state(gamePlayFromView.getGame_state());
 	}
 }
