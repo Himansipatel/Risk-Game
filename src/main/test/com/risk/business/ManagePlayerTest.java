@@ -37,8 +37,8 @@ public class ManagePlayerTest {
 
 	/**
 	 * This test validate that if player is rolling no. of dice greater than no. of
-	 * armies present on selected attacking territory then as per game rules player is not
-	 * allow to attack on any neighboring territory
+	 * armies present on selected attacking territory then as per game rules player
+	 * is not allow to attack on any neighboring territory
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 *         Function description added by Mayank Jariwala
@@ -77,7 +77,7 @@ public class ManagePlayerTest {
 		attack.setDefender_dice_no(2);
 		game_play.setAttack(attack);
 		game_play = manage_player.attack(game_play);
-		String message = game_play.getStatus();System.out.println(message);
+		String message = game_play.getStatus();
 		assertTrue(containsWon(message));
 	}
 
@@ -147,18 +147,18 @@ public class ManagePlayerTest {
 	public void checkFortifyPhaseInvalidNeighbouringTerritoryTest() {
 		Fortification fortify = new Fortification();
 		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
-		fortify.setSource_territory("Neuchtel");
-		fortify.setDestination_territory("Varduz");
-		fortify.setArmy_count(3);
+		fortify.setSource_territory("Fribourg");
+		fortify.setDestination_territory("Leistal Canton");
+		fortify.setArmy_count(2);
 		game_play.setFortification(fortify);
 		game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
-		assertEquals("Invalid Fortification - Varduz is not a Neighbouring Territory", message);
+		assertEquals("Invalid Move (Not Neighboring Territory)", message);
 	}
 
 	/**
-	 * This test checks for <i>Valid</i> fortification move to player <b> Neighboring
-	 * Territory </b>
+	 * This test checks for <i>Valid</i> fortification move to player <b>
+	 * Neighboring Territory </b>
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 *         Function and Comments modification by Mayank Jariwala
@@ -168,13 +168,13 @@ public class ManagePlayerTest {
 	public void checkFortifyPhaseValidNeighbouringTerritoryTest() {
 		Fortification fortify = new Fortification();
 		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
-		fortify.setSource_territory("Neuchtel");
-		fortify.setDestination_territory("Lusanne Canton");
-		fortify.setArmy_count(3);
+		fortify.setSource_territory("Fribourg");
+		fortify.setDestination_territory("Jura Canton");
+		fortify.setArmy_count(2);
 		game_play.setFortification(fortify);
 		game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
-		assertEquals("Fortification Successful", message);
+		assertTrue(message.contains("move"));
 	}
 
 	/**
@@ -187,15 +187,14 @@ public class ManagePlayerTest {
 	@Test
 	public void checkFortifyInvalidFortificationArmyMoveTest() {
 		Fortification fortify = new Fortification();
-		fortify.setSource_territory("Neuchtel");
-		fortify.setDestination_territory("Bern Canton");
+		fortify.setSource_territory("Fribourg");
+		fortify.setDestination_territory("Jura Canton");
 		fortify.setArmy_count(3);
 		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
 		game_play.setFortification(fortify);
-		game_play.getGame_state().get(1).getTerritory_list().get(0).setNumber_of_armies(1);
 		game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
-		assertEquals("Neuchtel is not having minimum armies to transfer", message);
+		assertTrue(message.contains("not having minimum armies"));
 	}
 
 	/**
@@ -210,14 +209,13 @@ public class ManagePlayerTest {
 	public void checkFortifyValidFortificationArmyMoveTest() {
 		Fortification fortify = new Fortification();
 		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
-		game_play.getGame_state().get(1).getTerritory_list().get(0).setNumber_of_armies(4);
-		fortify.setSource_territory("Neuchtel");
-		fortify.setDestination_territory("Bern Canton");
-		fortify.setArmy_count(3);
+		fortify.setSource_territory("Fribourg");
+		fortify.setDestination_territory("Jura Canton");
+		fortify.setArmy_count(2);
 		game_play.setFortification(fortify);
 		game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
-		assertEquals("Fortification Successful", message);
+		assertTrue(message.contains("move"));
 	}
 
 	@Ignore

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -354,50 +353,53 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	@Override
 	public GamePlay fortify(GamePlay game_play) {
-		// Attacker can move armies between adjacent territories
-		int destination_territory_armies = 0;
-		int source_territory_armies = 0;
 		String source_territory = game_play.getFortification().getSource_territory();
 		String destination_territory = game_play.getFortification().getDestination_territory();
-		int army_count = game_play.getFortification().getArmy_count();
-		List<Player> players_list = game_play.getGame_state();
-		for (Player player : players_list) {
-			List<GamePlayTerritory> territory_list = player.getTerritory_list();
-			for (GamePlayTerritory each_territory : territory_list) {
-				if (each_territory.getTerritory_name().equalsIgnoreCase(source_territory)) {
-					// Attacker Territory Object
-					source_territory_armies = each_territory.getNumber_of_armies();
-				}
-				if (each_territory.getTerritory_name().equalsIgnoreCase(destination_territory)) {
-					// Attacker Territory Object
-					destination_territory_armies = each_territory.getNumber_of_armies();
-				}
-			}
-		}
 		if (source_territory.equalsIgnoreCase(destination_territory)) {
 			game_play.setStatus("Fortification cannot be performed because same territory is selected in destination.");
 			return game_play;
-		} else if (source_territory_armies <= army_count) {
-			game_play.setStatus(source_territory + " is not having minimum armies to transfer");
+		}
+
+		int army_count = game_play.getFortification().getArmy_count();
+
+		if (army_count == 0) {
+			game_play.setStatus("Atleast 1 army should be moved.");
 			return game_play;
-		} else {
-			for (Iterator<Entry<String, Continent>> iterator = game_play.getMap().getContinents().entrySet()
-					.iterator(); iterator.hasNext();) {
-				java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
-				for (Territory territory : continent_entry.getValue().getTerritories()) {
-					if (source_territory.equalsIgnoreCase(territory.getName())) {
-						for (String each_neighbour_territory : territory.getNeighbours())
-							if (destination_territory.equalsIgnoreCase(each_neighbour_territory)) {
-								source_territory_armies = source_territory_armies - army_count;
-								destination_territory_armies = destination_territory_armies + army_count;
-								game_play.setStatus("Fortification Successful");
-								break;
-							} else {
-								game_play.setStatus("Invalid Fortification - " + destination_territory
-										+ " is not a Neighbouring Territory");
-							}
-					}
+		}
+
+		GamePlayTerritory source_territory_instance = null, dest_territory_instance = null;
+
+		for (Player player : game_play.getGame_state()) {
+
+			if (player.getId() != game_play.getCurrent_player()) {
+				continue;
+			}
+
+			for (GamePlayTerritory each_territory : player.getTerritory_list()) {
+
+				if (each_territory.getTerritory_name().equalsIgnoreCase(source_territory)) {
+					source_territory_instance = each_territory;
+				} else if (each_territory.getTerritory_name().equalsIgnoreCase(destination_territory)) {
+					dest_territory_instance = each_territory;
 				}
+				if (source_territory_instance != null && dest_territory_instance != null) {
+					if (source_territory_instance.getNumber_of_armies() <= army_count) {
+						game_play.setStatus(source_territory + " is not having minimum armies to transfer.");
+						return game_play;
+					} else {
+						source_territory_instance
+								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+						dest_territory_instance
+								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+						game_play.setStatus(army_count + " moved from " + source_territory_instance.getTerritory_name()
+								+ " to " + dest_territory_instance.getTerritory_name());
+					}
+					break;
+				}
+			}
+			if (source_territory_instance == null || dest_territory_instance == null) {
+				game_play.setStatus("Invalid Move (Not Neighboring Territory)");
+				return game_play;
 			}
 		}
 		return game_play;
@@ -613,13 +615,10 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
-	 * This method perform validation regarding attack.
 	 * 
-	 * @param attacker_territory_armies
-	 * @param defender_territory_armies
-	 * @param attacker_dice_no          : No. of dice attacker decided to roll
-	 * @param defender_dice_no          : No. of dice defender decided to roll
-	 * @return Attack Result Message
+	 * @param attacker_id
+	 * @param defender_id
+	 * @return
 	 */
 	private String checkForValidAttackTerritory(int attacker_id, int defender_id) {
 		String message = "";
@@ -630,13 +629,12 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
-	 * This method perform validation regarding attack.
 	 * 
 	 * @param attacker_territory_armies
 	 * @param defender_territory_armies
-	 * @param attacker_dice_no          : No. of dice attacker decided to roll
-	 * @param defender_dice_no          : No. of dice defender decided to roll
-	 * @return Attack Result Message
+	 * @param attacker_dice_no
+	 * @param defender_dice_no
+	 * @return
 	 */
 	private String checkForValidAttack(int attacker_territory_armies, int defender_territory_armies,
 			int attacker_dice_no, int defender_dice_no) {
