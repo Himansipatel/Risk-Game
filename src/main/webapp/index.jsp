@@ -12,7 +12,8 @@
 <title>Game Risk</title>
 <style type="text/css">
 body {
-	background: url("images/riskImage.jpeg") fixed;
+	background: url("images/420838.png") fixed;
+	background-size:cover;
 }
 
 #loadingmsg {
