@@ -137,9 +137,11 @@ public class Player {
 	 * @param game_play state of the game i.e. entire game related info when
 	 *                  reinforcement starts for a player.
 	 * @return GamePlay updated state of the game after reinforcement phase ends.
-	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
-	public GamePlay reInforce(GamePlay game_play) {
+	public GamePlay reinforce(GamePlay game_play) {
+		ManagePlayer manage_player = new ManagePlayer();
+		game_play = manage_player.reinforce(game_play);		
 		return game_play;
 	}
 
