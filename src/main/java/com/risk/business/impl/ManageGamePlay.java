@@ -121,10 +121,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				break;
 
 			case "FORTIFICATION":
-				//player.fortify(game_state);
-				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
+				player.fortify(game_state);
 				break;
 
+			case "FORTIFICATION_END":
+				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
+				break;
+				
 			default:
 				break;
 			}
@@ -296,28 +299,24 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 		case "STARTUP":
 			game_state.setCurrent_player(1);
-			game_state.setGame_phase("REINFORCE");
+			game_state.setGame_phase("REINFORCEMENT");
 			break;
 
 		case "REINFORCEMENT":
 			game_state.setGame_phase("ATTACK");
-			break;
-
-		case "ATTACK_ON": 
-			game_state.setGame_phase("ATTACK_ON");
 			break;
 			
 		case "ATTACK_END": 
 			game_state.setGame_phase("FORTIFICATION");
 			break;
 
-		case "FORTIFICATION":
+		case "FORTIFICATION_END":
 			if (game_state.getCurrent_player() + 1 > game_state.getGame_state().size()) {
 				game_state.setCurrent_player(1);
 			}else {
 				game_state.setCurrent_player(game_state.getCurrent_player() + 1);
 			}
-			game_state.setGame_phase("REINFORCE");
+			game_state.setGame_phase("REINFORCEMENT");
 			break;
 
 		default:
