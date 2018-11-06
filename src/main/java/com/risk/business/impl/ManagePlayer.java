@@ -40,6 +40,7 @@ public class ManagePlayer implements IManagePlayer {
 
 	private List<Player> player_info_list;
 	private Map map;
+	private boolean is_territory_occupied = false;
 
 	/**
 	 * @see com.risk.business.IManagePlayer#createPlayer(int, java.lang.String,
@@ -411,6 +412,11 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	@Override
 	public GamePlay attack(GamePlay game_play) {
+
+		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_END")) {
+			giveCardAtAttackEnd(game_play);
+			return game_play;
+		}
 		int attacker_id = 0;
 		int defender_id = 0;
 		String attack_message = "";
@@ -453,97 +459,105 @@ public class ManagePlayer implements IManagePlayer {
 		}
 		int attacker_dice_no = 0;
 		int defender_dice_no = 0;
-		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ALL_OUT")) {
-			setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
-		}
-		attacker_dice_no = game_play.getAttack().getAttacker_dice_no();
-		defender_dice_no = game_play.getAttack().getDefender_dice_no();
-		String valid_attack_message = checkForValidAttack(attacker_terrtiory_armies, defender_territory_armies,
-				attacker_dice_no, defender_dice_no);
-		if (valid_attack_message.trim().length() == 0) {
-			// Roll Dice
-			List<Integer> attack_result = rollDiceDecision(attacker_dice_no, defender_dice_no);
-			for (int i = 0; i < attack_result.size(); i++) {
-				int result = attack_result.get(i);
-				if (result == 1) {
-					// Attacker Won
-					GamePlayTerritory def_obj = defender_territory_list.get(0);
-					def_obj.setNumber_of_armies(def_obj.getNumber_of_armies() - 1);
-					attack_message = attacker_id + " Won !!";
-					attack_message_list.add(attack_message);
-					if (def_obj.getNumber_of_armies() == 0) {
-						attacker_territory_list.add(def_obj);
-						attack_message = attacker_id + " Occupies Defender Territory";
+		String valid_territory_message = checkForValidAttackTerritory(attacker_id, defender_id);
+		if (valid_territory_message.trim().length() == 0) {
+			if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ALL_OUT")) {
+				setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
+			}
+			attacker_dice_no = game_play.getAttack().getAttacker_dice_no();
+			defender_dice_no = game_play.getAttack().getDefender_dice_no();
+
+			String valid_attack_message = checkForValidAttack(attacker_terrtiory_armies, defender_territory_armies,
+					attacker_dice_no, defender_dice_no);
+			if (valid_attack_message.trim().length() == 0) {
+				// Roll Dice
+				List<Integer> attack_result = rollDiceDecision(attacker_dice_no, defender_dice_no);
+				for (int i = 0; i < attack_result.size(); i++) {
+					int result = attack_result.get(i);
+					if (result == 1) {
+						// Attacker Won
+						GamePlayTerritory def_obj = defender_territory_list.get(0);
+						def_obj.setNumber_of_armies(def_obj.getNumber_of_armies() - 1);
+						attack_message = "Attacker Won";
+						attack_message_list.add(attack_message);
+						if (def_obj.getNumber_of_armies() == 0) {
+							attacker_territory_list.add(def_obj);
+							attack_message = "Attacker Occupies Defender Territory";
+							attack_message_list.add(attack_message);
+						}
+					} else {
+						// Defender Won
+						GamePlayTerritory att_obj = attacker_territory_list.get(0);
+						att_obj.setNumber_of_armies(att_obj.getNumber_of_armies() - 1);
+						attack_message = "Defender Won";
 						attack_message_list.add(attack_message);
 					}
-				} else {
-					// Defender Won
-					GamePlayTerritory att_obj = attacker_territory_list.get(0);
-					att_obj.setNumber_of_armies(att_obj.getNumber_of_armies() - 1);
-					attack_message = defender_id + " Won !!";
-					attack_message_list.add(attack_message);
 				}
-			}
 
-			// Iterating Attacker Territory List for performing actions regarding dice
-			// result
-			boolean is_territory_occupied = false;
-			for (GamePlayTerritory att_territory : attacker_territory_list) {
-				for (Player player : players_list) {
-					if (player.getId() == attacker_id) {
-						List<GamePlayTerritory> territory_list = player.getTerritory_list();
-						for (int j = 0; j < territory_list.size(); j++) {
-							if (att_territory.getTerritory_name()
-									.equalsIgnoreCase(territory_list.get(j).getTerritory_name())) {
-								territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
-							} else if (!territory_list.contains(att_territory)) {
-								territory_list.add(att_territory);
-								is_territory_occupied = true;
-							}
-						}
-						player.setAny_territory_occupied(is_territory_occupied);
-					}
-				}
-			}
-
-			// Iterating Defender Territory List for performing actions regarding dice
-			// result
-			for (GamePlayTerritory deff_territory : defender_territory_list) {
-				for (Player player : players_list) {
-					if (player.getId() == defender_id) {
-						List<GamePlayTerritory> territory_list = player.getTerritory_list();
-						for (GamePlayTerritory territory : territory_list) {
-							if (deff_territory.getTerritory_name().equalsIgnoreCase(territory.getTerritory_name())) {
-								if (deff_territory.getNumber_of_armies() == 0) {
-									territory_list.remove(territory);
-									game_play.setGame_phase("ATTACK_MOVE_ON");
-								} else {
-									territory.setNumber_of_armies(deff_territory.getNumber_of_armies());
+				// Iterating Attacker Territory List for performing actions regarding dice
+				// result
+				for (GamePlayTerritory att_territory : attacker_territory_list) {
+					for (Player player : players_list) {
+						if (player.getId() == attacker_id) {
+							List<GamePlayTerritory> territory_list = player.getTerritory_list();
+							for (int j = 0; j < territory_list.size(); j++) {
+								if (att_territory.getTerritory_name()
+										.equalsIgnoreCase(territory_list.get(j).getTerritory_name())) {
+									territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
+								} else if (!territory_list.contains(att_territory)) {
+									territory_list.add(att_territory);
+									is_territory_occupied = true;
+									break;
 								}
-								break;
+							}
+							player.setAny_territory_occupied(is_territory_occupied);
+						}
+					}
+				}
+
+				// Iterating Defender Territory List for performing actions regarding dice
+				// result
+				for (GamePlayTerritory deff_territory : defender_territory_list) {
+					for (Player player : players_list) {
+						if (player.getId() == defender_id) {
+							List<GamePlayTerritory> territory_list = player.getTerritory_list();
+							for (GamePlayTerritory territory : territory_list) {
+								if (deff_territory.getTerritory_name()
+										.equalsIgnoreCase(territory.getTerritory_name())) {
+									if (deff_territory.getNumber_of_armies() == 0) {
+										territory_list.remove(territory);
+										game_play.setGame_phase("ATTACK_MOVE_ON");
+										break;
+									} else {
+										territory.setNumber_of_armies(deff_territory.getNumber_of_armies());
+									}
+								}
 							}
 						}
 					}
 				}
+				attack_message = String.join("\n", attack_message_list);
+				game_play.setStatus(attack_message);
+			} else {
+				game_play.setStatus(valid_attack_message);
 			}
-			attack_message = String.join(",", attack_message_list);
-			game_play.setStatus(attack_message);
+			if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ALL_OUT")
+					&& attacker_territory_list.get(0).getNumber_of_armies() > 1) {
+				attack(game_play);
+			}
 		} else {
-			game_play.setStatus(valid_attack_message);
+			game_play.setStatus(valid_territory_message);
 		}
-		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ALL_OUT")
-				&& attacker_territory_list.get(0).getNumber_of_armies() > 1) {
-			setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
-			attack(game_play);
-		}
+
 		return game_play;
 	}
 
 	/**
+	 * This function is use to give card to player from card deck at the end of
+	 * player attack turn if player has occupy any territory.
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param game_play
-	 * @return Card Object : A Single Card to player
 	 */
 	public void giveCardAtAttackEnd(GamePlay game_play) {
 		int current_player_id = game_play.getCurrent_player();
@@ -561,9 +575,15 @@ public class ManagePlayer implements IManagePlayer {
 						.size(); player_list_index++) {
 					if (current_player_id == game_play.getGame_state().get(player_list_index).getId()) {
 						game_play.getGame_state().get(player_list_index).getCard_list().add(card);
+						String message = "Card-".concat(card.getTerritory_name()).concat("Army-")
+								.concat(card.getArmy_type()).concat("assigned to Attacker.");
+						game_play.setStatus(message);
+						game_play.getGame_state().get(player_list_index).setAny_territory_occupied(false);
 					}
 				}
 			}
+		} else {
+			game_play.setStatus("");
 		}
 	}
 
@@ -601,6 +621,23 @@ public class ManagePlayer implements IManagePlayer {
 	 * @param defender_dice_no          : No. of dice defender decided to roll
 	 * @return Attack Result Message
 	 */
+	private String checkForValidAttackTerritory(int attacker_id, int defender_id) {
+		String message = "";
+		if (attacker_id == defender_id) {
+			message = "This territory is already with the attacker";
+		}
+		return message;
+	}
+
+	/**
+	 * This method perform validation regarding attack.
+	 * 
+	 * @param attacker_territory_armies
+	 * @param defender_territory_armies
+	 * @param attacker_dice_no          : No. of dice attacker decided to roll
+	 * @param defender_dice_no          : No. of dice defender decided to roll
+	 * @return Attack Result Message
+	 */
 	private String checkForValidAttack(int attacker_territory_armies, int defender_territory_armies,
 			int attacker_dice_no, int defender_dice_no) {
 
@@ -609,12 +646,21 @@ public class ManagePlayer implements IManagePlayer {
 			if (attacker_territory_armies - 1 == 0) {
 				message = "Invalid Attack By Attacker (You can't attack with this territory)";
 			} else {
-				message = "Invalid Attack By Attacker (You can roll max " + (attacker_territory_armies - 1) + " dice)";
+				if (attacker_territory_armies - 1 <= 3) {
+					message = "Invalid Attack By Attacker (You can roll max " + (attacker_territory_armies - 1)
+							+ " dice)";
+				} else {
+					message = "Invalid Attack By Attacker (You can roll max 3 dice)";
+				}
 			}
 		}
 
 		if (defender_territory_armies < defender_dice_no) {
-			message = "Invalid Defend(You can roll max " + defender_territory_armies + " dice )";
+			if (defender_territory_armies <= 2) {
+				message = "Invalid Defend(You can roll max " + defender_territory_armies + " dice )";
+			} else {
+				message = "Invalid defend By defender (You can roll max 2 dice)";
+			}
 		}
 
 		return message;
@@ -665,8 +711,8 @@ public class ManagePlayer implements IManagePlayer {
 	private List<Integer> rollDiceOneOnOne() {
 		Random random = new Random();
 		int dice_result_flag = 0;
-		int attacker_dice_result = random.nextInt(6);
-		int defender_dice_result = random.nextInt(6);
+		int attacker_dice_result = random.nextInt(6) + 1;
+		int defender_dice_result = random.nextInt(6) + 1;
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
 		} else if (attacker_dice_result <= defender_dice_result) {
@@ -684,8 +730,8 @@ public class ManagePlayer implements IManagePlayer {
 	private List<Integer> rollDiceOneOnTwo() {
 		Random random = new Random();
 		int dice_result_flag = 0;
-		int attacker_dice_result = random.nextInt(6);
-		int defender_dice_result = Math.max(random.nextInt(6), random.nextInt(6));
+		int attacker_dice_result = random.nextInt(6) + 1;
+		int defender_dice_result = Math.max(random.nextInt(6) + 1, random.nextInt(6) + 1);
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
 		} else if (attacker_dice_result <= defender_dice_result) {
@@ -703,8 +749,8 @@ public class ManagePlayer implements IManagePlayer {
 	private List<Integer> rollDiceTwoOnOne() {
 		Random random = new Random();
 		int dice_result_flag = 0;
-		int attacker_dice_result = Math.max(random.nextInt(6), random.nextInt(6));
-		int defender_dice_result = random.nextInt(6);
+		int attacker_dice_result = Math.max(random.nextInt(6) + 1, random.nextInt(6) + 1);
+		int defender_dice_result = random.nextInt(6) + 1;
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
 		} else if (attacker_dice_result <= defender_dice_result) {
@@ -722,11 +768,11 @@ public class ManagePlayer implements IManagePlayer {
 	private List<Integer> rollDiceTwoOnTwo() {
 		Random random = new Random();
 		HashMap<String, List<Integer>> dice_result_list = new HashMap<>();
-		int attacker_roll_one = random.nextInt(6);
-		int attacker_roll_two = random.nextInt(6);
+		int attacker_roll_one = random.nextInt(6) + 1;
+		int attacker_roll_two = random.nextInt(6) + 1;
 		dice_result_list.put("attacker", Arrays.asList(attacker_roll_one, attacker_roll_two));
-		int defender_roll_one = random.nextInt(6);
-		int defender_roll_two = random.nextInt(6);
+		int defender_roll_one = random.nextInt(6) + 1;
+		int defender_roll_two = random.nextInt(6) + 1;
 		dice_result_list.put("defender", Arrays.asList(defender_roll_one, defender_roll_two));
 		int attacker_max = Collections.max(dice_result_list.get("attacker"));
 		int defender_max = Collections.max(dice_result_list.get("defender"));
@@ -749,12 +795,12 @@ public class ManagePlayer implements IManagePlayer {
 		List<Integer> attacker_list = new ArrayList<>();
 		List<Integer> defender_list = new ArrayList<>();
 
-		attacker_list.add(random.nextInt(6));
-		attacker_list.add(random.nextInt(6));
-		attacker_list.add(random.nextInt(6));
+		attacker_list.add(random.nextInt(6) + 1);
+		attacker_list.add(random.nextInt(6) + 1);
+		attacker_list.add(random.nextInt(6) + 1);
 
-		defender_list.add(random.nextInt(6));
-		defender_list.add(random.nextInt(6));
+		defender_list.add(random.nextInt(6) + 1);
+		defender_list.add(random.nextInt(6) + 1);
 
 		int attacker_max = Collections.max(attacker_list);
 		attacker_list.remove((attacker_list.indexOf(attacker_max)));
@@ -779,8 +825,9 @@ public class ManagePlayer implements IManagePlayer {
 	private List<Integer> rollDiceThreeOnOne() {
 		Random random = new Random();
 		int dice_result_flag = 0;
-		int attacker_dice_result = Math.max(Math.max(random.nextInt(6), random.nextInt(6)), random.nextInt(6));
-		int defender_dice_result = random.nextInt(6);
+		int attacker_dice_result = Math.max(Math.max(random.nextInt(6) + 1, random.nextInt(6) + 1),
+				random.nextInt(6) + 1);
+		int defender_dice_result = random.nextInt(6) + 1;
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
 		} else if (attacker_dice_result <= defender_dice_result) {
