@@ -684,9 +684,10 @@
 											
 											//read player no from data
 											if (currentPhase == 'ATTACK'
-													|| currentPhase == "ATTACK_ON"
-													|| currentPhase == "ATTACK_ALL_OUT"
-													|| currentPhase == "ATTACK_END") {
+													|| currentPhase == 'ATTACK_ON'
+													|| currentPhase == 'ATTACK_ALL_OUT'
+													|| currentPhase == 'ATTACK_END' 
+													|| currentPhase =='FORTIFICATION') {
 												if(data.status != null && data.status != ''){
 													alert(data.status);
 												}
@@ -1581,6 +1582,9 @@
 					<button id="armiesSelectionForReinforcementDone" type="button"
 						class="btn btn-primary"
 						style="background-color: black; border-color: black">Reinforce</button>
+					<button id="tradeCards" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Trade
+						Cards</button>
 				</div>
 			</div>
 		</div>
