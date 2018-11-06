@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -100,7 +101,7 @@ public class ManagePlayer implements IManagePlayer {
 						int sum_armies = player_info_list.get(player_index).getTerritory_list()
 								.get(territory_list_index).getNumber_of_armies() + 1;
 						player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-								.setNumber_of_armies(sum_armies);
+						.setNumber_of_armies(sum_armies);
 						if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
 							territory_list_index = -1;
 						}
@@ -112,7 +113,7 @@ public class ManagePlayer implements IManagePlayer {
 					int sum_armies = player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.getNumber_of_armies() + 1;
 					player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-							.setNumber_of_armies(sum_armies);
+					.setNumber_of_armies(sum_armies);
 				}
 			}
 		}
@@ -239,11 +240,11 @@ public class ManagePlayer implements IManagePlayer {
 			for (int j = 0; j < player_list.get(i).getTerritory_list().size(); j++) {
 				GamePlayTerritory game_play_territory = new GamePlayTerritory();
 				game_play_territory
-						.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
+				.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
 				game_play_territory
-						.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
+				.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
 				game_play_territory
-						.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
+				.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
 				game_play_territory_list.add(game_play_territory);
 			}
 			player_object_at_file.setTerritory_list(game_play_territory_list);
@@ -346,69 +347,170 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
-	 * 
-	 * @see com.risk.business.IManagePlayer#fortify(com.risk.model.GamePlay)
-	 * 
-	 * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
+	 * @see com.risk.business.IManagePlayer#reinforce(com.risk.model.GamePlay)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public GamePlay fortify(GamePlay game_play) {
-		String source_territory = game_play.getFortification().getSource_territory();
-		String destination_territory = game_play.getFortification().getDestination_territory();
-		if (source_territory.equalsIgnoreCase(destination_territory)) {
-			game_play.setStatus("Fortification cannot be performed because same territory is selected in destination.");
-			return game_play;
-		}
-
-		int army_count = game_play.getFortification().getArmy_count();
-
-		if (army_count == 0) {
-			game_play.setStatus("Atleast 1 army should be moved.");
-			return game_play;
-		}
-
-		GamePlayTerritory source_territory_instance = null, dest_territory_instance = null;
-
-		for (Player player : game_play.getGame_state()) {
-
-			if (player.getId() != game_play.getCurrent_player()) {
-				continue;
-			}
-
-			for (GamePlayTerritory each_territory : player.getTerritory_list()) {
-
-				if (each_territory.getTerritory_name().equalsIgnoreCase(source_territory)) {
-					source_territory_instance = each_territory;
-				} else if (each_territory.getTerritory_name().equalsIgnoreCase(destination_territory)) {
-					dest_territory_instance = each_territory;
-				}
-				if (source_territory_instance != null && dest_territory_instance != null) {
-					if (source_territory_instance.getNumber_of_armies() <= army_count) {
-						game_play.setStatus(source_territory + " is not having minimum armies to transfer.");
-						return game_play;
-					} else {
-						source_territory_instance
-								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
-						dest_territory_instance
-								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
-						game_play.setStatus(army_count + " moved from " + source_territory_instance.getTerritory_name()
-								+ " to " + dest_territory_instance.getTerritory_name());
-					}
-					break;
-				}
-			}
-			if (source_territory_instance == null || dest_territory_instance == null) {
-				game_play.setStatus("Invalid Move (Not Neighboring Territory)");
-				return game_play;
-			}
+	public GamePlay reinforce(GamePlay game_play) {
+		if (game_play.getGame_phase().equalsIgnoreCase("TRADE_CARDS")) {
+			tradeCards(game_play);
 		}
 		return game_play;
 	}
 
 	/**
+	 * This method handles the trading of cards during reinforcement phase of the game-play.
 	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param  game_state State of the game at point of time holding the entire info
+	 *                    about game-play. Like the current phase and player.
+	 * @return game_state after updating info on trading of cards.
+	 */	
+	private GamePlay tradeCards(GamePlay game_state) {	
+
+		CardTrade trade_card = game_state.getCard_trade();
+		if (trade_card!=null) {
+			if (trade_card.getCard1() == null || trade_card.getCard2() == null || trade_card.getCard3() == null) {
+				game_state.setStatus("Trading requires a minimum of three cards to be selected.");
+			}else {
+
+				/**
+				 * First part of condition (before OR) checks if all images on the three cards are same and the second part 
+				 * (after OR) checks if all the three are different.
+				 */
+				if (    (trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
+						&& trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type()))
+						||  (!trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())	
+								&& !trade_card.getCard2().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type())
+								&& !trade_card.getCard3().getArmy_type().equalsIgnoreCase(trade_card.getCard1().getArmy_type()))){
+
+					int current_player = game_state.getCurrent_player();
+
+					for (Player player : game_state.getGame_state()) {
+
+						if (player.getId()==current_player) {
+
+							updateTradedArmies(player);
+							updateCardLists(player, game_state.getFree_cards(), trade_card);
+
+							/**
+							 * Check if the Player controls any territory which is present in one of the cards being traded.
+							 */
+							List<GamePlayTerritory> player_territory_list = player.getTerritory_list();
+
+							if (player_territory_list != null) {
+
+								for (GamePlayTerritory gamePlayTerritory : player_territory_list) {
+
+									if (   gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard1().getTerritory_name())
+											|| gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
+											|| gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
+
+										/**
+										 * An additional two armies given if the Player controls any territory 
+										 * which is present in one of the cards being traded.
+										 */
+										gamePlayTerritory.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);			
+										break;
+									}
+								}
+							}
+							break;
+						}
+					}
+				}else {
+					game_state.setStatus("Either all three cards should have same image or all three different.");
+				}
+			}
+		}else {
+			game_state.setStatus("Inavlid Trade State during Gameplay");
+		}
+		return game_state;
+	}	
+
+	/**
+	 * This method assigns a random card to a player and removes that card from the free stock.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>   
+	 * @param game_state Overall game_state to be updated after this move
+	 */
+	public void addCardToPlayer(GamePlay game_state) {
+
+		if (game_state!=null) {
+
+			for (Player player : game_state.getGame_state()) {
+
+				if (player.getId()==game_state.getCurrent_player()) {
+
+					Random rand = new Random();
+					int idx = rand.nextInt(game_state.getFree_cards().size());					
+
+					player.getCard_list().add(game_state.getFree_cards().get(idx));
+					game_state.getFree_cards().remove(idx);
+
+					break;
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * This method updates the player's army count during the trade of cards.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param player State of the current Player. 
+	 */
+	private void updateTradedArmies(Player player) {
+		if (player.getTrade_count()==0) {
+			player.setArmy_stock(player.getArmy_stock() + 4);
+			player.setTrade_count(1);
+		}else if (player.getTrade_count()==1) {
+			player.setArmy_stock(player.getArmy_stock() + 6);
+			player.setTrade_count(2);											
+		}else if (player.getTrade_count()==2) {
+			player.setArmy_stock(player.getArmy_stock() + 8);
+			player.setTrade_count(3);											
+		}else if (player.getTrade_count()==3) {
+			player.setArmy_stock(player.getArmy_stock() + 10);
+			player.setTrade_count(4);											
+		}else if (player.getTrade_count()==4) {
+			player.setArmy_stock(player.getArmy_stock() + 12);
+			player.setTrade_count(5);											
+		}else if (player.getTrade_count()==5) {
+			player.setArmy_stock(player.getArmy_stock() + 15);
+			player.setTrade_count(6);											
+		}else if (player.getTrade_count()>5) {
+			player.setArmy_stock(player.getArmy_stock() + 15 + ((player.getTrade_count() - 5) * 5) );
+			player.setTrade_count(player.getTrade_count()+1);																						
+		}		
+	}
+
+	/**
+	 * This method updates the player's card list and well as the free card list after the trading is over.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param player State of the current Player.
+	 * @param free_cards List of cards which are free for allocation
+	 * @param traded_cards The set of three cards being traded.
+	 */
+	private void updateCardLists(Player player, List<Card> free_cards, CardTrade traded_cards) {
+		free_cards.add(traded_cards.getCard1());
+		free_cards.add(traded_cards.getCard2());
+		free_cards.add(traded_cards.getCard3());
+		Iterator<Card> i = player.getCard_list().iterator();
+		while (i.hasNext()) {
+			Card card = (Card) i.next();
+			if (   (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard1().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard1().getTerritory_name())) 
+					|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard2().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard2().getTerritory_name()))
+					|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard3().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard3().getTerritory_name()))) {
+				i.remove();				
+			}
+		}
+	}
+
+	/**
 	 * @see com.risk.business.IManagePlayer#attack(com.risk.model.GamePlay)
-	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
 	 */
@@ -553,6 +655,68 @@ public class ManagePlayer implements IManagePlayer {
 
 		return game_play;
 	}
+
+
+	/**
+	 * 
+	 * @see com.risk.business.IManagePlayer#fortify(com.risk.model.GamePlay)
+	 * 
+	 * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
+	 */
+	@Override
+	public GamePlay fortify(GamePlay game_play) {
+		String source_territory = game_play.getFortification().getSource_territory();
+		String destination_territory = game_play.getFortification().getDestination_territory();
+		if (source_territory.equalsIgnoreCase(destination_territory)) {
+			game_play.setStatus("Fortification cannot be performed because same territory is selected in destination.");
+			return game_play;
+		}
+
+		int army_count = game_play.getFortification().getArmy_count();
+
+		if (army_count == 0) {
+			game_play.setStatus("Atleast 1 army should be moved.");
+			return game_play;
+		}
+
+		GamePlayTerritory source_territory_instance = null, dest_territory_instance = null;
+
+		for (Player player : game_play.getGame_state()) {
+
+			if (player.getId() != game_play.getCurrent_player()) {
+				continue;
+			}
+
+			for (GamePlayTerritory each_territory : player.getTerritory_list()) {
+
+				if (each_territory.getTerritory_name().equalsIgnoreCase(source_territory)) {
+					source_territory_instance = each_territory;
+				} else if (each_territory.getTerritory_name().equalsIgnoreCase(destination_territory)) {
+					dest_territory_instance = each_territory;
+				}
+				if (source_territory_instance != null && dest_territory_instance != null) {
+					if (source_territory_instance.getNumber_of_armies() <= army_count) {
+						game_play.setStatus(source_territory + " is not having minimum armies to transfer.");
+						return game_play;
+					} else {
+						source_territory_instance
+						.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+						dest_territory_instance
+						.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+						game_play.setStatus(army_count + " moved from " + source_territory_instance.getTerritory_name()
+						+ " to " + dest_territory_instance.getTerritory_name());
+					}
+					break;
+				}
+			}
+			if (source_territory_instance == null || dest_territory_instance == null) {
+				game_play.setStatus("Invalid Move (Not Neighboring Territory)");
+				return game_play;
+			}
+		}
+		return game_play;
+	}
+
 
 	/**
 	 * This function is use to give card to player from card deck at the end of
