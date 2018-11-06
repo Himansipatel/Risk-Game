@@ -879,9 +879,11 @@
 						}
 
 						function fillReinforcementModal(no) {
+							//clear modal values
 							$('#countriesForReinforcement').find('option')
 									.remove();
 
+							//fill modal values
 							$('#playerIdReinforcement').val(no);
 							var playerTable = fetchDataTableforCurrentPlayer(no);
 							playerTableData = playerTable.rows().data();
@@ -941,9 +943,11 @@
 						});
 
 						function fillAttackModal(no) {
+							//clear modal values
 							$('#countriesFromAttack').find('option').remove();
 							$('#countriesForAttack').find('option').remove();
 
+							//fill modal values
 							var playerTable = fetchDataTableforCurrentPlayer(no);
 							playerTableData = playerTable.rows().data();
 							for (var i = 0; i < playerTableData.length; i++) {
@@ -960,6 +964,7 @@
 
 						function fillAttackModalCountriesForAttack(
 								sourceCountriesSelected) {
+							//clear modal values
 							$('#countriesForAttack').find('option').remove();
 							var countryData = countryDataTable.rows().data();
 							//find neighbours
