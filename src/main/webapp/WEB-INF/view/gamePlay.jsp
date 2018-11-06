@@ -668,13 +668,15 @@
 											clearGameState();
 											parseGamePlayData(data.game_state);
 											currentMapName = (data.file_name);
-											//set currentPhase also(later)
+											
 											//read player no from data
 											if (currentPhase == 'ATTACK'
 													|| currentPhase == "ATTACK_ON"
 													|| currentPhase == "ATTACK_ALL_OUT"
 													|| currentPhase == "ATTACK_END") {
-												alert(data.status);
+												if(data.status != null && data.status != ''){
+													alert(data.status);
+												}
 											}
 											if (currentPhase != 'ATTACK'
 													&& currentPhase != "ATTACK_ON"
@@ -869,7 +871,7 @@
 									|| currentPhase == "ATTACK_ALL_OUT"
 									|| currentPhase == "ATTACK_END") {
 								displayAttackButtonForPlayer();
-							} else if (currentPhase == "FORTIFICATION") {
+							} else if (currentPhase == "FORTIFICATION" || currentPhase == "FORTIFICATION_END") {
 								displayFortificationButtonForPlayer();
 							} else if (currentPhase == "REINFORCEMENT") {
 								displayReinforcementButtonForPlayer();
@@ -880,6 +882,7 @@
 							$('#countriesForReinforcement').find('option')
 									.remove();
 
+							$('#playerIdReinforcement').val(no);
 							var playerTable = fetchDataTableforCurrentPlayer(no);
 							playerTableData = playerTable.rows().data();
 							playerArmiesStock = getEachPlayerArmiesStock(no);
@@ -1094,23 +1097,51 @@
 								keyboard : false
 							});
 						});
+						
+						function decreaseArmiesStockOfCurrentPlayer(no){
+							switch (String(no)) {
+							case "1":
+								armiesStockOfPlayer1 = armiesStockOfPlayer1 - 1;
+								break;
+							case "2":
+								armiesStockOfPlayer2 = armiesStockOfPlayer2 - 1;
+								break;
+							case "3":
+								armiesStockOfPlayer3 = armiesStockOfPlayer3 - 1;
+								break;
+							case "4":
+								armiesStockOfPlayer4 = armiesStockOfPlayer4 - 1;
+								break;
+							case "5":
+								armiesStockOfPlayer5 = armiesStockOfPlayer5 - 1;
+								break;
+							case "6":
+								armiesStockOfPlayer6 = armiesStockOfPlayer6 - 1;
+								break;
+							}
+						}
 
 						$('#armiesSelectionForReinforcementDone')
 								.on(
 										'click',
 										function() {
-											if (armiesStockOfPlayer1 > 0) {
-												armiesStockOfPlayer1 = armiesStockOfPlayer1 - 1;
+										var no = $('#playerIdReinforcement').val();
+										playerArmiesStock = getEachPlayerArmiesStock(no);
+										var playerTable = fetchDataTableforCurrentPlayer(no);
+										playerTableData = playerTable.rows().data();
+											if (playerArmiesStock > 0) {
+												playerArmiesStock =playerArmiesStock -1;
+												decreaseArmiesStockOfCurrentPlayer(no);
 												var country = $(
 														"#countriesForReinforcement option:selected")
 														.val();
-												addArmy(player1DataTable,
+												addArmy(playerTableData,
 														country);
 												$(
 														"#reinforcementRemainingArmies")
 														.text(
-																armiesStockOfPlayer1);
-												if (armiesStockOfPlayer1 == 0) {
+																playerArmiesStock);
+												if (playerArmiesStock == 0) {
 													$('#reinforcementModal')
 															.modal('toggle');
 													hideReinforcementButtonForPlayer();
@@ -1168,14 +1199,13 @@
 									"#armiesToShift").val();
 							currentPhase = fortifyType;
 							$('#fortificationModal').modal('toggle');
-							//hideReinforcementButtonForPlayer();
 							saveGameState();
 						}
 						
 						$('#fortify').on('click', function() {
 							fortify('FORTIFICATION');
 						});
-						$('#fortifyEnd').on('click', function() {
+						$('#fortifyEnd').on('click', function() {debugger;
 							hideFortificationButtonForPlayer();
 							fortify('FORTIFICATION_END');
 
@@ -1486,6 +1516,8 @@
 				</div>
 				<div class="modal-body">
 					<div>
+						<label for="playerIdReinforcement">Player id : </label> <input
+							type="text" class="form-control" id="playerIdReinforcement">
 						<label for="ReinforcementPlayerNo">Allocate the armies for
 							reinforcement</label>
 					</div>
