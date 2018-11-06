@@ -1520,8 +1520,10 @@
 				</div>
 				<div class="modal-body">
 					<div>
-						<label for="playerIdReinforcement">Player id : </label> <input
-							type="text" class="form-control" id="playerIdReinforcement">
+						<div style="display: none;">
+							<label for="playerIdReinforcement">Player id : </label> <input
+								type="text" class="form-control" id="playerIdReinforcement">
+						</div>
 						<label for="ReinforcementPlayerNo">Allocate the armies for
 							reinforcement</label>
 					</div>
