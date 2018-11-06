@@ -1047,6 +1047,36 @@
 								keyboard : false
 							});
 						});
+						
+						function fillFortificationModalCountriesForFortificationDestination(
+								sourceCountriesSelected) {
+							//clear modal values
+							$('#countriesForFortificationDestination').find('option').remove();
+							var countryData = countryDataTable.rows().data();
+							//find neighbours
+							for (var i = 0; i < countryData.length; i++) {
+								if (countryData[i][0] == sourceCountriesSelected) {
+									var array = countryData[i][2].split(';');
+									for (var j = 0; j < array.length; j++) {
+										$('#countriesForFortificationDestination').append(
+												$('<option>', {
+													value : array[j],
+													text : array[j]
+												}));
+									}
+									break;
+								}
+							}
+						}
+						
+						$("#countriesForFortificationSource")
+						.change(
+								function() {
+									var countriesForFortificationSource = $(
+											"#countriesForFortificationSource option:selected")
+											.val();
+									fillFortificationModalCountriesForFortificationDestination(countriesForFortificationSource);
+								});
 
 						function fillFortificationModal(no) {
 							//clear modal values
@@ -1059,16 +1089,14 @@
 							var playerTable = fetchDataTableforCurrentPlayer(no);
 							playerTableData = playerTable.rows().data();
 							for (var i = 0; i < playerTableData.length; i++) {
-								$('#countriesForFortificationDestination')
-										.append($('<option>', {
-											value : playerTableData[i][0],
-											text : playerTableData[i][0]
-										}));
 								$('#countriesForFortificationSource').append(
 										$('<option>', {
 											value : playerTableData[i][0],
 											text : playerTableData[i][0]
 										}));
+								if(i==0){
+									fillFortificationModalCountriesForFortificationDestination(playerTableData[i][0]);									
+								}
 							}
 						}
 
