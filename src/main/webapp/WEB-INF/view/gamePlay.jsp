@@ -613,8 +613,8 @@
 						$('#check').on('click', function() {
 							saveGameState();
 						});
-
-						function makePlayerData(playerNo) {
+						
+						function makePlayerData(playerNo) {debugger;
 							var countryArray = [];
 							var playerCountryTable = fetchDataTableforCurrentPlayer(playerNo);
 							var data = playerCountryTable.rows().data();
@@ -625,11 +625,24 @@
 									number_of_armies : data[i][2]
 								});
 							}
+							var any_territory_occupied;
+							var trade_count;
+							var card_list;
+							for(var i=0;i<data_game.game_state.length;i++){
+								if(data_game.game_state[i].id ==playerNo){
+									any_territory_occupied = data_game.game_state[i].any_territory_occupied;
+									trade_count = data_game.game_state[i].trade_count;
+									card_list = data_game.game_state[i].card_list;
+								}
+							}
 							var playerObject = {
 								id : getEachPlayerId(playerNo),
 								name : getEachPlayerName(playerNo),
 								army_stock : getEachPlayerArmiesStock(playerNo),
-								territory_list : countryArray
+								territory_list : countryArray,
+								any_territory_occupied : any_territory_occupied,
+								trade_count : trade_count,
+								card_list : card_list
 							};
 							return playerObject;
 						}
