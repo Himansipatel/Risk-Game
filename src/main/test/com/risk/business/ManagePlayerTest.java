@@ -35,6 +35,15 @@ public class ManagePlayerTest {
 		manage_player = new ManagePlayer();
 	}
 
+	/**
+	 * This test validate that if player is rolling no. of dice greater than no. of
+	 * armies present on selected attacking territory then as per game rules player is not
+	 * allow to attack on any neighboring territory
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 *         Function description added by Mayank Jariwala
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 */
 	@Test
 	public void checkValidAttackTestDiceGreater() {
 		Attack attack = new Attack();
@@ -49,8 +58,17 @@ public class ManagePlayerTest {
 		assertTrue(containsInvalid(message));
 	}
 
+	/**
+	 * This test validates that if player want to attack neighboring territory then
+	 * the player is only allow to roll maximum number of dice by keeping one army
+	 * on his territory.
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 *         Function description added by Mayank Jariwala
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 */
 	@Test
-	public void checkValidAttackTestDiceEqualLesser() {
+	public void checkValidAttackTestDiceLesser() {
 		Attack attack = new Attack();
 		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
 		attack.setAttacker_territory("Neuchtel");
@@ -59,10 +77,19 @@ public class ManagePlayerTest {
 		attack.setDefender_dice_no(2);
 		game_play.setAttack(attack);
 		game_play = manage_player.attack(game_play);
-		String message = game_play.getStatus();
+		String message = game_play.getStatus();System.out.println(message);
 		assertTrue(containsWon(message));
 	}
 
+	/**
+	 * This test performs check on creation of card which is equal to no. of
+	 * territories in map (Inserting Free Cards to card stock) if map is valid and
+	 * game is ready for players to play.
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 *         Function description added by Mayank Jariwala
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 */
 	@Test
 	public void checkValidCardCreationTest() {
 		ManagePlayer managePlayer = new ManagePlayer();
@@ -74,6 +101,14 @@ public class ManagePlayerTest {
 		assertEquals(map_territory_list_size, free_card_list_size);
 	}
 
+	/**
+	 * This test performs validation of placing armies manually by player on their
+	 * assign territories in round robin fashion during startup phase.
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 *         Function description added by Mayank Jariwala
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 */
 	@Test
 	public void validateManuallyAssignArmyStock() {
 		ManagePlayer managePlayer = new ManagePlayer();
@@ -84,6 +119,14 @@ public class ManagePlayerTest {
 
 	}
 
+	/**
+	 * This test performs validation of placing armies automatically on player
+	 * assign territories in round robin fashion during startup phase.
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 *         Function description added by Mayank Jariwala
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 */
 	@Test
 	public void validateAutomaticallyAssignArmyStock() {
 		ManagePlayer managePlayer = new ManagePlayer();
@@ -91,9 +134,9 @@ public class ManagePlayerTest {
 		assertEquals(5, gamePlay.getGame_state().get(0).getArmy_stock());
 		assertEquals(6, gamePlay.getGame_state().get(1).getArmy_stock());
 	}
-	
+
 	/**
-	 * This test just check for <i>Invalid</i> fortification move to player <b>
+	 * This test checks for <i>Invalid</i> fortification move to player <b>
 	 * Neighboring Territory </b>
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
@@ -114,8 +157,8 @@ public class ManagePlayerTest {
 	}
 
 	/**
-	 * This test just check for <i>Valid</i> fortification move to player <b>
-	 * Neighboring Territory </b>
+	 * This test checks for <i>Valid</i> fortification move to player <b> Neighboring
+	 * Territory </b>
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 *         Function and Comments modification by Mayank Jariwala
@@ -146,7 +189,7 @@ public class ManagePlayerTest {
 		Fortification fortify = new Fortification();
 		fortify.setSource_territory("Neuchtel");
 		fortify.setDestination_territory("Bern Canton");
-		fortify.setArmy_count(3);		
+		fortify.setArmy_count(3);
 		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
 		game_play.setFortification(fortify);
 		game_play.getGame_state().get(1).getTerritory_list().get(0).setNumber_of_armies(1);
@@ -179,11 +222,11 @@ public class ManagePlayerTest {
 
 	@Ignore
 	public boolean containsWon(String s) {
-		return s.matches(".*Won.*");
+		return s.contains("Won");
 	}
 
 	@Ignore
 	public boolean containsInvalid(String s) {
-		return s.matches(".*Invalid.*");
+		return s.contains("Invalid");
 	}
 }
