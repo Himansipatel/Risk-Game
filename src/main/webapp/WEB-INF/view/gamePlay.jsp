@@ -12,6 +12,22 @@
 							backdrop : 'static',
 							keyboard : false
 						});
+						
+						$("#armiesToShift").keydown(function (e) {
+					        // Allow: backspace, delete, tab, escape, enter and .
+					        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+					             // Allow: Ctrl+A, Command+A
+					            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+					             // Allow: home, end, left, right, down, up
+					            (e.keyCode >= 35 && e.keyCode <= 40)) {
+					                 // let it happen, don't do anything
+					                 return;
+					        }
+					        // Ensure that it is a number and stop the keypress
+					        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+					            e.preventDefault();
+					        }
+					    });
 
 						var continentDataTable = $('#continentsDesc')
 								.DataTable();
@@ -634,9 +650,10 @@
 								map : data_game.map,
 								current_player : data_game.current_player,
 								free_cards : data_game.free_cards,
-								status : data_game.status,
+								status : '',
 								card_trade : data_game.card_trade,
-								attack : data_game.attack
+								attack : data_game.attack,
+								fortification : data_game.fortification
 							};
 							var a = JSON.stringify(game_Play);
 							$
@@ -661,7 +678,8 @@
 											}
 											if (currentPhase != 'ATTACK'
 													&& currentPhase != "ATTACK_ON"
-													&& currentPhase != "ATTACK_ALL_OUT") {
+													&& currentPhase != "ATTACK_ALL_OUT" 
+													&& currentPhase != "FORTIFICATION") {
 												alert(currentPhase + " ended");
 											}
 											currentPhase = data.game_phase;
@@ -939,7 +957,6 @@
 
 						function fillAttackModalCountriesForAttack(
 								sourceCountriesSelected) {
-							debugger;
 							$('#countriesForAttack').find('option').remove();
 							var countryData = countryDataTable.rows().data();
 							//find neighbours
@@ -1010,6 +1027,74 @@
 							});
 						});
 
+						function fillFortificationModal(no) {
+							debugger;
+							//clear modal values
+							$('#countriesForFortificationSource')
+									.find('option').remove();
+							$('#countriesForFortificationDestination').find(
+									'option').remove();
+							$("#armiesToShift").val("");
+							//fill modal values
+							var playerTable = fetchDataTableforCurrentPlayer(no);
+							playerTableData = playerTable.rows().data();
+							for (var i = 0; i < playerTableData.length; i++) {
+								$('#countriesForFortificationDestination')
+										.append($('<option>', {
+											value : playerTableData[i][0],
+											text : playerTableData[i][0]
+										}));
+								$('#countriesForFortificationSource').append(
+										$('<option>', {
+											value : playerTableData[i][0],
+											text : playerTableData[i][0]
+										}));
+							}
+						}
+
+						$('#player1Fortification').on('click', function() {
+							fillFortificationModal("1");
+							$('#fortificationModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						});
+						$('#player2Fortification').on('click', function() {
+							fillFortificationModal("2");
+							$('#fortificationModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player3AFortification').on('click', function() {
+							fillFortificationModal("3");
+							$('#fortificationModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player4Fortification').on('click', function() {
+							fillFortificationModal("4");
+							$('#fortificationModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player5Fortification').on('click', function() {
+							fillFortificationModal("5");
+							$('#fortificationModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						})
+						$('#player6Fortification').on('click', function() {
+							fillFortificationModal("6");
+							$('#fortificationModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						});
+
 						$('#armiesSelectionForReinforcementDone')
 								.on(
 										'click',
@@ -1045,12 +1130,14 @@
 									"#countriesFromAttack option:selected")
 									.val();
 							data_game.attack.defender_territory = $(
-									"#countriesFromAttack option:selected")
+									"#countriesForAttack option:selected")
 									.val();
 							data_game.attack.attacker_dice_no = $(
-									"#noOfDiceAttacker").val();
+							"#noOfDiceAttacker option:selected")
+							.val();
 							data_game.attack.defender_dice_no = $(
-									"#noOfDiceDefender").val();
+							"#noOfDiceDefender option:selected")
+							.val();
 							currentPhase = attackType;
 							$('#attackModal').modal('toggle');
 							//hideReinforcementButtonForPlayer();
@@ -1066,6 +1153,31 @@
 						$('#attackEnd').on('click', function() {
 							hideAttackButtonForPlayer();
 							attack('ATTACK_END');
+
+						});
+						
+						function fortify(fortifyType) {debugger;
+							data_game.fortification = {};
+							data_game.fortification.source_territory = $(
+									"#countriesForFortificationSource option:selected")
+									.val();
+							data_game.fortification.destination_territory = $(
+									"#countriesForFortificationDestination option:selected")
+									.val();
+							data_game.fortification.army_count = $(
+									"#armiesToShift").val();
+							currentPhase = fortifyType;
+							$('#fortificationModal').modal('toggle');
+							//hideReinforcementButtonForPlayer();
+							saveGameState();
+						}
+						
+						$('#fortify').on('click', function() {
+							fortify('FORTIFICATION');
+						});
+						$('#fortifyEnd').on('click', function() {
+							hideFortificationButtonForPlayer();
+							fortify('FORTIFICATION_END');
 
 						});
 					});
@@ -1431,12 +1543,21 @@
 					</div>
 					<div class='row'>
 						<div class='col-sm-6'>
-							<label for="noOfDiceAttacker">Number of Dice (Attacker)</label> <input
-								type="text" class="form-control" id="noOfDiceAttacker">
+							<label for="noOfDiceAttacker">Number of Dice (Attacker) :
+							</label> <select class="form-control form-control-sm"
+								id="noOfDiceAttacker">
+								<option value='1'>1</option>
+								<option value='2'>2</option>
+								<option value='3'>3</option>
+							</select>
 						</div>
 						<div class='col-sm-6'>
-							<label for="noOfDiceDefender">Number of Dice (Defender)</label> <input
-								type="text" class="form-control" id="noOfDiceDefender">
+							<label for="noOfDiceDefender">Number of Dice (Defender) :
+							</label> <select class="form-control form-control-sm"
+								id="noOfDiceDefender">
+								<option value='1'>1</option>
+								<option value='2'>2</option>
+							</select>
 						</div>
 					</div>
 				</div>
@@ -1455,10 +1576,48 @@
 		</div>
 	</div>
 
-
-
-	<button id="check" type="button" class="btn btn-primary"
-		style="background-color: black; border-color: black">check</button>
+	<!-- Modal Fortification -->
+	<div class="modal fade" id="fortificationModal" tabindex="-1"
+		role="dialog" aria-labelledby="fortificationModalTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Fortification
+						Phase</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div>
+						<label for="FortificationPlayerNo">shift your army for
+							fortification phase</label>
+					</div>
+					<p>Please select your country to allocate one army</p>
+					<label for="countriesForFortificationSource">Source
+						Countries : </label> <select class="form-control form-control-sm"
+						id="countriesForFortificationSource">
+						<option></option>
+					</select><label for="armiesToShift">Armies to shift : </label> <input
+						type="text" class="form-control" id="armiesToShift"> <label
+						for="countriesForFortificationDestination">Destination
+						Countries : </label> <select class="form-control form-control-sm"
+						id="countriesForFortificationDestination">
+						<option></option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button id="fortify" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Fortify</button>
+					<button id="fortifyEnd" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Fortify
+						End</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 </html>
