@@ -117,6 +117,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				break;
 				
 			case "ATTACK_END":
+				player.attack(game_state);
 				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
