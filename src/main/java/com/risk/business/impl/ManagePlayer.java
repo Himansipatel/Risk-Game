@@ -101,7 +101,7 @@ public class ManagePlayer implements IManagePlayer {
 						int sum_armies = player_info_list.get(player_index).getTerritory_list()
 								.get(territory_list_index).getNumber_of_armies() + 1;
 						player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-						.setNumber_of_armies(sum_armies);
+								.setNumber_of_armies(sum_armies);
 						if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
 							territory_list_index = -1;
 						}
@@ -113,7 +113,7 @@ public class ManagePlayer implements IManagePlayer {
 					int sum_armies = player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.getNumber_of_armies() + 1;
 					player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-					.setNumber_of_armies(sum_armies);
+							.setNumber_of_armies(sum_armies);
 				}
 			}
 		}
@@ -164,7 +164,7 @@ public class ManagePlayer implements IManagePlayer {
 	/**
 	 * This method set cards according to territory and army name
 	 * 
-	 * @return
+	 * @return List of Cards Total No. of Cards in entire game before game starts
 	 */
 	private List<Card> getFreeCards() {
 		List<Card> card_list = new ArrayList<>();
@@ -240,11 +240,11 @@ public class ManagePlayer implements IManagePlayer {
 			for (int j = 0; j < player_list.get(i).getTerritory_list().size(); j++) {
 				GamePlayTerritory game_play_territory = new GamePlayTerritory();
 				game_play_territory
-				.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
+						.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
 				game_play_territory
-				.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
+						.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
 				game_play_territory
-				.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
+						.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
 				game_play_territory_list.add(game_play_territory);
 			}
 			player_object_at_file.setTerritory_list(game_play_territory_list);
@@ -359,42 +359,47 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
-	 * This method handles the trading of cards during reinforcement phase of the game-play.
+	 * This method handles the trading of cards during reinforcement phase of the
+	 * game-play.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param  game_state State of the game at point of time holding the entire info
-	 *                    about game-play. Like the current phase and player.
+	 * @param game_state State of the game at point of time holding the entire info
+	 *                   about game-play. Like the current phase and player.
 	 * @return game_state after updating info on trading of cards.
-	 */	
-	private GamePlay tradeCards(GamePlay game_state) {	
+	 */
+	private GamePlay tradeCards(GamePlay game_state) {
 
 		CardTrade trade_card = game_state.getCard_trade();
-		if (trade_card!=null) {
+		if (trade_card != null) {
 			if (trade_card.getCard1() == null || trade_card.getCard2() == null || trade_card.getCard3() == null) {
 				game_state.setStatus("Trading requires a minimum of three cards to be selected.");
-			}else {
+			} else {
 
 				/**
-				 * First part of condition (before OR) checks if all images on the three cards are same and the second part 
-				 * (after OR) checks if all the three are different.
+				 * First part of condition (before OR) checks if all images on the three cards
+				 * are same and the second part (after OR) checks if all the three are
+				 * different.
 				 */
-				if (    (trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
+				if ((trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
 						&& trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type()))
-						||  (!trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())	
-								&& !trade_card.getCard2().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type())
-								&& !trade_card.getCard3().getArmy_type().equalsIgnoreCase(trade_card.getCard1().getArmy_type()))){
+						|| (!trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
+								&& !trade_card.getCard2().getArmy_type()
+										.equalsIgnoreCase(trade_card.getCard3().getArmy_type())
+								&& !trade_card.getCard3().getArmy_type()
+										.equalsIgnoreCase(trade_card.getCard1().getArmy_type()))) {
 
 					int current_player = game_state.getCurrent_player();
 
 					for (Player player : game_state.getGame_state()) {
 
-						if (player.getId()==current_player) {
+						if (player.getId() == current_player) {
 
 							updateTradedArmies(player);
 							updateCardLists(player, game_state.getFree_cards(), trade_card);
 
 							/**
-							 * Check if the Player controls any territory which is present in one of the cards being traded.
+							 * Check if the Player controls any territory which is present in one of the
+							 * cards being traded.
 							 */
 							List<GamePlayTerritory> player_territory_list = player.getTerritory_list();
 
@@ -402,15 +407,19 @@ public class ManagePlayer implements IManagePlayer {
 
 								for (GamePlayTerritory gamePlayTerritory : player_territory_list) {
 
-									if (   gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard1().getTerritory_name())
-											|| gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
-											|| gamePlayTerritory.getTerritory_name().equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
+									if (gamePlayTerritory.getTerritory_name()
+											.equalsIgnoreCase(trade_card.getCard1().getTerritory_name())
+											|| gamePlayTerritory.getTerritory_name()
+													.equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
+											|| gamePlayTerritory.getTerritory_name()
+													.equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
 
 										/**
-										 * An additional two armies given if the Player controls any territory 
-										 * which is present in one of the cards being traded.
+										 * An additional two armies given if the Player controls any territory which is
+										 * present in one of the cards being traded.
 										 */
-										gamePlayTerritory.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);			
+										gamePlayTerritory
+												.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);
 										break;
 									}
 								}
@@ -418,32 +427,33 @@ public class ManagePlayer implements IManagePlayer {
 							break;
 						}
 					}
-				}else {
+				} else {
 					game_state.setStatus("Either all three cards should have same image or all three different.");
 				}
 			}
-		}else {
+		} else {
 			game_state.setStatus("Inavlid Trade State during Gameplay");
 		}
 		return game_state;
-	}	
+	}
 
 	/**
-	 * This method assigns a random card to a player and removes that card from the free stock.
+	 * This method assigns a random card to a player and removes that card from the
+	 * free stock.
 	 * 
-	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>   
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param game_state Overall game_state to be updated after this move
 	 */
 	public void addCardToPlayer(GamePlay game_state) {
 
-		if (game_state!=null) {
+		if (game_state != null) {
 
 			for (Player player : game_state.getGame_state()) {
 
-				if (player.getId()==game_state.getCurrent_player()) {
+				if (player.getId() == game_state.getCurrent_player()) {
 
 					Random rand = new Random();
-					int idx = rand.nextInt(game_state.getFree_cards().size());					
+					int idx = rand.nextInt(game_state.getFree_cards().size());
 
 					player.getCard_list().add(game_state.getFree_cards().get(idx));
 					game_state.getFree_cards().remove(idx);
@@ -454,44 +464,44 @@ public class ManagePlayer implements IManagePlayer {
 		}
 	}
 
-
 	/**
 	 * This method updates the player's army count during the trade of cards.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param player State of the current Player. 
+	 * @param player State of the current Player.
 	 */
 	private void updateTradedArmies(Player player) {
-		if (player.getTrade_count()==0) {
+		if (player.getTrade_count() == 0) {
 			player.setArmy_stock(player.getArmy_stock() + 4);
 			player.setTrade_count(1);
-		}else if (player.getTrade_count()==1) {
+		} else if (player.getTrade_count() == 1) {
 			player.setArmy_stock(player.getArmy_stock() + 6);
-			player.setTrade_count(2);											
-		}else if (player.getTrade_count()==2) {
+			player.setTrade_count(2);
+		} else if (player.getTrade_count() == 2) {
 			player.setArmy_stock(player.getArmy_stock() + 8);
-			player.setTrade_count(3);											
-		}else if (player.getTrade_count()==3) {
+			player.setTrade_count(3);
+		} else if (player.getTrade_count() == 3) {
 			player.setArmy_stock(player.getArmy_stock() + 10);
-			player.setTrade_count(4);											
-		}else if (player.getTrade_count()==4) {
+			player.setTrade_count(4);
+		} else if (player.getTrade_count() == 4) {
 			player.setArmy_stock(player.getArmy_stock() + 12);
-			player.setTrade_count(5);											
-		}else if (player.getTrade_count()==5) {
+			player.setTrade_count(5);
+		} else if (player.getTrade_count() == 5) {
 			player.setArmy_stock(player.getArmy_stock() + 15);
-			player.setTrade_count(6);											
-		}else if (player.getTrade_count()>5) {
-			player.setArmy_stock(player.getArmy_stock() + 15 + ((player.getTrade_count() - 5) * 5) );
-			player.setTrade_count(player.getTrade_count()+1);																						
-		}		
+			player.setTrade_count(6);
+		} else if (player.getTrade_count() > 5) {
+			player.setArmy_stock(player.getArmy_stock() + 15 + ((player.getTrade_count() - 5) * 5));
+			player.setTrade_count(player.getTrade_count() + 1);
+		}
 	}
 
 	/**
-	 * This method updates the player's card list and well as the free card list after the trading is over.
+	 * This method updates the player's card list and well as the free card list
+	 * after the trading is over.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param player State of the current Player.
-	 * @param free_cards List of cards which are free for allocation
+	 * @param player       State of the current Player.
+	 * @param free_cards   List of cards which are free for allocation
 	 * @param traded_cards The set of three cards being traded.
 	 */
 	private void updateCardLists(Player player, List<Card> free_cards, CardTrade traded_cards) {
@@ -501,10 +511,13 @@ public class ManagePlayer implements IManagePlayer {
 		Iterator<Card> i = player.getCard_list().iterator();
 		while (i.hasNext()) {
 			Card card = (Card) i.next();
-			if (   (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard1().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard1().getTerritory_name())) 
-					|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard2().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard2().getTerritory_name()))
-					|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard3().getArmy_type()) && card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard3().getTerritory_name()))) {
-				i.remove();				
+			if ((card.getArmy_type().equalsIgnoreCase(traded_cards.getCard1().getArmy_type())
+					&& card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard1().getTerritory_name()))
+					|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard2().getArmy_type())
+							&& card.getTerritory_name().equalsIgnoreCase(traded_cards.getCard2().getTerritory_name()))
+					|| (card.getArmy_type().equalsIgnoreCase(traded_cards.getCard3().getArmy_type()) && card
+							.getTerritory_name().equalsIgnoreCase(traded_cards.getCard3().getTerritory_name()))) {
+				i.remove();
 			}
 		}
 	}
@@ -517,10 +530,16 @@ public class ManagePlayer implements IManagePlayer {
 	@Override
 	public GamePlay attack(GamePlay game_play) {
 
+		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ARMY_MOVE")) {
+			attackArmyMove(game_play);
+			return game_play;
+		}
+
 		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_END")) {
 			giveCardAtAttackEnd(game_play);
 			return game_play;
 		}
+
 		int attacker_id = 0;
 		int defender_id = 0;
 		String attack_message = "";
@@ -607,7 +626,17 @@ public class ManagePlayer implements IManagePlayer {
 							for (int j = 0; j < territory_list.size(); j++) {
 								if (att_territory.getTerritory_name()
 										.equalsIgnoreCase(territory_list.get(j).getTerritory_name())) {
-									territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
+									if (attacker_territory_list.size() > 1) {
+										if (att_territory.getNumber_of_armies() == 1) {
+											territory_list.get(j)
+													.setNumber_of_armies(att_territory.getNumber_of_armies() + 1);
+										} else {
+											territory_list.get(j)
+													.setNumber_of_armies(att_territory.getNumber_of_armies());
+										}
+									} else {
+										territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
+									}
 								} else if (!territory_list.contains(att_territory)) {
 									territory_list.add(att_territory);
 									is_territory_occupied = true;
@@ -630,7 +659,7 @@ public class ManagePlayer implements IManagePlayer {
 										.equalsIgnoreCase(territory.getTerritory_name())) {
 									if (deff_territory.getNumber_of_armies() == 0) {
 										territory_list.remove(territory);
-										game_play.setGame_phase("ATTACK_MOVE_ON");
+										game_play.setGame_phase("ATTACK_ARMY_MOVE");
 										break;
 									} else {
 										territory.setNumber_of_armies(deff_territory.getNumber_of_armies());
@@ -640,8 +669,14 @@ public class ManagePlayer implements IManagePlayer {
 						}
 					}
 				}
-				attack_message = String.join("\n", attack_message_list);
-				game_play.setStatus(attack_message);
+				boolean is_winner = declareGameWinner(attacker_territory_list, game_play.getMap());
+				if (is_winner) {
+					game_play.setGame_phase("GAME_FINISH");
+					game_play.setStatus("Player" + game_play.getCurrent_player() + " is winner !!");
+				} else {
+					attack_message = String.join("\n", attack_message_list);
+					game_play.setStatus(attack_message);
+				}
 			} else {
 				game_play.setStatus(valid_attack_message);
 			}
@@ -656,6 +691,72 @@ public class ManagePlayer implements IManagePlayer {
 		return game_play;
 	}
 
+	/**
+	 * This method performs army move when attacker occupies defender territory.
+	 * 
+	 * @author <a href="himansipatel1994@gmail.com"> Himansi Patel </a>
+	 * @param game_play : GamePlay Object
+	 * @return GamePlay updated state of the game after army move during attack
+	 *         phase.
+	 */
+	private GamePlay attackArmyMove(GamePlay game_play) {
+		String source_territory = game_play.getArmy_move().getAttacker_territory();
+		String destination_territory = game_play.getArmy_move().getDefender_territory();
+		if (source_territory.equalsIgnoreCase(destination_territory)) {
+			game_play.setStatus(" cannot move armies because same territory is selected in destination.");
+			game_play.setGame_phase("ATTACK_ARMY_MOVE");
+			return game_play;
+		}
+
+		int army_count = game_play.getArmy_move().getAmry_count();
+
+		if (army_count == 0) {
+			game_play.setStatus("Atleast 1 army should be moved.");
+			game_play.setGame_phase("ATTACK_ARMY_MOVE");
+			return game_play;
+		}
+
+		GamePlayTerritory source_territory_instance = null, dest_territory_instance = null;
+
+		for (Player player : game_play.getGame_state()) {
+
+			if (player.getId() != game_play.getCurrent_player()) {
+				continue;
+			}
+
+			for (GamePlayTerritory each_territory : player.getTerritory_list()) {
+
+				if (each_territory.getTerritory_name().equalsIgnoreCase(source_territory)) {
+					source_territory_instance = each_territory;
+				} else if (each_territory.getTerritory_name().equalsIgnoreCase(destination_territory)) {
+					dest_territory_instance = each_territory;
+				}
+				if (source_territory_instance != null && dest_territory_instance != null) {
+					if (source_territory_instance.getNumber_of_armies() <= army_count) {
+						game_play.setStatus(source_territory + " is not having minimum armies to transfer.");
+						game_play.setGame_phase("ATTACK_ARMY_MOVE");
+						return game_play;
+					} else {
+						source_territory_instance
+								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+						dest_territory_instance
+								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+						game_play.setStatus(army_count + " moved from " + source_territory_instance.getTerritory_name()
+								+ " to " + dest_territory_instance.getTerritory_name());
+						game_play.setGame_phase("ATTACK_ARMY_ON");
+					}
+					break;
+				}
+			}
+			if (source_territory_instance == null || dest_territory_instance == null) {
+				game_play.setStatus("Invalid Move (Not Neighboring Territory)");
+				game_play.setGame_phase("ATTACK_ARMY_MOVE");
+				return game_play;
+			}
+		}
+		return game_play;
+
+	}
 
 	/**
 	 * 
@@ -700,11 +801,11 @@ public class ManagePlayer implements IManagePlayer {
 						return game_play;
 					} else {
 						source_territory_instance
-						.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
-						.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
 						game_play.setStatus(army_count + " moved from " + source_territory_instance.getTerritory_name()
-						+ " to " + dest_territory_instance.getTerritory_name());
+								+ " to " + dest_territory_instance.getTerritory_name());
 					}
 					break;
 				}
@@ -717,15 +818,40 @@ public class ManagePlayer implements IManagePlayer {
 		return game_play;
 	}
 
+	/**
+	 * This function is use to detect if current player(i.e attacker) is winner once
+	 * attacker occupy defender territory
+	 * 
+	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param attacker_territory_list
+	 * @param map                     The Entire Game Map Object
+	 * @return Flag Current Player(Attacker) is Winner or not
+	 */
+	public boolean declareGameWinner(List<GamePlayTerritory> attacker_territory_list, Map map) {
+		boolean is_winner = false;
+		int total_territory_in_game = getTerritories(map).size();
+		if (total_territory_in_game > 0) {
+			// Current Player(Attacker) Territory Size
+			int player_territory_count = attacker_territory_list.size();
+			if (player_territory_count == total_territory_in_game) {
+				is_winner = true;
+			}
+		}
+		return is_winner;
+	}
 
 	/**
-	 * This function is use to give card to player from card deck at the end of
-	 * player attack turn if player has occupy any territory.
+	 * This function is call at the end of each player attack phase , which performs
+	 * checks that whether player has occupied any territory during each turn and if
+	 * any territory occupied then as per risk rules player should get one card from
+	 * card deck.
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param game_play
+	 *         Description added by Mayank Jariwala
+	 * @param game_play : GamePlay Object
 	 */
-	public void giveCardAtAttackEnd(GamePlay game_play) {
+	private void giveCardAtAttackEnd(GamePlay game_play) {
 		int current_player_id = game_play.getCurrent_player();
 		boolean is_territory_occupied = false;
 		for (int player_list_index = 0; player_list_index < game_play.getGame_state().size(); player_list_index++) {
@@ -779,10 +905,13 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
+	 * This function performs check for valid attack on defender territory (If
+	 * Territory is occupy by attacker then player cannot attack on his own
+	 * territory)
 	 * 
 	 * @param attacker_id
 	 * @param defender_id
-	 * @return
+	 * @return Valid Attack Message
 	 */
 	private String checkForValidAttackTerritory(int attacker_id, int defender_id) {
 		String message = "";
@@ -793,12 +922,13 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
+	 * This function performs valid attack check.
 	 * 
 	 * @param attacker_territory_armies
 	 * @param defender_territory_armies
 	 * @param attacker_dice_no
 	 * @param defender_dice_no
-	 * @return
+	 * @return Valid Attack Message
 	 */
 	private String checkForValidAttack(int attacker_territory_armies, int defender_territory_armies,
 			int attacker_dice_no, int defender_dice_no) {
