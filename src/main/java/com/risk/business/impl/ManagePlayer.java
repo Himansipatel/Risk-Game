@@ -11,6 +11,7 @@ import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
+import com.risk.business.IManageMap;
 import com.risk.business.IManagePlayer;
 import com.risk.file.impl.ManageGamePlayFile;
 import com.risk.model.Attack;
@@ -138,6 +139,7 @@ public class ManagePlayer implements IManagePlayer {
 		List<Player> player_list_at_file = convertPlayerToFileLayer(player_info_list);
 		ManageGamePlay game_manager = new ManageGamePlay();
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
+		IManageMap map_manager = new ManageMap();
 		String game_phase;
 		int current_player = 1;
 		game_phase = allocation_type.equalsIgnoreCase("A") ? "REINFORCEMENT" : "STARTUP";
@@ -149,6 +151,7 @@ public class ManagePlayer implements IManagePlayer {
 		game_play.setGame_phase(game_phase);
 		game_play.setGame_state(player_list_at_file);
 		game_play.setMap(map);
+		game_play.setGui_map(map_manager.fetchMap(file_name));
 		game_play.setCard_trade(new CardTrade());
 		List<Card> free_cards = getFreeCards();
 		game_play.setFree_cards(free_cards);
@@ -752,7 +755,7 @@ public class ManagePlayer implements IManagePlayer {
 								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
 								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
-						game_play.setStatus(army_count + " moved from " + source_territory_instance.getTerritory_name()
+						game_play.setStatus(army_count + " army moved from " + source_territory_instance.getTerritory_name()
 								+ " to " + dest_territory_instance.getTerritory_name());
 						game_play.setGame_phase("ATTACK_ARMY_ON");
 					}
@@ -815,7 +818,7 @@ public class ManagePlayer implements IManagePlayer {
 								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
 								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
-						game_play.setStatus(army_count + " moved from " + source_territory_instance.getTerritory_name()
+						game_play.setStatus(army_count + " army moved from " + source_territory_instance.getTerritory_name()
 								+ " to " + dest_territory_instance.getTerritory_name());
 					}
 					break;
