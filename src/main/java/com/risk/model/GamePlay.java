@@ -32,7 +32,7 @@ public class GamePlay extends Observable {
 	 * GUI Map object for the current game play
 	 */
 	private com.risk.model.gui.Map gui_map;
-	
+
 	/**
 	 * Currently active phase during game play
 	 */
@@ -71,12 +71,33 @@ public class GamePlay extends Observable {
 
 	/**
 	 * Represents the info captured during fortification phase of any player.
-	 */	
+	 */
 	private Fortification fortification;
+
+	private List<Domination> domination;
+
+	/**
+	 * @return the domination
+	 */
+	public List<Domination> getDomination() {
+		return domination;
+	}
+
+	/**
+	 * Any change in the state of Player based on control over the map will trigger
+	 * calling of update method in ManageGamePlay which is acting as the Observer.
+	 * 
+	 * @param domination List of player domination objects to set
+	 */
+	public void setDomination(List<Domination> domination) {
+		this.domination = domination;
+		setChanged();
+		notifyObservers(this);
+	}
 
 	/**
 	 * @return the AttackArmyMove
-	 */	
+	 */
 	public AttackArmyMove getArmy_move() {
 		return army_move;
 	}
@@ -247,6 +268,5 @@ public class GamePlay extends Observable {
 	public void setGui_map(com.risk.model.gui.Map gui_map) {
 		this.gui_map = gui_map;
 	}
-	
 
 }
