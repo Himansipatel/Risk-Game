@@ -670,6 +670,7 @@
 								var playerD = makePlayerData(i);
 								playerArray.push(playerD);
 							}
+							var phaseBeforeCall = currentPhase;
 
 							var game_Play = {
 								game_state : playerArray,
@@ -704,7 +705,8 @@
 													|| currentPhase == 'ATTACK_ON'
 													|| currentPhase == 'ATTACK_ALL_OUT'
 													|| currentPhase == 'ATTACK_END' 
-													|| currentPhase =='FORTIFICATION') {
+													|| currentPhase =='FORTIFICATION'
+													|| currentPhase =='ATTACK_ARMY_MOVE') {
 												if(data.status != null && data.status != ''){
 													alert(data.status);
 												}
@@ -712,13 +714,17 @@
 											if (currentPhase != 'ATTACK'
 													&& currentPhase != "ATTACK_ON"
 													&& currentPhase != "ATTACK_ALL_OUT" 
-													&& currentPhase != "FORTIFICATION") {
+													&& currentPhase != "FORTIFICATION"
+													&& currentPhase != "ATTACK_ARMY_MOVE") {
 												alert(currentPhase + " ended");
 											}
 											currentPhase = data.game_phase;
 											whichPlayerChance = data.current_player;
-											checkForNextPhaseAndDisplayOption();
 											stopLoading();
+											if(phaseBeforeCall == 'ATTACK_ARMY_MOVE' && currentPhase !='ATTACK_ARMY_MOVE'){
+												$('#attackArmiesMovementModal').modal('toggle');												
+											}
+											checkForNextPhaseAndDisplayOption();											
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -896,14 +902,14 @@
 							}
 						}
 						
-						function displayModalAttackArmiesMovement(){
+						function displayModalAttackArmiesMovement(){debugger;
 							$('#attackArmiesMovementModal').modal({
 								backdrop : 'static',
 								keyboard : false
 							});							
 						}
 
-						function checkForNextPhaseAndDisplayOption() {debugger;
+						function checkForNextPhaseAndDisplayOption() {
 							if (currentPhase == "ATTACK"
 									|| currentPhase == "ATTACK_ON"
 									|| currentPhase == "ATTACK_ALL_OUT"
@@ -1382,9 +1388,8 @@
 						$('#attackArmiesMovementDone').on('click', function(){
 							var no = $('#armiesToShiftAttack').val();
 							data_game.army_move.amry_count = no;
-							$('#attackArmiesMovementModal').modal('toggle');
 							saveGameState();
-						});							
+						});	
 						
 					});
 </script>
