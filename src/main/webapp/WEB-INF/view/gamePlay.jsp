@@ -28,6 +28,22 @@
 					            e.preventDefault();
 					        }
 					    });
+						
+						$("#armiesToShiftAttack").keydown(function (e) {
+					        // Allow: backspace, delete, tab, escape, enter and .
+					        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+					             // Allow: Ctrl+A, Command+A
+					            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+					             // Allow: home, end, left, right, down, up
+					            (e.keyCode >= 35 && e.keyCode <= 40)) {
+					                 // let it happen, don't do anything
+					                 return;
+					        }
+					        // Ensure that it is a number and stop the keypress
+					        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+					            e.preventDefault();
+					        }
+					    });
 
 						var continentDataTable = $('#continentsDesc')
 								.DataTable();
@@ -666,7 +682,8 @@
 								status : '',
 								card_trade : data_game.card_trade,
 								attack : data_game.attack,
-								fortification : data_game.fortification
+								fortification : data_game.fortification,
+								army_move : data_game.army_move
 							};
 							var a = JSON.stringify(game_Play);
 							$
@@ -878,8 +895,15 @@
 								break;
 							}
 						}
+						
+						function displayModalAttackArmiesMovement(){
+							$('#attackArmiesMovementModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});							
+						}
 
-						function checkForNextPhaseAndDisplayOption() {
+						function checkForNextPhaseAndDisplayOption() {debugger;
 							if (currentPhase == "ATTACK"
 									|| currentPhase == "ATTACK_ON"
 									|| currentPhase == "ATTACK_ALL_OUT"
@@ -889,6 +913,8 @@
 								displayFortificationButtonForPlayer();
 							} else if (currentPhase == "REINFORCEMENT") {
 								displayReinforcementButtonForPlayer();
+							} else if(currentPhase == "ATTACK_ARMY_MOVE") {
+								displayModalAttackArmiesMovement();
 							}
 						}
 
@@ -1352,6 +1378,14 @@
 						$('#reinforcementModal').modal('toggle');
 						saveGameState();														
 					});
+						
+						$('#attackArmiesMovementDone').on('click', function(){
+							var no = $('#armiesToShiftAttack').val();
+							data_game.army_move.amry_count = no;
+							$('#attackArmiesMovementModal').modal('toggle');
+							saveGameState();
+						});							
+						
 					});
 </script>
 
@@ -1822,6 +1856,28 @@
 				<div class="modal-footer">
 					<button id="tradeCardsDone" type="button" class="btn btn-primary"
 						style="background-color: black; border-color: black">trade</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal Attack Armies movement -->
+	<div class="modal fade" id="attackArmiesMovementModal" tabindex="-1"
+		role="dialog" aria-labelledby="attackArmiesMovementModalTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Move Armies</h5>
+				</div>
+				<div class="modal-body">
+					<p>Please select armies to move to newly acquired territories</p>
+					<label for="armiesToShiftAttack">Armies to shift : </label> <input
+						type="text" class="form-control" id="armiesToShiftAttack">
+				</div>
+				<div class="modal-footer">
+					<button id="attackArmiesMovementDone" type="button"
+						class="btn btn-primary"
+						style="background-color: black; border-color: black">move</button>
 				</div>
 			</div>
 		</div>
