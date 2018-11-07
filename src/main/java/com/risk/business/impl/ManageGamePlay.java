@@ -52,8 +52,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			switch (game_state.getGame_phase()) {
 
 			case "STARTUP":
-				//game_state.setGame_state(calculateArmiesReinforce(game_state.getGame_state(),map));
-				calculateArmiesReinforce(game_state.getGame_state(),map);
+				calculateArmiesReinforce(game_state.getGame_state(),map,1);
 				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
 				break;
 
@@ -90,8 +89,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 			case "FORTIFICATION_END":
 				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
-				//game_state.setGame_state(calculateArmiesReinforce(game_state.getGame_state(),map));
-			    calculateArmiesReinforce(game_state.getGame_state(),map);
+				calculateArmiesReinforce(game_state.getGame_state(),map,game_state.getCurrent_player());
 				break;
 
 			default:
@@ -151,7 +149,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map){
+	public List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map, int current_player){
 
 		List<Continent> continents = new ArrayList<>();
 		List<Territory> territories;
@@ -171,17 +169,21 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 		//Preparing a list of all players along with the continents they hold.
 		for (Player player : gameplay) {
-			List<GamePlayTerritory> player_territories_game = player.getTerritory_list();
-			territories_player = new TreeSet<>();
-			for (GamePlayTerritory territority : player_territories_game) {
-				territories_player.add(territority.getTerritory_name());
+			if (player.getId()==current_player) {
+				List<GamePlayTerritory> player_territories_game = player.getTerritory_list();
+				territories_player = new TreeSet<>();
+				for (GamePlayTerritory territority : player_territories_game) {
+					territories_player.add(territority.getTerritory_name());
+				}
+				player_territories.put(player.getId(), territories_player);
 			}
-			player_territories.put(player.getId(), territories_player);
 		}		
 
 		//Preparing List of all players along with their current army stock.
 		for (Player player : gameplay) {
-			players_army.put(player.getId(), player.getArmy_stock());
+			if (player.getId()==current_player) {
+				players_army.put(player.getId(), player.getArmy_stock());
+			}
 		}
 
 		//Preparing a list of all continents along with their territories.
@@ -199,12 +201,14 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		//Updating Player's army stock on the basis of territories it hold.
 		//If the player holds less than 9 territories then allocate 3 army elements as per Risk Rules
 		for (Player player : gameplay) {
-			int army_count = player_territories.get(player.getId()).size() / 3;
-			if (army_count < 3) {
-				army_count = 3;
+			if (player.getId()==current_player) {
+				int army_count = player_territories.get(player.getId()).size() / 3;
+				if (army_count < 3) {
+					army_count = 3;
+				}
+				army_count = army_count + players_army.get(player.getId());
+				players_army.replace(player.getId(), army_count);
 			}
-			army_count = army_count + players_army.get(player.getId());
-			players_army.replace(player.getId(), army_count);
 		}		
 
 		//Verifying if a player holds the entire continent and updating its army stock.
@@ -224,7 +228,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 		//Preparing List of all players along with their updated army stock.
 		for (Player player : gameplay) {
-			player.setArmy_stock(players_army.get(player.getId()));
+			if (player.getId()==current_player) {
+				player.setArmy_stock(players_army.get(player.getId()));
+			}
 		}
 
 		return gameplay;
