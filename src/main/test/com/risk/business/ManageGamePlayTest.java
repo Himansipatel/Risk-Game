@@ -2,21 +2,11 @@ package com.risk.business;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.risk.business.impl.ManageGamePlay;
-import com.risk.business.impl.ManageMap;
-import com.risk.file.IManageFile;
-import com.risk.file.IManageGamePlayFile;
-import com.risk.file.impl.ManageFile;
-import com.risk.file.impl.ManageGamePlayFile;
+import com.risk.business.impl.ManagePlayer;
 import com.risk.model.GamePlay;
-import com.risk.model.Map;
-import com.risk.model.Player;
-import com.risk.model.file.File;
 
 /**
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -24,41 +14,78 @@ import com.risk.model.file.File;
  */
 public class ManageGamePlayTest {
 
-	private static IManageGamePlay manageGamePlay;
+	private IManagePlayer player_manager;
 
 	@Before
 	public void initMapManager() {
-		manageGamePlay = new ManageGamePlay();
+		player_manager = new ManagePlayer();
 	}
 
 	/**
-	 * Test to check if army stock allocation for reinforcement phase is working
-	 * fine.
+	 * This test checks if a player gets correct armies based on multiple continents
+	 * it holds.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Test
-	public void testCalculateArmiesReinforce() {
+	public void testCalculateArmiesReinforceMultiContinent() {
 
-		IManageGamePlayFile game_file = new ManageGamePlayFile();
-		GamePlay game_state = new GamePlay();
-		game_state = game_file.fetchGameState("India_Reinforce_Test.txt");
+		/**
+		 * Creating a game state using AutoAllocationMode - A.
+		 * Auto Allocation Mode Performs an initial automatic allocation of armies
+		 * during startup phase and then calls calculateArmiesReinforce to give an
+		 * additional amount of armies based on the Continent score if any player
+		 * holds control over an entire continent.
+		 */
 
-		IManageMap map_manager = new ManageMap();
-		String[] file_name_construct = game_state.getFile_name().split("_");
-		String[] file_name = file_name_construct[0].split("=");
-		IManageFile file_manager = new ManageFile(file_name[1].concat(".map"));
-		File file = file_manager.retreiveFileObject();
-		Map map = map_manager.convertFileToMap(file);
+		GamePlay game_state = new GamePlay();		
+		game_state = player_manager.createPlayer(6,"Switzerland.map","A");
 
-		List<Player> game_state_new = manageGamePlay.calculateArmiesReinforce(game_state.getGame_state(), map);
+		/**
+		 * Using auto allocation Player 2 captures entire 
+		 * "Lowlands" Continent - Score = 1
+		 * "Basel" Continent - Score = 1
+		 * Initial army stock 0 - New Stock after calculation = 5 = (3 + 2)
+		 * 3 on the basis of 5 Territories it holds and 2 from Continent Scores
+		 */
+		assertEquals(5, game_state.getGame_state().get(1).getArmy_stock());
 
-		// Player 1 captures entire "southern states" Continent - Score = 5.
-		// Initial army stock 20 - New Stock after calculation = 35.
-		assertEquals(35, game_state_new.get(0).getArmy_stock());
-
-		// Player 2 captures entire "north east" Continent - Score = 5.
-		// Initial army stock 10 - New Stock after calculation = 19.
-		assertEquals(19, game_state_new.get(1).getArmy_stock());
+		/**
+		 * Using auto allocation Player 3 captures entire 
+		 * "Liechtenstien" Continent - Score = 1
+		 * Initial army stock 0 - New Stock after calculation = 4 = (3 + 1)
+		 * 3 on the basis of 5 Territories it holds and 1 from Continent Score.
+		 */		
+		assertEquals(4, game_state.getGame_state().get(2).getArmy_stock());
 	}
+
+	/**
+	 * This test checks if a player gets correct armies based on single continent
+	 * it holds.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Test
+	public void testCalculateArmiesReinforceSingleContinent() {
+
+		/**
+		 * Creating a game state using AutoAllocationMode - A.
+		 * Auto Allocation Mode Performs an initial automatic allocation of armies
+		 * during startup phase and then calls calculateArmiesReinforce to give an
+		 * additional amount of armies based on the Continent score if any player
+		 * holds control over an entire continent.
+		 */
+
+		GamePlay game_state = new GamePlay();		
+		game_state = player_manager.createPlayer(6,"Switzerland.map","A");
+
+		/**
+		 * Using auto allocation Player 3 captures entire 
+		 * "Liechtenstien" Continent - Score = 1
+		 * Initial army stock 0 - New Stock after calculation = 4 = (3 + 1)
+		 * 3 on the basis of 5 Territories it holds and 1 from Continent Score.
+		 */		
+		assertEquals(4, game_state.getGame_state().get(2).getArmy_stock());
+	}
+
 }

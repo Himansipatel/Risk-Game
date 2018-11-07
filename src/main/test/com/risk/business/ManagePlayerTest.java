@@ -240,27 +240,22 @@ public class ManagePlayerTest {
 	 */
 	@Test
 	public void testReinforceAutoAllocate() {
-		IManageGamePlay game_manager   = new ManageGamePlay();
 		IManagePlayer   player_manager = new ManagePlayer();
 		GamePlay game_state = new GamePlay();
 		game_state = player_manager.createPlayer(6,"Switzerland.map","A");		
-		game_manager.managePhase(game_state);
-		assertEquals(0, 0);
+
+		//6 Players should have been created.
+		assertEquals(6, game_state.getGame_state().size());
+
+		//Player 1 should be set as the current player.  
+		assertEquals(1, game_state.getCurrent_player());
+
+		//REINFORCEMENT Phase should be set a the current phase.  
+		assertEquals("REINFORCEMENT", game_state.getGame_phase());		
 	}
 
 
 	//Test Cases for Trading Cards.
-	/**
-	 * Test to check if a card is allocated to a player it is removed  
-	 * from the list of free cards.
-	 * 
-	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 */
-	@Test
-	public void testAddCardToPlayer() {
-		assertEquals(0, 0);
-	}
-
 	/**
 	 * Test to check if an Valid trade move is executed when 
 	 * all three cards have the same army image.
