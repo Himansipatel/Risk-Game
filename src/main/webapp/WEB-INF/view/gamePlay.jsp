@@ -588,6 +588,11 @@
 										url : "gamePlay/initStartUpPhase",
 										success : function(data) {
 											data_game = data;
+											if(typeof(data.gui_map) == undefined || data.gui_map == null){
+												alert(data.status);
+												stopLoading();
+												return;
+											}
 											parseMapData(data.gui_map);
 											parseGamePlayData(data.game_state);
 											currentMapName = (data.file_name);

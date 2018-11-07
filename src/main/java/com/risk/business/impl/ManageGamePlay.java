@@ -313,7 +313,6 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		managePhase((GamePlay) arg);
-		dominationView((GamePlay) arg);
 	}
 
 }
