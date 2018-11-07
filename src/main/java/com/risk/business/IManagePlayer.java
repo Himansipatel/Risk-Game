@@ -60,17 +60,4 @@ public interface IManagePlayer {
 	 * @return GamePlay Object
 	 */
 	GamePlay fortify(GamePlay game_play);
-
-	/**
-	 * This function is call at the end of player turn , which performs checks that
-	 * whether player has occupied any territory during each turn and if any
-	 * territory occupied then as per risk rules player should get one card from
-	 * card deck.
-	 * 
-	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
-	 *         Description added by Mayank Jariwala
-	 * @param game_play : GamePlay Object
-	 * @return Card Object
-	 */
-	void giveCardAtAttackEnd(GamePlay game_play);
 }
