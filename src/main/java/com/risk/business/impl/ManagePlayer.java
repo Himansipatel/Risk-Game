@@ -741,8 +741,8 @@ public class ManagePlayer implements IManagePlayer {
 						.size(); player_list_index++) {
 					if (current_player_id == game_play.getGame_state().get(player_list_index).getId()) {
 						game_play.getGame_state().get(player_list_index).getCard_list().add(card);
-						String message = "Card-".concat(card.getTerritory_name()).concat("Army-")
-								.concat(card.getArmy_type()).concat("assigned to Attacker.");
+						String message = "Card - ".concat(card.getTerritory_name()).concat(" Army - ")
+								.concat(card.getArmy_type()).concat(" has been assigned to Attacker.");
 						game_play.setStatus(message);
 						game_play.getGame_state().get(player_list_index).setAny_territory_occupied(false);
 					}
