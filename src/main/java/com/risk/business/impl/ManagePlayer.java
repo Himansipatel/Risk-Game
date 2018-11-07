@@ -152,7 +152,7 @@ public class ManagePlayer implements IManagePlayer {
 		List<Card> free_cards = getFreeCards();
 		game_play.setFree_cards(free_cards);
 		if (allocation_type.equalsIgnoreCase("A")) {
-			game_manager.calculateArmiesReinforce(game_play.getGame_state(), map);
+			game_manager.calculateArmiesReinforce(game_play.getGame_state(), map,game_play.getCurrent_player());
 		}
 		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(game_play);
 		if (file_write_message)
