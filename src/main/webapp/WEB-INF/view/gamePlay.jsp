@@ -588,6 +588,7 @@
 										url : "gamePlay/initStartUpPhase",
 										success : function(data) {
 											data_game = data;
+											parseMapData(data.gui_map);
 											parseGamePlayData(data.game_state);
 											currentMapName = (data.file_name);
 											//set currentPhase also(later)
@@ -609,7 +610,7 @@
 						}
 
 						$('#manualAllocate').on('click', function() {
-							fetchMap();
+							//fetchMap();
 							initStartUpPhase(false);
 							$('#mapSelectModal').modal('toggle');
 							whichPlayerChance = 1;
@@ -618,7 +619,7 @@
 						});
 
 						$('#autoAllocate').on('click', function() {
-							fetchMap();
+							//fetchMap();
 							initStartUpPhase(true);
 							$('#mapSelectModal').modal('toggle');
 							whichPlayerChance = 1;
@@ -684,7 +685,8 @@
 								card_trade : data_game.card_trade,
 								attack : data_game.attack,
 								fortification : data_game.fortification,
-								army_move : data_game.army_move
+								army_move : data_game.army_move,
+								gui_map : data_game.gui_map
 							};
 							var a = JSON.stringify(game_Play);
 							$
@@ -1860,7 +1862,7 @@
 				</div>
 				<div class="modal-footer">
 					<button id="tradeCardsDone" type="button" class="btn btn-primary"
-						style="background-color: black; border-color: black">trade</button>
+						style="background-color: black; border-color: black">Trade</button>
 				</div>
 			</div>
 		</div>
@@ -1882,7 +1884,7 @@
 				<div class="modal-footer">
 					<button id="attackArmiesMovementDone" type="button"
 						class="btn btn-primary"
-						style="background-color: black; border-color: black">move</button>
+						style="background-color: black; border-color: black">Move</button>
 				</div>
 			</div>
 		</div>
