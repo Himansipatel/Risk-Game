@@ -29,6 +29,11 @@ public class GamePlay extends Observable {
 	private com.risk.model.Map map;
 
 	/**
+	 * GUI Map object for the current game play
+	 */
+	private com.risk.model.gui.Map gui_map;
+	
+	/**
 	 * Currently active phase during game play
 	 */
 	private String game_phase;
@@ -228,5 +233,20 @@ public class GamePlay extends Observable {
 	public void setCard_trade(CardTrade card_trade) {
 		this.card_trade = card_trade;
 	}
+
+	/**
+	 * @return the gui_map
+	 */
+	public com.risk.model.gui.Map getGui_map() {
+		return gui_map;
+	}
+
+	/**
+	 * @param gui_map the gui_map to set
+	 */
+	public void setGui_map(com.risk.model.gui.Map gui_map) {
+		this.gui_map = gui_map;
+	}
+	
 
 }
