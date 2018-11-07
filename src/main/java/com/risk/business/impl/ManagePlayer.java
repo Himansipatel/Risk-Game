@@ -662,6 +662,9 @@ public class ManagePlayer implements IManagePlayer {
 										territory_list.remove(territory);
 										game_play.setGame_phase("ATTACK_ARMY_MOVE");
 										AttackArmyMove attack_army_move = game_play.getArmy_move();
+										if(attack_army_move==null) {
+											attack_army_move=new AttackArmyMove();
+										}
 										attack_army_move
 												.setAttacker_territory(game_play.getAttack().getAttacker_territory());
 										attack_army_move
