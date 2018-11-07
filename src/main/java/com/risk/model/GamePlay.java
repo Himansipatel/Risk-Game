@@ -54,9 +54,34 @@ public class GamePlay extends Observable {
 	 */
 	private CardTrade card_trade;
 
+	/**
+	 * Represents the info captured during attack phase of any player.
+	 */
 	private Attack attack;
 
+	/**
+	 * Represents the info captured during army movement after Attack.
+	 */
+	private AttackArmyMove army_move;
+
+	/**
+	 * Represents the info captured during fortification phase of any player.
+	 */	
 	private Fortification fortification;
+
+	/**
+	 * @return the AttackArmyMove
+	 */	
+	public AttackArmyMove getArmy_move() {
+		return army_move;
+	}
+
+	/**
+	 * @param army_move to set after attack
+	 */
+	public void setArmy_move(AttackArmyMove army_move) {
+		this.army_move = army_move;
+	}
 
 	/**
 	 * @return the attack

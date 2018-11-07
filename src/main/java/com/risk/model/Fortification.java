@@ -9,8 +9,20 @@ package com.risk.model;
  * @version 0.0.1
  */
 public class Fortification {
+
+	/**
+	 * Territory from where to move the army
+	 */	
 	private String source_territory;
+	
+	/**
+	 * Territory to where to move the army
+	 */	
 	private String destination_territory;
+
+	/**
+	 * Number of armies to be moved
+	 */	
 	private int army_count;
 
 	public Fortification() {
