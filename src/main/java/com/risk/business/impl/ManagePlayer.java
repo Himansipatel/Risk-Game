@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.risk.business.IManagePlayer;
 import com.risk.file.impl.ManageGamePlayFile;
 import com.risk.model.Attack;
+import com.risk.model.AttackArmyMove;
 import com.risk.model.Card;
 import com.risk.model.CardTrade;
 import com.risk.model.Continent;
@@ -152,7 +153,7 @@ public class ManagePlayer implements IManagePlayer {
 		List<Card> free_cards = getFreeCards();
 		game_play.setFree_cards(free_cards);
 		if (allocation_type.equalsIgnoreCase("A")) {
-			game_manager.calculateArmiesReinforce(game_play.getGame_state(), map,game_play.getCurrent_player());
+			game_manager.calculateArmiesReinforce(game_play.getGame_state(), map, game_play.getCurrent_player());
 		}
 		boolean file_write_message = manage_game_play_file.saveGameStateToDisk(game_play);
 		if (file_write_message)
@@ -660,6 +661,13 @@ public class ManagePlayer implements IManagePlayer {
 									if (deff_territory.getNumber_of_armies() == 0) {
 										territory_list.remove(territory);
 										game_play.setGame_phase("ATTACK_ARMY_MOVE");
+										AttackArmyMove attack_army_move = game_play.getArmy_move();
+										attack_army_move
+												.setAttacker_territory(game_play.getAttack().getAttacker_territory());
+										attack_army_move
+												.setDefender_territory(game_play.getAttack().getDefender_territory());
+										attack_army_move.setAmry_count(0);
+										game_play.setArmy_move(attack_army_move);
 										break;
 									} else {
 										territory.setNumber_of_armies(deff_territory.getNumber_of_armies());
