@@ -630,7 +630,7 @@
 							saveGameState();
 						});
 						
-						function makePlayerData(playerNo) {debugger;
+						function makePlayerData(playerNo) {
 							var countryArray = [];
 							var playerCountryTable = fetchDataTableforCurrentPlayer(playerNo);
 							var data = playerCountryTable.rows().data();
@@ -902,7 +902,7 @@
 							}
 						}
 						
-						function displayModalAttackArmiesMovement(){debugger;
+						function displayModalAttackArmiesMovement(){
 							$('#attackArmiesMovementModal').modal({
 								backdrop : 'static',
 								keyboard : false
