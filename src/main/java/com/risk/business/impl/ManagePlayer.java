@@ -142,16 +142,16 @@ public class ManagePlayer implements IManagePlayer {
 		IManageMap map_manager = new ManageMap();
 		String game_phase;
 		int current_player = 1;
+		GamePlay game_play = new GamePlay();
+		game_play.setGui_map(map_manager.fetchMap(file_name));
 		game_phase = allocation_type.equalsIgnoreCase("A") ? "REINFORCEMENT" : "STARTUP";
 		file_name = (file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name) + "_"
 				+ String.valueOf(System.currentTimeMillis());
-		GamePlay game_play = new GamePlay();
 		game_play.setFile_name(file_name);
 		game_play.setCurrent_player(current_player);
 		game_play.setGame_phase(game_phase);
 		game_play.setGame_state(player_list_at_file);
 		game_play.setMap(map);
-		game_play.setGui_map(map_manager.fetchMap(file_name));
 		game_play.setCard_trade(new CardTrade());
 		List<Card> free_cards = getFreeCards();
 		game_play.setFree_cards(free_cards);
