@@ -122,6 +122,7 @@ public class GamePlayController {
 		gamePlay.setStatus(gamePlayFromView.getStatus());
 		gamePlay.setAttack(gamePlayFromView.getAttack());
 		gamePlay.setFortification(gamePlayFromView.getFortification());
+		gamePlay.setArmy_move(gamePlayFromView.getArmy_move());
 		gamePlay.setGame_state(gamePlayFromView.getGame_state());
 	}
 }
