@@ -135,8 +135,8 @@ public class ManagePlayerTest {
 	public void validateAutomaticallyAssignArmyStock() {
 		ManagePlayer managePlayer = new ManagePlayer();
 		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "A");
-		assertEquals(5, gamePlay.getGame_state().get(0).getArmy_stock());
-		assertEquals(6, gamePlay.getGame_state().get(1).getArmy_stock());
+		assertEquals(14, gamePlay.getGame_state().get(0).getTerritory_list().size());
+		assertEquals(13, gamePlay.getGame_state().get(1).getTerritory_list().size());
 	}
 
 	/**
@@ -327,8 +327,8 @@ public class ManagePlayerTest {
 		 * Current Player - 3 and has clicked on TRADE_CARD
 		 * Player holds 3 cards of same image
 		 * Number of trades player has already done - 6
-		 * Current free army stock of Player 3  = 4
-		 * New army stock after trade should be = 4 + 20 = 24 
+		 * Current free army stock of Player 3  = 0
+		 * New army stock after trade should be = 0 + 20 = 20
 		 */
 		game_manager.managePhase(game_state);
 
@@ -336,7 +336,7 @@ public class ManagePlayerTest {
 		assertEquals(3,game_state.getFree_cards().size());
 
 		/**
-		 * Player's army stock becomes      - 24
+		 * Player's army stock becomes      - 20
 		 * Player's card list becomes empty.
 		 * Player's number of trades become - 7 
 		 */
@@ -346,7 +346,7 @@ public class ManagePlayerTest {
 			}else {
 				assertEquals(7,player.getTrade_count());
 				assertEquals(0,player.getCard_list().size());
-				assertEquals(24,player.getArmy_stock());
+				assertEquals(20,player.getArmy_stock());
 				break;
 			}
 		}		
@@ -422,8 +422,8 @@ public class ManagePlayerTest {
 		 * Current Player - 3 and has clicked on TRADE_CARD
 		 * Player holds 3 cards of different image
 		 * Number of trades player has already done - 4
-		 * Current free army stock of Player 3  = 4
-		 * New army stock after trade should be = 4 + 12 = 16
+		 * Current free army stock of Player 3  = 0
+		 * New army stock after trade should be = 0 + 12 = 12
 		 */
 		game_manager.managePhase(game_state);
 
@@ -431,7 +431,7 @@ public class ManagePlayerTest {
 		assertEquals(3,game_state.getFree_cards().size());
 
 		/**
-		 * Player's army stock becomes      - 16
+		 * Player's army stock becomes      - 12
 		 * Player's card list becomes empty.
 		 * Player's number of trades become - 5
 		 */
@@ -441,7 +441,7 @@ public class ManagePlayerTest {
 			}else {
 				assertEquals(5,player.getTrade_count());
 				assertEquals(0,player.getCard_list().size());
-				assertEquals(16,player.getArmy_stock());
+				assertEquals(12,player.getArmy_stock());
 				break;
 			}
 		}		
@@ -518,8 +518,8 @@ public class ManagePlayerTest {
 		 * Current Player - 4 and has clicked on TRADE_CARD
 		 * Player holds 2 cards of same image and 1 different
 		 * Number of trades player has already done - 2
-		 * Current free army stock of Player 3  = 3
-		 * New army stock after trade should be = 3 + 0 = 3
+		 * Current free army stock of Player 3  = 0
+		 * New army stock after trade should be = 0 + 0 = 0
 		 * 
 		 * No new armies as per risk rules with a proper status message.
 		 *  
@@ -530,7 +530,7 @@ public class ManagePlayerTest {
 		assertEquals(0,game_state.getFree_cards().size());
 
 		/**
-		 * Player's army stock stays           - 3
+		 * Player's army stock stays           - 0
 		 * Player's card list unchanged.
 		 * Player's number of trades unchanged - 2
 		 */
@@ -540,7 +540,7 @@ public class ManagePlayerTest {
 			}else {
 				assertEquals(2,player.getTrade_count());
 				assertEquals(3,player.getCard_list().size());
-				assertEquals(3,player.getArmy_stock());
+				assertEquals(0,player.getArmy_stock());
 				assertEquals("Either all three cards should have same image or all three different.",game_state.getStatus());
 				break;
 			}
@@ -619,8 +619,8 @@ public class ManagePlayerTest {
 		 * Current Player - 3 and has clicked on TRADE_CARD
 		 * Player holds 3 cards of same image
 		 * Number of trades player has already done - 5
-		 * Current free army stock of Player 3  = 4
-		 * New army stock after trade should be = 4 + 15 = 19
+		 * Current free army stock of Player 3  = 0
+		 * New army stock after trade should be = 0 + 15 = 15
 		 * Player even holds a territory of same name which is present in one his cards
 		 * i.e. Geneva - So player will get an extra bonus of 2 Armies on Geneva.
 		 * Before trade he had 4 armies on Geneva after trade it should be 6. 
@@ -632,7 +632,7 @@ public class ManagePlayerTest {
 		assertEquals(game_state.getFree_cards().size(),3);
 
 		/**
-		 * Player's army stock becomes      - 19
+		 * Player's army stock becomes      - 15
 		 * Player's card list becomes empty.
 		 * Player's number of trades become - 6 
 		 * Player's army count on Geneva Should become - 6
@@ -643,7 +643,7 @@ public class ManagePlayerTest {
 			}else {
 				assertEquals(6,player.getTrade_count());
 				assertEquals(0,player.getCard_list().size());
-				assertEquals(19,player.getArmy_stock());
+				assertEquals(15,player.getArmy_stock());
 				for (GamePlayTerritory territory : player.getTerritory_list()) {
 					if (territory.getTerritory_name().equalsIgnoreCase("Geneva")) {
 						assertEquals(6, territory.getNumber_of_armies());

@@ -35,9 +35,10 @@ public interface IManageGamePlay {
 	 * Rule 1 : Number of armies = max(floor(Total captured Territories / 3),3)
 	 * Rule 2 : Number of extra armies added = continent score if Player has captured 
 	 * the entire continent.
-	 * @param gameplay Current state of entire Game.
-	 * @param map      Current map on which game is being played.
+	 * @param gameplay       Current state of entire Game.
+	 * @param map            Current map on which game is being played.
+	 * @param current_player Current player for which Armies are to be re-calculated.
 	 * @return State of the game in form of a List of Players.
 	 */
-	List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map);	
+	List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map, int current_player);	
 }
