@@ -134,17 +134,26 @@ public class Player {
 	 * and updates the state of the game accordingly. It also handles the trading of
 	 * cards during game play.
 	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param game_play state of the game i.e. entire game related info when
 	 *                  reinforcement starts for a player.
 	 * @return GamePlay updated state of the game after reinforcement phase ends.
-	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	public GamePlay reinforce(GamePlay game_play) {
 		ManagePlayer manage_player = new ManagePlayer();
-		game_play = manage_player.reinforce(game_play);		
+		game_play = manage_player.reinforce(game_play);
 		return game_play;
 	}
 
+	/**
+	 * This method is called to execute attack phase for a particular player and
+	 * updates the state of the game accordingly.
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
+	 * @param game_play state of the game i.e. entire game related info when attack
+	 *                  starts for a player.
+	 * @return GamePlay updated state of the game after attack phase ends.
+	 */
 	public GamePlay attack(GamePlay game_play) {
 		ManagePlayer manage_player = new ManagePlayer();
 		game_play = manage_player.attack(game_play);
@@ -156,7 +165,8 @@ public class Player {
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 *         Comments and Function added by Mayank Jariwala
-	 * @param game_play
+	 * @param game_play state of the game i.e. entire game related info when
+	 *                  fortification starts for a player.
 	 * @return GamePlay Object
 	 */
 	public GamePlay fortify(GamePlay game_play) {

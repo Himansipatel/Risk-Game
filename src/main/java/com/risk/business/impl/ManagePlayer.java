@@ -27,12 +27,7 @@ import com.risk.model.Player;
 import com.risk.model.Territory;
 
 /**
- * This class is responsible for managing players state for each game phases.
- * 
- * <b><i>Attack Related Functions</i></b>
- * <li>Valid Attack</li>
- * <li>Roll Dice</li>
- * <li>Main Attack(attack function)</li>
+ * This class is the Concrete Implementation for interface IManagePlayer
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
@@ -844,7 +839,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * 
 	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 * @author <a href="himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param attacker_territory_list
+	 * @param attacker_territory_list Total territory list of attacker
 	 * @param map                     The Entire Game Map Object
 	 * @return Flag Current Player(Attacker) is Winner or not
 	 */
@@ -1147,4 +1142,5 @@ public class ManagePlayer implements IManagePlayer {
 		}
 		return Arrays.asList(dice_result_flag);
 	}
+
 }
