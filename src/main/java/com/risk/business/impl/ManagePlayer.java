@@ -76,8 +76,10 @@ public class ManagePlayer implements IManagePlayer {
 			game_play = writePlayerToFile(player_info_list, file_name, army_allocation_type);
 		} else if (map != null && map.getStatus() != "") {
 			game_play.setStatus(map.getStatus());
+			return game_play;
 		} else {
 			game_play.setStatus("Invalid Map");
+			return game_play;
 		}
 		Domination domination = new Domination();
 		ManageDomination manage_domination = new ManageDomination();
