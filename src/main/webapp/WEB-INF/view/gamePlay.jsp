@@ -54,6 +54,7 @@
 						var player4DataTable = $('#player4').DataTable();
 						var player5DataTable = $('#player5').DataTable();
 						var player6DataTable = $('#player6').DataTable();
+						var dominationViewDataTable = $('#dominationView').DataTable();
 
 						var armiesStockOfPlayer1 = 0;
 						var armiesStockOfPlayer2 = 0;
@@ -76,7 +77,7 @@
 						var namePlayer5 = "";
 						var namePlayer6 = "";
 
-						var currentPhase = "REINFORCEMENT";
+						var currentPhase;
 						var currentMapName = "";
 						var noOfPlayingPlayer = "";
 						var whichPlayerChance = 0;
@@ -359,6 +360,27 @@
 								}
 							}
 						}
+						
+						function parseDominationView(data){
+							dominationViewDataTable.clear().draw();
+							if(typeof data != undefined && data != null && data.length >0){
+								for(var i=0 ; i < data.length ; i++){
+									var column1 = data[i].player_id;
+									var column2 = data[i].map_coverage;
+									var column3 = data[i].player_army_count;
+									var column4 ='';
+									if(typeof data[i].player_continent_list != undefined && data[i].player_continent_list != null && data[i].player_continent_list.length >0){
+										for(var j=0 ; j < data[i].player_continent_list.length ; j++){
+											column4 = column4 + data[i].player_continent_list[j];
+											column4 = column4 + ';';
+										}
+									} 
+									dominationViewDataTable.row.add(
+											[ column1, column2, column3, column4 ]).draw(
+											false);
+								}								
+							}
+						}
 
 						function parseGamePlayData(data) {
 							var noOfPlayers = $("#noOfPlayer option:selected")
@@ -594,8 +616,10 @@
 												return;
 											}
 											parseMapData(data.gui_map);
+											parseDominationView(data.domination);
 											parseGamePlayData(data.game_state);
 											currentMapName = (data.file_name);
+											currentPhase = data.game_phase;
 											//set currentPhase also(later)
 											//read player no from data
 											noOfPlayingPlayer = $(
@@ -605,6 +629,7 @@
 											if (!allocationType) {
 												startArmyAllocation();
 											}
+											checkForNextPhaseAndDisplayOption();
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -620,7 +645,6 @@
 							$('#mapSelectModal').modal('toggle');
 							whichPlayerChance = 1;
 							//armiesStockOfPlayer1 = 3;
-							checkForNextPhaseAndDisplayOption();
 						});
 
 						$('#autoAllocate').on('click', function() {
@@ -629,7 +653,6 @@
 							$('#mapSelectModal').modal('toggle');
 							whichPlayerChance = 1;
 							//armiesStockOfPlayer1 = 3;
-							checkForNextPhaseAndDisplayOption();
 						});
 
 						$('#check').on('click', function() {
@@ -691,7 +714,8 @@
 								attack : data_game.attack,
 								fortification : data_game.fortification,
 								army_move : data_game.army_move,
-								gui_map : data_game.gui_map
+								gui_map : data_game.gui_map,
+								domination : data_game.domination
 							};
 							var a = JSON.stringify(game_Play);
 							$
@@ -705,6 +729,8 @@
 											data_game = data;
 											clearGameState();
 											parseGamePlayData(data.game_state);
+											//parse domination view
+											parseDominationView(data.domination);
 											currentMapName = (data.file_name);
 											
 											//read player no from data
@@ -1612,6 +1638,28 @@
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Fortification</button>
 		</div>
+	</div>
+
+	<div id="worldDominationView">
+		<h3>World domination view :</h3>
+		<table id="dominationView" class="display" style="width: 100%">
+			<thead>
+				<tr>
+					<th>player id</th>
+					<th>Map Coverage</th>
+					<th>Total Armies Count</th>
+					<th>Continents owns</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>player id</th>
+					<th>Map Coverage</th>
+					<th>Total Armies Count</th>
+					<th>Continents owns</th>
+				</tr>
+			</tfoot>
+		</table>
 	</div>
 
 	<!-- Modal map selection -->
