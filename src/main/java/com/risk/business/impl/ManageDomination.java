@@ -24,7 +24,8 @@ import com.risk.model.Player;
 public class ManageDomination implements IManageDomination, Observer {
 
 	/**
-	 * @see com.risk.business.IManageDomination#dominatonView(GamePlay)
+	 * @see com.risk.business.IManageDomination#dominationView(com.risk.model.GamePlay)
+	 * 
 	 * @author <a href="mailto:zinnia.rana.22@gmail.com">Zinnia Rana</a>
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 */
@@ -59,7 +60,7 @@ public class ManageDomination implements IManageDomination, Observer {
 				}
 			}
 			for (Entry<String, Integer> entry : continent_territory_count.entrySet()) {
-				if(entry.getValue() == 0)
+				if (entry.getValue() == 0)
 					continent_occupy.add(entry.getKey());
 			}
 			continent_occupy = continent_occupy.size() > 0 ? continent_occupy : null;
