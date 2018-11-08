@@ -752,12 +752,16 @@
 												alert(currentPhase + " ended");
 											}
 											currentPhase = data.game_phase;
+											if(data.status == 'No more attacks'){
+												alert("Attack ended");
+												hideAttackButtonForPlayer();												
+											}
 											whichPlayerChance = data.current_player;
 											stopLoading();
 											if(phaseBeforeCall == 'ATTACK_ARMY_MOVE' && currentPhase !='ATTACK_ARMY_MOVE'){
 												$('#attackArmiesMovementModal').modal('toggle');												
 											}
-											checkForNextPhaseAndDisplayOption();											
+											checkForNextPhaseAndDisplayOption();
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
