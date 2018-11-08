@@ -91,8 +91,6 @@ public class GamePlay extends Observable {
 	 */
 	public void setDomination(List<Domination> domination) {
 		this.domination = domination;
-		setChanged();
-		notifyObservers(this);
 	}
 
 	/**
