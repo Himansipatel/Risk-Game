@@ -33,7 +33,7 @@ public class ManageMapTest {
 
 		com.risk.model.Map       map_model	= manageMap.getFullMap("Switzerland - Invalid - Disconnected Geneva.map");		
 		String message             			= manageMap.checkDiscontinuity(map_model);
-		assertEquals(message, "Geneva: Territory is disconnected from the rest of the Map.");
+		assertEquals("Geneva : Territory is disconnected from the rest of the Map.",message);
 
 	}
 
@@ -50,7 +50,7 @@ public class ManageMapTest {
 		
 		com.risk.model.Map map_model  = manageMap.getFullMap("USA - Invalid Disconnected 3 States.map");		
 		String message                = manageMap.checkDiscontinuity(map_model);
-		assertEquals(message, "Disconnected Territories:Oklahoma-Colorado-New Mexico");
+		assertEquals("Disconnected Territories: Oklahoma-Colorado-New Mexico",message);
 
 	}
 
@@ -96,7 +96,7 @@ public class ManageMapTest {
 
 		com.risk.model.Map map_model 		= manageMap.getFullMap("World (small) - Invalid-DuplicateTerritory.map");		
 		String message             			= manageMap.checkDuplicateTerritory(map_model);
-		assertEquals(message, "Egypt: Duplicate territory detected in the Map.");
+		assertEquals(message, "Egypt : Duplicate territory detected in the Map.");
 
 	}
 
