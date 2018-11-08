@@ -80,7 +80,7 @@ public class ManageMap implements IManageMap {
 		}
 		for (Territory map_territory : territories) {
 			if (!unique_territories.add(map_territory.getName())) {
-				message = map_territory.getName().concat(": Duplicate territory detected in the Map.");
+				message = map_territory.getName().concat(" : Duplicate territory detected in the Map.");
 				break;
 			}
 		}
@@ -168,7 +168,7 @@ public class ManageMap implements IManageMap {
 
 			territory_visited.put(map_territory.getName(), false);
 			if (!(map_territory.getNeighbours() != null && map_territory.getNeighbours().size() > 0)) {
-				message = map_territory.getName().concat(": Territory is disconnected from the rest of the Map.");
+				message = map_territory.getName().concat(" : Territory is disconnected from the rest of the Map.");
 				error_flag = true;
 				break;
 			}
@@ -177,10 +177,10 @@ public class ManageMap implements IManageMap {
 		if (!error_flag) {
 			start_node = territories.get(0).getName();
 			if (territories.size() == 1) {
-				return "Only one territory is there in the map:" + territories.get(0).getName();
+				return "Only one territory is there in the map: " + territories.get(0).getName();
 			}
 			territory_visited = findLink(start_node, neighbours_link, territory_visited);
-			message = "Disconnected Territories:";
+			message = "Disconnected Territories: ";
 			for (Iterator<Entry<String, Boolean>> iterator = territory_visited.entrySet().iterator(); iterator
 					.hasNext();) {
 				java.util.Map.Entry<String, Boolean> territory_link = iterator.next();
@@ -188,7 +188,7 @@ public class ManageMap implements IManageMap {
 					message = message.concat(territory_link.getKey()).concat("-");
 				}
 			}
-			if (message.length() > 25) {
+			if (message.length() > 26) {
 				message = message.substring(0, message.length() - 1);
 			} else {
 
@@ -507,14 +507,17 @@ public class ManageMap implements IManageMap {
 			message 	    = checkDiscontinuity(map);
 			if (message != "") {
 				map.setStatus(message);
+				return map;
 			}
 			message 		= checkDuplicateTerritory(map);
 			if (message != "") {
 				map.setStatus(message);
+				return map;
 			}
 			message 		= checkInvalidNeighbour(map);
 			if (message != "") {
 				map.setStatus(message);
+				return map;
 			}
 			return map;
 		} else {
