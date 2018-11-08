@@ -3,6 +3,10 @@ package com.risk.business;
 import com.risk.model.GamePlay;
 
 /**
+ * This interface is responsible for handling all player related functionalities
+ * like: Managing players state for each game phases ,Such as reinforcement
+ * phase,attack phase and fortification phase.
+ * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @version 0.0.1
  */
@@ -34,8 +38,8 @@ public interface IManagePlayer {
 	GamePlay reinforce(GamePlay game_play);
 
 	/**
-	 * This method implements the functionality for attack which initially check for each
-	 * attack validation and get results and based on result it perform certain
+	 * This method implements the functionality for attack which initially check for
+	 * each attack validation and get results and based on result it perform certain
 	 * actions like populating message , increment/decrement armies from respective
 	 * player and last if attacker occupy defender territory then add defender
 	 * territory to attacker territory list and remove from defender territory list
@@ -43,7 +47,7 @@ public interface IManagePlayer {
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 * @param game_play : GamePlay Object
-	 * @return GamePlay Object
+	 * @return GamePlay updated state of the game during attack phase.
 	 */
 	GamePlay attack(GamePlay game_play);
 
@@ -57,7 +61,7 @@ public interface IManagePlayer {
 	 * 
 	 * @author <a href="mailto:zinnia.rana.22@gmail.com">Zinnia Rana</a>
 	 * @param game_play : GamePlay Object
-	 * @return GamePlay Object
+	 * @return GamePlay updated state of the game during fortification phase.
 	 */
 	GamePlay fortify(GamePlay game_play);
 }
