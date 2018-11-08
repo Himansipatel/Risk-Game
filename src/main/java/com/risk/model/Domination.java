@@ -4,17 +4,30 @@ import java.util.List;
 import java.util.Observable;
 
 /**
- * This class represents the domination view implemented by game play.
+ * This class represents the domination view implemented of player.
  * 
  * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
+ * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
  * @version 0.0.1
  */
 
 public class Domination extends Observable {
 
 	private int player_id;
+
+	/**
+	 * Continents Occupy by Player
+	 */
 	private List<String> player_continent_list;
+
+	/**
+	 * Total Map Cover By Player (in %)
+	 */
 	private double map_coverage;
+
+	/**
+	 * Total Army Player Have(Including All Territories)
+	 */
 	private int player_army_count;
 
 	/**
@@ -73,4 +86,8 @@ public class Domination extends Observable {
 		this.player_army_count = player_army_count;
 	}
 
+	public void updateDomination(GamePlay game_play) {
+		setChanged();
+		notifyObservers(game_play);
+	}
 }

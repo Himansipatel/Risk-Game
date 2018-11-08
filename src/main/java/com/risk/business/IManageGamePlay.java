@@ -43,6 +43,4 @@ public interface IManageGamePlay {
 	 * @return State of the game in form of a List of Players.
 	 */
 	List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map, int current_player);
-
-	GamePlay dominationView(GamePlay game_state);
 }

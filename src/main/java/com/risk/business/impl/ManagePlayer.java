@@ -19,6 +19,7 @@ import com.risk.model.AttackArmyMove;
 import com.risk.model.Card;
 import com.risk.model.CardTrade;
 import com.risk.model.Continent;
+import com.risk.model.Domination;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Map;
@@ -83,6 +84,10 @@ public class ManagePlayer implements IManagePlayer {
 		} else {
 			game_play.setStatus("Invalid Map");
 		}
+		Domination domination = new Domination();
+		ManageDomination manage_domination = new ManageDomination();
+		domination.addObserver(manage_domination);
+		domination.updateDomination(game_play);
 		return game_play;
 	}
 
@@ -533,7 +538,6 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	@Override
 	public GamePlay attack(GamePlay game_play) {
-
 		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ARMY_MOVE")) {
 			attackArmyMove(game_play);
 			return game_play;
@@ -665,8 +669,8 @@ public class ManagePlayer implements IManagePlayer {
 										territory_list.remove(territory);
 										game_play.setGame_phase("ATTACK_ARMY_MOVE");
 										AttackArmyMove attack_army_move = game_play.getArmy_move();
-										if(attack_army_move==null) {
-											attack_army_move=new AttackArmyMove();
+										if (attack_army_move == null) {
+											attack_army_move = new AttackArmyMove();
 										}
 										attack_army_move
 												.setAttacker_territory(game_play.getAttack().getAttacker_territory());
@@ -755,8 +759,9 @@ public class ManagePlayer implements IManagePlayer {
 								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
 								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
-						game_play.setStatus(army_count + " army moved from " + source_territory_instance.getTerritory_name()
-								+ " to " + dest_territory_instance.getTerritory_name());
+						game_play.setStatus(
+								army_count + " army moved from " + source_territory_instance.getTerritory_name()
+										+ " to " + dest_territory_instance.getTerritory_name());
 						game_play.setGame_phase("ATTACK_ARMY_ON");
 					}
 					break;
@@ -818,8 +823,9 @@ public class ManagePlayer implements IManagePlayer {
 								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
 								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
-						game_play.setStatus(army_count + " army moved from " + source_territory_instance.getTerritory_name()
-								+ " to " + dest_territory_instance.getTerritory_name());
+						game_play.setStatus(
+								army_count + " army moved from " + source_territory_instance.getTerritory_name()
+										+ " to " + dest_territory_instance.getTerritory_name());
 					}
 					break;
 				}
