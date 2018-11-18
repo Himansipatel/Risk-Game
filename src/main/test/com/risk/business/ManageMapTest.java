@@ -48,10 +48,9 @@ public class ManageMapTest {
 	@Test
 	public void testMapDiscontinuityMultiDisconnect() {
 		
-		com.risk.model.Map map_model  = manageMap.getFullMap("USA - Invalid Disconnected 3 States.map");		
+		com.risk.model.Map map_model  = manageMap.getFullMap("USA - Disconnected Continent.map");		
 		String message                = manageMap.checkDiscontinuity(map_model);
-		assertEquals("Disconnected Territories: Oklahoma-Colorado-New Mexico",message);
-
+		assertEquals("Disconnected Territories: Iowa-Texas-Minnisota-Missouri-South Dakota-Louisiana-Kansas-North Dakota-Arkansas-Nebraska within Continent: Midwest U.S.",message);
 	}
 
 	/**
@@ -81,7 +80,7 @@ public class ManageMapTest {
 
 		com.risk.model.Map map_model = manageMap.getFullMap("Asia - Invalid - NonExistantCountry - Yemen.map");		
 		String message             	 = manageMap.checkInvalidNeighbour(map_model);
-		assertEquals(message, "Invalid Territories used as a neighbor: Yemen");		
+		assertEquals(message, "Invalid Territories used as a neighbor: yemen");		
 
 	}	
 

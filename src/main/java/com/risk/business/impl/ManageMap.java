@@ -109,9 +109,9 @@ public class ManageMap implements IManageMap {
 		}
 
 		for (Territory map_territory : territories) {
-			full_territory_list.add(map_territory.getName());
+			full_territory_list.add(map_territory.getName().toLowerCase());
 			for (String neighbour : map_territory.getNeighbours()) {
-				full_neighbour_list.add(neighbour);
+				full_neighbour_list.add(neighbour.toLowerCase());
 			}
 		}
 
@@ -140,9 +140,12 @@ public class ManageMap implements IManageMap {
 		boolean error_flag = false;
 		String message = "";
 		String start_node;
+		String start_node_continent;
 		List<Territory> territories = new ArrayList<>();
-		HashMap<String, Boolean> territory_visited = new HashMap<>();
-		HashMap<String, List<String>> neighbours_link = new HashMap<>();
+		HashMap<String, Boolean> territory_visited         = new HashMap<>();
+		HashMap<String, List<String>> neighbours_link      = new HashMap<>();
+		HashMap<String, List<String>> neighbours_link_continent;
+		HashMap<String, Boolean> territory_visited_continent;
 		Set<String> full_neighbour_list = new HashSet<>();
 
 		for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
@@ -175,10 +178,48 @@ public class ManageMap implements IManageMap {
 		}
 
 		if (!error_flag) {
+
 			start_node = territories.get(0).getName();
 			if (territories.size() == 1) {
 				return "Only one territory is there in the map: " + territories.get(0).getName();
 			}
+
+			/**
+			 * To check discontinuity at Continent Level
+			 */			
+			for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
+					.hasNext();) {
+				java.util.Map.Entry<String, Continent> continent = iterator.next();
+				territories = new ArrayList<>();
+				territories.addAll(continent.getValue().getTerritories());
+				start_node_continent        = territories.get(0).getName();
+				neighbours_link_continent   = new HashMap<>();
+				territory_visited_continent = new HashMap<>();
+				for (Territory territory : territories) {
+					neighbours_link_continent.put(territory.getName(), territory.getNeighbours());					
+					territory_visited_continent.put(territory.getName(), false);
+				}
+				territory_visited_continent = findLink(start_node_continent, neighbours_link_continent, territory_visited_continent);
+				message = "Disconnected Territories: ";
+				for (Iterator<Entry<String, Boolean>> iterator_visit = territory_visited_continent.entrySet().iterator(); iterator_visit
+						.hasNext();) {
+					java.util.Map.Entry<String, Boolean> territory_link = iterator_visit.next();
+					if (territory_link.getValue() != null && !territory_link.getValue()) {
+						message = message.concat(territory_link.getKey()).concat("-");
+					}
+				}			
+				if (message.length() > 26) {
+					message = message.substring(0, message.length() - 1);
+					message = message.concat(" within Continent: ")+continent.getKey();
+					return message;
+				} else {
+					message = "";
+				}
+			}
+
+			/**
+			 * To check discontinuity at Map Level
+			 */
 			territory_visited = findLink(start_node, neighbours_link, territory_visited);
 			message = "Disconnected Territories: ";
 			for (Iterator<Entry<String, Boolean>> iterator = territory_visited.entrySet().iterator(); iterator
@@ -187,11 +228,10 @@ public class ManageMap implements IManageMap {
 				if (territory_link.getValue() != null && !territory_link.getValue()) {
 					message = message.concat(territory_link.getKey()).concat("-");
 				}
-			}
+			}			
 			if (message.length() > 26) {
 				message = message.substring(0, message.length() - 1);
 			} else {
-
 				message = "";
 			}
 			return message;
@@ -324,22 +364,11 @@ public class ManageMap implements IManageMap {
 
 		map = getFullMap(file_name);
 		if (map != null) {
-			String message = "";
-			message = checkDiscontinuity(map);
-			if (message != "") {
-				map.setStatus(message);
-			}else {
-				message = checkDuplicateTerritory(map);
-				if (message != "") {
-					map.setStatus(message);
-				}else {
-					message = checkInvalidNeighbour(map);
-					if (message != "") {
-						map.setStatus(message);
-					}					
-				}				
+			if (map.getStatus() != null && map.getStatus() != "") {
+				com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(null, null);
+				map_gui.setStatus(map.getStatus());
+				return map_gui;				
 			}
-
 			for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
 					.hasNext();) {
 				java.util.Map.Entry<String, Continent> continent_entry = iterator.next();
@@ -382,7 +411,7 @@ public class ManageMap implements IManageMap {
 	 * @param start_node        : Starting territory for DFS traversal.
 	 * @param neighbours_link   : Hash Map representing the entire Graph.
 	 * @param territory_visited : Marker HashMap to keep track of which all
-	 *                          territories are visited.
+	 *                            territories are visited.
 	 * @return HashMap<String, Boolean> : Resultant HashMap telling which all
 	 *         territories could be visited and which not.
 	 */
