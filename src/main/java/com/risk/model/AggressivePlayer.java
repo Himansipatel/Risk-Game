@@ -8,12 +8,10 @@ import com.risk.business.impl.ManagePlayer;
  * This Player Model represents a Human Player in terms of Strategy-Pattern implementation,
  * during our GamePlay.
  * 
- * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
- * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a> -
- *         Added Model Description
+ * @author <a href="mailto:apoorv.semwal20@gmail.com">Apoorv Semwal</a>
  * @version 0.0.1
  */
-public class Player implements IAbstractPlayer {
+public class AggressivePlayer implements IAbstractPlayer {
 	private int id;
 	private String name;
 	private int army_stock;
@@ -156,14 +154,9 @@ public class Player implements IAbstractPlayer {
 	}
 
 	/**
-	 * Reinforce for a Human Player as per Strategy Design Pattern. 
-	 * This method is called to execute reinforcement phase for a particular player
-	 * and updates the state of the game accordingly. It also handles the trading of
-	 * cards during game play.
+	 * Reinforcement of an Aggressive Player.
+	 * @see com.risk.business.IAbstractPLayer#reinforce(GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param game_play state of the game i.e. entire game related info when
-	 *                  reinforcement starts for a player.
-	 * @return GamePlay updated state of the game after reinforcement phase ends.
 	 */
 	public GamePlay reinforce(GamePlay game_play) {
 		ManagePlayer manage_player = new ManagePlayer();
@@ -172,13 +165,9 @@ public class Player implements IAbstractPlayer {
 	}
 
 	/**
-	 * Attack for a Human Player as per Strategy Design Pattern. 
-	 * This method is called to execute attack phase for a particular player and
-	 * updates the state of the game accordingly.
-	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
-	 * @param game_play state of the game i.e. entire game related info when attack
-	 *                  starts for a player.
-	 * @return GamePlay updated state of the game after attack phase ends.
+	 * Attack of an Aggressive Player.
+	 * @see com.risk.business.IAbstractPLayer#attack(GamePlay)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	public GamePlay attack(GamePlay game_play) {
 		ManagePlayer manage_player = new ManagePlayer();
@@ -187,13 +176,9 @@ public class Player implements IAbstractPlayer {
 	}
 
 	/**
-	 * Fortify for a Human Player as per Strategy Design Pattern.
-	 * @see com.risk.business.IManagePlayer#fortify(com.risk.model.GamePlay)
-	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
-	 *         Comments and Function added by Mayank Jariwala
-	 * @param game_play state of the game i.e. entire game related info when
-	 *                  fortification starts for a player.
-	 * @return GamePlay Object
+	 * Fortify of an Aggressive Player.
+	 * @see com.risk.business.IAbstractPLayer#fortify(GamePlay)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	public GamePlay fortify(GamePlay game_play) {
 		ManagePlayer manage_player = new ManagePlayer();
