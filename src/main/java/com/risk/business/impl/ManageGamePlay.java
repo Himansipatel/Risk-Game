@@ -12,6 +12,7 @@ import java.util.TreeSet;
 
 import org.springframework.stereotype.Service;
 
+import com.risk.business.AbstractPlayer;
 import com.risk.business.IManageGamePlay;
 import com.risk.model.Continent;
 import com.risk.model.Domination;
@@ -39,6 +40,8 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 		if (game_state != null) {
 
+			for (AbstractPlayer player : game_state.getGame_state()) {
+			}
 			Player player = new Player();
 			Map map = game_state.getMap();
 
@@ -156,7 +159,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map, int current_player) {
+	public List<AbstractPlayer> calculateArmiesReinforce(List<AbstractPlayer> gameplay, Map map, int current_player) {
 
 		List<Continent> continents = new ArrayList<>();
 		List<Territory> territories;
@@ -175,7 +178,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 
 		// Preparing a list of all players along with the continents they hold.
-		for (Player player : gameplay) {
+		for (AbstractPlayer player : gameplay) {
 			if (player.getId() == current_player) {
 				List<GamePlayTerritory> player_territories_game = player.getTerritory_list();
 				territories_player = new TreeSet<>();
@@ -187,7 +190,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 
 		// Preparing List of all players along with their current army stock.
-		for (Player player : gameplay) {
+		for (AbstractPlayer player : gameplay) {
 			if (player.getId() == current_player) {
 				players_army.put(player.getId(), player.getArmy_stock());
 			}
@@ -208,7 +211,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		// Updating Player's army stock on the basis of territories it hold.
 		// If the player holds less than 9 territories then allocate 3 army elements as
 		// per Risk Rules
-		for (Player player : gameplay) {
+		for (AbstractPlayer player : gameplay) {
 			if (player.getId() == current_player) {
 				int army_count = player_territories.get(player.getId()).size() / 3;
 				if (army_count < 3) {
@@ -237,7 +240,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 
 		// Preparing List of all players along with their updated army stock.
-		for (Player player : gameplay) {
+		for (AbstractPlayer player : gameplay) {
 			if (player.getId() == current_player) {
 				player.setArmy_stock(players_army.get(player.getId()));
 			}

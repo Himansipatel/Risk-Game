@@ -11,6 +11,7 @@ import java.util.Random;
 
 import org.springframework.stereotype.Service;
 
+import com.risk.business.AbstractPlayer;
 import com.risk.business.IManageMap;
 import com.risk.business.IManagePlayer;
 import com.risk.file.impl.ManageGamePlayFile;
@@ -36,7 +37,7 @@ import com.risk.model.Territory;
 @Service
 public class ManagePlayer implements IManagePlayer {
 
-	private List<Player> player_info_list;
+	private List<AbstractPlayer> player_info_list;
 	private Map map;
 	private boolean is_territory_occupied = false;
 
@@ -50,7 +51,7 @@ public class ManagePlayer implements IManagePlayer {
 	@Override
 	public GamePlay createPlayer(int num_of_players, String file_name, String army_allocation_type) {
 		GamePlay game_play = new GamePlay();
-		player_info_list = new ArrayList<Player>();
+		player_info_list = new ArrayList<AbstractPlayer>();
 		int army_stock = getArmyStock(num_of_players);
 		for (int i = 1; i <= num_of_players; i++) {
 			String player_name = "player" + i;
@@ -105,7 +106,7 @@ public class ManagePlayer implements IManagePlayer {
 						int sum_armies = player_info_list.get(player_index).getTerritory_list()
 								.get(territory_list_index).getNumber_of_armies() + 1;
 						player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-								.setNumber_of_armies(sum_armies);
+						.setNumber_of_armies(sum_armies);
 						if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
 							territory_list_index = -1;
 						}
@@ -117,7 +118,7 @@ public class ManagePlayer implements IManagePlayer {
 					int sum_armies = player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.getNumber_of_armies() + 1;
 					player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-							.setNumber_of_armies(sum_armies);
+					.setNumber_of_armies(sum_armies);
 				}
 			}
 		}
@@ -137,8 +138,8 @@ public class ManagePlayer implements IManagePlayer {
 	 *                         and GamePlay File.
 	 * @return GamePlay File Object
 	 */
-	private GamePlay writePlayerToFile(List<Player> player_info_list, String file_name, String allocation_type) {
-		List<Player> player_list_at_file = convertPlayerToFileLayer(player_info_list);
+	private GamePlay writePlayerToFile(List<AbstractPlayer> player_info_list, String file_name, String allocation_type) {
+		List<AbstractPlayer> player_list_at_file = convertPlayerToFileLayer(player_info_list);
 		ManageGamePlay game_manager = new ManageGamePlay();
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
 		IManageMap map_manager = new ManageMap();
@@ -232,8 +233,8 @@ public class ManagePlayer implements IManagePlayer {
 	 *                    Game play file object
 	 * @return list of converted Game play file object
 	 */
-	private List<Player> convertPlayerToFileLayer(List<Player> player_list) {
-		List<Player> player_list_at_file = new ArrayList<>();
+	private List<AbstractPlayer> convertPlayerToFileLayer(List<AbstractPlayer> player_list) {
+		List<AbstractPlayer> player_list_at_file = new ArrayList<>();
 		for (int i = 0; i < player_list.size(); i++) {
 
 			Player player_object_at_file = new Player();
@@ -246,11 +247,11 @@ public class ManagePlayer implements IManagePlayer {
 			for (int j = 0; j < player_list.get(i).getTerritory_list().size(); j++) {
 				GamePlayTerritory game_play_territory = new GamePlayTerritory();
 				game_play_territory
-						.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
+				.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
 				game_play_territory
-						.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
+				.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
 				game_play_territory
-						.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
+				.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
 				game_play_territory_list.add(game_play_territory);
 			}
 			player_object_at_file.setTerritory_list(game_play_territory_list);
@@ -390,13 +391,13 @@ public class ManagePlayer implements IManagePlayer {
 						&& trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type()))
 						|| (!trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
 								&& !trade_card.getCard2().getArmy_type()
-										.equalsIgnoreCase(trade_card.getCard3().getArmy_type())
+								.equalsIgnoreCase(trade_card.getCard3().getArmy_type())
 								&& !trade_card.getCard3().getArmy_type()
-										.equalsIgnoreCase(trade_card.getCard1().getArmy_type()))) {
+								.equalsIgnoreCase(trade_card.getCard1().getArmy_type()))) {
 
 					int current_player = game_state.getCurrent_player();
 
-					for (Player player : game_state.getGame_state()) {
+					for (AbstractPlayer player : game_state.getGame_state()) {
 
 						if (player.getId() == current_player) {
 
@@ -416,16 +417,16 @@ public class ManagePlayer implements IManagePlayer {
 									if (gamePlayTerritory.getTerritory_name()
 											.equalsIgnoreCase(trade_card.getCard1().getTerritory_name())
 											|| gamePlayTerritory.getTerritory_name()
-													.equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
+											.equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
 											|| gamePlayTerritory.getTerritory_name()
-													.equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
+											.equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
 
 										/**
 										 * An additional two armies given if the Player controls any territory which is
 										 * present in one of the cards being traded.
 										 */
 										gamePlayTerritory
-												.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);
+										.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);
 										break;
 									}
 								}
@@ -454,7 +455,7 @@ public class ManagePlayer implements IManagePlayer {
 
 		if (game_state != null) {
 
-			for (Player player : game_state.getGame_state()) {
+			for (AbstractPlayer player : game_state.getGame_state()) {
 
 				if (player.getId() == game_state.getCurrent_player()) {
 
@@ -476,7 +477,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param player State of the current Player.
 	 */
-	private void updateTradedArmies(Player player) {
+	private void updateTradedArmies(AbstractPlayer player) {
 		if (player.getTrade_count() == 0) {
 			player.setArmy_stock(player.getArmy_stock() + 4);
 			player.setTrade_count(1);
@@ -510,7 +511,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @param free_cards   List of cards which are free for allocation
 	 * @param traded_cards The set of three cards being traded.
 	 */
-	private void updateCardLists(Player player, List<Card> free_cards, CardTrade traded_cards) {
+	private void updateCardLists(AbstractPlayer player, List<Card> free_cards, CardTrade traded_cards) {
 		free_cards.add(traded_cards.getCard1());
 		free_cards.add(traded_cards.getCard2());
 		free_cards.add(traded_cards.getCard3());
@@ -561,9 +562,9 @@ public class ManagePlayer implements IManagePlayer {
 		int defender_territory_armies = 0;
 		String attacker_territory_name = game_play.getAttack().getAttacker_territory();
 		String defender_territory_name = game_play.getAttack().getDefender_territory();
-		List<Player> players_list = game_play.getGame_state();
+		List<AbstractPlayer> players_list = game_play.getGame_state();
 
-		for (Player player : players_list) {
+		for (AbstractPlayer player : players_list) {
 			List<GamePlayTerritory> territory_list = player.getTerritory_list();
 			for (GamePlayTerritory territory : territory_list) {
 				// Attacker Territory Object
@@ -625,7 +626,7 @@ public class ManagePlayer implements IManagePlayer {
 				// Iterating Attacker Territory List for performing actions regarding dice
 				// result
 				for (GamePlayTerritory att_territory : attacker_territory_list) {
-					for (Player player : players_list) {
+					for (AbstractPlayer player : players_list) {
 						if (player.getId() == attacker_id) {
 							List<GamePlayTerritory> territory_list = player.getTerritory_list();
 							for (int j = 0; j < territory_list.size(); j++) {
@@ -634,10 +635,10 @@ public class ManagePlayer implements IManagePlayer {
 									if (attacker_territory_list.size() > 1) {
 										if (att_territory.getNumber_of_armies() == 1) {
 											territory_list.get(j)
-													.setNumber_of_armies(att_territory.getNumber_of_armies() + 1);
+											.setNumber_of_armies(att_territory.getNumber_of_armies() + 1);
 										} else {
 											territory_list.get(j)
-													.setNumber_of_armies(att_territory.getNumber_of_armies());
+											.setNumber_of_armies(att_territory.getNumber_of_armies());
 										}
 									} else {
 										territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
@@ -656,7 +657,7 @@ public class ManagePlayer implements IManagePlayer {
 				// Iterating Defender Territory List for performing actions regarding dice
 				// result
 				for (GamePlayTerritory deff_territory : defender_territory_list) {
-					for (Player player : players_list) {
+					for (AbstractPlayer player : players_list) {
 						if (player.getId() == defender_id) {
 							List<GamePlayTerritory> territory_list = player.getTerritory_list();
 							for (GamePlayTerritory territory : territory_list) {
@@ -670,9 +671,9 @@ public class ManagePlayer implements IManagePlayer {
 											attack_army_move = new AttackArmyMove();
 										}
 										attack_army_move
-												.setAttacker_territory(game_play.getAttack().getAttacker_territory());
+										.setAttacker_territory(game_play.getAttack().getAttacker_territory());
 										attack_army_move
-												.setDefender_territory(game_play.getAttack().getDefender_territory());
+										.setDefender_territory(game_play.getAttack().getDefender_territory());
 										attack_army_move.setAmry_count(0);
 										game_play.setArmy_move(attack_army_move);
 										break;
@@ -733,7 +734,7 @@ public class ManagePlayer implements IManagePlayer {
 
 		GamePlayTerritory source_territory_instance = null, dest_territory_instance = null;
 
-		for (Player player : game_play.getGame_state()) {
+		for (AbstractPlayer player : game_play.getGame_state()) {
 
 			if (player.getId() != game_play.getCurrent_player()) {
 				continue;
@@ -753,12 +754,12 @@ public class ManagePlayer implements IManagePlayer {
 						return game_play;
 					} else {
 						source_territory_instance
-								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+						.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
-								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+						.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
 						game_play.setStatus(
 								army_count + " army moved from " + source_territory_instance.getTerritory_name()
-										+ " to " + dest_territory_instance.getTerritory_name());
+								+ " to " + dest_territory_instance.getTerritory_name());
 						game_play.setGame_phase("ATTACK_ARMY_ON");
 					}
 					break;
@@ -798,7 +799,7 @@ public class ManagePlayer implements IManagePlayer {
 
 		GamePlayTerritory source_territory_instance = null, dest_territory_instance = null;
 
-		for (Player player : game_play.getGame_state()) {
+		for (AbstractPlayer player : game_play.getGame_state()) {
 
 			if (player.getId() != game_play.getCurrent_player()) {
 				continue;
@@ -817,12 +818,12 @@ public class ManagePlayer implements IManagePlayer {
 						return game_play;
 					} else {
 						source_territory_instance
-								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+						.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
-								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+						.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
 						game_play.setStatus(
 								army_count + " army moved from " + source_territory_instance.getTerritory_name()
-										+ " to " + dest_territory_instance.getTerritory_name());
+								+ " to " + dest_territory_instance.getTerritory_name());
 					}
 					break;
 				}

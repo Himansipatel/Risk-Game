@@ -2,6 +2,7 @@ package com.risk.model;
 
 import java.util.List;
 import java.util.Observable;
+import com.risk.business.AbstractPlayer;
 
 /**
  * This class represents the Game Play state at any point of time.
@@ -16,7 +17,7 @@ public class GamePlay extends Observable {
 	/**
 	 * State of the entire game at any point of time.
 	 */
-	private List<Player> game_state;
+	private List<AbstractPlayer> game_state;
 
 	/**
 	 * Map File name for the current game play
@@ -138,7 +139,7 @@ public class GamePlay extends Observable {
 	/**
 	 * @return the game_state
 	 */
-	public List<Player> getGame_state() {
+	public List<AbstractPlayer> getGame_state() {
 		return game_state;
 	}
 
@@ -148,7 +149,7 @@ public class GamePlay extends Observable {
 	 * 
 	 * @param game_state the game_state to set
 	 */
-	public void setGame_state(List<Player> game_state) {
+	public void setGame_state(List<AbstractPlayer> game_state) {
 		this.game_state = game_state;
 		setChanged();
 		notifyObservers(this);
