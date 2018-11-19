@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.risk.business.AbstractPlayer;
 import com.risk.file.IManageGamePlayFile;
 import com.risk.model.Card;
 import com.risk.model.GamePlay;
@@ -44,7 +45,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		boolean file_writer_message = false;
 		String file_name = gamePlay.getFile_name();
 		String game_phase = gamePlay.getGame_phase();
-		List<Player> player_list = gamePlay.getGame_state();
+		List<AbstractPlayer> player_list = gamePlay.getGame_state();
 		try (PrintStream player_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/gameplay/" + file_name + ".txt")))) {
 			player_file_writer.println("Map name=" + file_name);
@@ -92,7 +93,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 	 * @see com.risk.file.IManageGamePlayFile#fetchGameState(java.lang.String)
 	 */
 	public GamePlay fetchGameState(String file_name) {
-		List<Player> players_list = new ArrayList<>();
+		List<AbstractPlayer> players_list = new ArrayList<>();
 		GamePlay game_play = new GamePlay();
 		try (BufferedReader game_file_reader = new BufferedReader(
 				new FileReader("src/main/resource/gameplay/" + file_name))) {

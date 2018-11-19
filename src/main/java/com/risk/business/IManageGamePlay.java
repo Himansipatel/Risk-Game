@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.risk.model.GamePlay;
 import com.risk.model.Map;
-import com.risk.model.Player;
 
 /**
  * This Interface handles the GamePlay as per RiskRules and manages game state
@@ -42,5 +41,5 @@ public interface IManageGamePlay {
 	 *                       re-calculated.
 	 * @return State of the game in form of a List of Players.
 	 */
-	List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map, int current_player);
+	List<AbstractPlayer> calculateArmiesReinforce(List<AbstractPlayer> gameplay, Map map, int current_player);
 }

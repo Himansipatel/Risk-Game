@@ -22,7 +22,6 @@ import com.risk.model.CardTrade;
 import com.risk.model.Fortification;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
-import com.risk.model.Player;
 
 /**
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -307,7 +306,7 @@ public class ManagePlayerTest {
 		// Setting an empty free card list and current trade count for the player as 6.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -336,7 +335,7 @@ public class ManagePlayerTest {
 		 * Player's army stock becomes - 20 Player's card list becomes empty. Player's
 		 * number of trades become - 7
 		 */
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -399,7 +398,7 @@ public class ManagePlayerTest {
 		// Setting an empty free card list and current trade count for the player as 4.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -429,7 +428,7 @@ public class ManagePlayerTest {
 		 * Player's army stock becomes - 12 Player's card list becomes empty. Player's
 		 * number of trades become - 5
 		 */
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -492,7 +491,7 @@ public class ManagePlayerTest {
 		// Setting an empty free card list and current trade count for the player as 2.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 4) {
 				continue;
 			} else {
@@ -525,7 +524,7 @@ public class ManagePlayerTest {
 		 * Player's army stock stays - 0 Player's card list unchanged. Player's number
 		 * of trades unchanged - 2
 		 */
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 4) {
 				continue;
 			} else {
@@ -593,7 +592,7 @@ public class ManagePlayerTest {
 		// Geneva.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -626,7 +625,7 @@ public class ManagePlayerTest {
 		 * Player's army stock becomes - 15 Player's card list becomes empty. Player's
 		 * number of trades become - 6 Player's army count on Geneva Should become - 6
 		 */
-		for (Player player : game_state.getGame_state()) {
+		for (AbstractPlayer player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
