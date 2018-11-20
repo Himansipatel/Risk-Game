@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.risk.model.GamePlay;
 import com.risk.model.Map;
+import com.risk.model.Tournament;
 
 /**
  * This Interface handles the GamePlay as per RiskRules and manages game state
@@ -27,6 +28,21 @@ public interface IManageGamePlay {
 	 * 
 	 */
 	GamePlay managePhase(GamePlay game_state);
+
+	/**
+	 * This method prepares a GamePlay Object for Tournament Mode.
+	 * It then initiates the Tournament. 
+	 * @param tournament_inp Inputs from UI to prepare a tournament.
+	 * @return Tournament containing the current as well as the set of pending and executed GamePlays.
+	 */
+	Tournament prepareTournamentGamePlay(GamePlay tournament_inp);
+
+	/**
+	 * This method is responsible for managing the flow of Game in Tournament Mode.
+	 * @param tournament Tournament containing the current as well as the set of pending and executed GamePlays.
+	 * @return Tournament with updates in the currently active GamePlay.
+	 */
+	Tournament playTournamentMode(Tournament tournament);
 
 	/**
 	 * This method calculates the number of Armies to be allocated to each player at
