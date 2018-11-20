@@ -19,8 +19,8 @@ import com.risk.model.Domination;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Map;
-import com.risk.model.Player;
 import com.risk.model.Territory;
+import com.risk.model.Tournament;
 
 /**
  * This class is the Concrete Implementation for interface IManageGamePlay.
@@ -36,76 +36,90 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public GamePlay managePhase(GamePlay game_state) {
+	public GamePlay managePhase(GamePlay game_play) {
 
-		if (game_state != null) {
+		AbstractPlayer current_player = null;
 
-			for (AbstractPlayer player : game_state.getGame_state()) {
-			}
-			Player player = new Player();
-			Map map = game_state.getMap();
+		if (game_play != null) {
 
-			if (map == null) {
-				game_state.setStatus("Inavlid Map.");
-				return game_state;
-			} else if (!map.getStatus().equalsIgnoreCase("")) {
-				game_state.setStatus(map.getStatus());
-				return game_state;
+			for (AbstractPlayer player : game_play.getGame_state()) {
+				if (player.getId()==game_play.getCurrent_player()) {
+					current_player = player;
+					break;
+				}
 			}
 
-			switch (game_state.getGame_phase()) {
+			if (current_player != null) {
+				Map map = game_play.getMap();
 
-			case "STARTUP":
-				calculateArmiesReinforce(game_state.getGame_state(), map, 1);
-				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
-				break;
+				if (map == null) {
+					game_play.setStatus("Inavlid Map.");
+					return game_play;
+				} else if (!map.getStatus().equalsIgnoreCase("")) {
+					game_play.setStatus(map.getStatus());
+					return game_play;
+				}
 
-			case "REINFORCEMENT":
-				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
-				game_state = player.reinforce(game_state);
-				break;
+				switch (game_play.getGame_phase()) {
 
-			case "TRADE_CARDS":
-				game_state = player.reinforce(game_state);
-				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
-				break;
+				case "STARTUP":
+					calculateArmiesReinforce(game_play.getGame_state(), map, 1);
+					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
+					break;
 
-			case "ATTACK_ON":
-				player.attack(game_state);
-				break;
+				case "REINFORCEMENT":
+					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
+					game_play = current_player.reinforce(game_play);
+					break;
 
-			case "ATTACK_ALL_OUT":
-				player.attack(game_state);
-				break;
+				case "TRADE_CARDS":
+					game_play = current_player.reinforce(game_play);
+					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
+					break;
 
-			case "ATTACK_ARMY_MOVE":
-				player.attack(game_state);
-				break;
+				case "ATTACK_ON":
+					current_player.attack(game_play);
+					break;
 
-			case "ATTACK_END":
-				player.attack(game_state);
-				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
-				break;
+				case "ATTACK_ALL_OUT":
+					current_player.attack(game_play);
+					break;
 
-			case "FORTIFICATION":
-				player.fortify(game_state);
-				break;
+				case "ATTACK_ARMY_MOVE":
+					current_player.attack(game_play);
+					break;
 
-			case "FORTIFICATION_END":
-				setCurrentPlayerAndPhase(game_state, game_state.getGame_phase());
-				calculateArmiesReinforce(game_state.getGame_state(), map, game_state.getCurrent_player());
-				break;
+				case "ATTACK_END":
+					current_player.attack(game_play);
+					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
+					break;
 
-			default:
-				break;
+				case "FORTIFICATION":
+					current_player.fortify(game_play);
+					break;
+
+				case "FORTIFICATION_END":
+					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
+					calculateArmiesReinforce(game_play.getGame_state(), map, game_play.getCurrent_player());
+					break;
+
+				default:
+					break;
+				}
+
+				Domination domination = new Domination();
+				ManageDomination manage_domination = new ManageDomination();
+				domination.addObserver(manage_domination);
+				domination.updateDomination(game_play);
+				return game_play;
+			} else {
+				game_play.setStatus("Current Player is not Valid!");
+				return game_play;
 			}
-			Domination domination = new Domination();
-			ManageDomination manage_domination = new ManageDomination();
-			domination.addObserver(manage_domination);
-			domination.updateDomination(game_state);
-			return game_state;
 		} else {
-			return game_state;
+			game_play = new GamePlay();
+			game_play.setStatus("Invalid Game State!");
+			return game_play;
 		}
 	}
 
@@ -250,10 +264,28 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	}
 
 	/**
+	 * @see com.risk.business.IManageGamePlay#prepareTournamentGamePlay(GamePlay)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Override
+	public Tournament prepareTournamentGamePlay(GamePlay tournament_inp) {
+		return null;
+	}
+
+	/**
+	 * @see com.risk.business.IManageGamePlay#playTournamentMode(Tournament)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */	
+	@Override
+	public Tournament playTournamentMode(Tournament tournament) {
+		return tournament;
+	}
+
+	/**
 	 * This method here serves for the implementation of Observer Pattern in our
 	 * Project. It handles multiple phases during game play as per risk rules. As
-	 * the GUI captures events for a particular phase it triggers an state change
-	 * for GamePlay Object and any trigger for GamePlay object is being observed by
+	 * the GUI captures data and events for a particular phase and triggers a state change
+	 * in GamePlay Object, this class here is being observed by
 	 * ManageGamePlay as an observer.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -261,6 +293,5 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	@Override
 	public void update(Observable o, Object arg) {
 		managePhase((GamePlay) arg);
-	}
-
+	}	
 }
