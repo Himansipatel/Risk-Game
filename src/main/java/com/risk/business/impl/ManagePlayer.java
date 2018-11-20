@@ -106,7 +106,7 @@ public class ManagePlayer implements IManagePlayer {
 						int sum_armies = player_info_list.get(player_index).getTerritory_list()
 								.get(territory_list_index).getNumber_of_armies() + 1;
 						player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-						.setNumber_of_armies(sum_armies);
+								.setNumber_of_armies(sum_armies);
 						if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
 							territory_list_index = -1;
 						}
@@ -118,7 +118,7 @@ public class ManagePlayer implements IManagePlayer {
 					int sum_armies = player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.getNumber_of_armies() + 1;
 					player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-					.setNumber_of_armies(sum_armies);
+							.setNumber_of_armies(sum_armies);
 				}
 			}
 		}
@@ -138,7 +138,8 @@ public class ManagePlayer implements IManagePlayer {
 	 *                         and GamePlay File.
 	 * @return GamePlay File Object
 	 */
-	private GamePlay writePlayerToFile(List<AbstractPlayer> player_info_list, String file_name, String allocation_type) {
+	private GamePlay writePlayerToFile(List<AbstractPlayer> player_info_list, String file_name,
+			String allocation_type) {
 		List<AbstractPlayer> player_list_at_file = convertPlayerToFileLayer(player_info_list);
 		ManageGamePlay game_manager = new ManageGamePlay();
 		ManageGamePlayFile manage_game_play_file = new ManageGamePlayFile();
@@ -247,11 +248,11 @@ public class ManagePlayer implements IManagePlayer {
 			for (int j = 0; j < player_list.get(i).getTerritory_list().size(); j++) {
 				GamePlayTerritory game_play_territory = new GamePlayTerritory();
 				game_play_territory
-				.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
+						.setTerritory_name(player_list.get(i).getTerritory_list().get(j).getTerritory_name());
 				game_play_territory
-				.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
+						.setContinent_name(player_list.get(i).getTerritory_list().get(j).getContinent_name());
 				game_play_territory
-				.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
+						.setNumber_of_armies(player_list.get(i).getTerritory_list().get(j).getNumber_of_armies());
 				game_play_territory_list.add(game_play_territory);
 			}
 			player_object_at_file.setTerritory_list(game_play_territory_list);
@@ -391,9 +392,9 @@ public class ManagePlayer implements IManagePlayer {
 						&& trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type()))
 						|| (!trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
 								&& !trade_card.getCard2().getArmy_type()
-								.equalsIgnoreCase(trade_card.getCard3().getArmy_type())
+										.equalsIgnoreCase(trade_card.getCard3().getArmy_type())
 								&& !trade_card.getCard3().getArmy_type()
-								.equalsIgnoreCase(trade_card.getCard1().getArmy_type()))) {
+										.equalsIgnoreCase(trade_card.getCard1().getArmy_type()))) {
 
 					int current_player = game_state.getCurrent_player();
 
@@ -417,16 +418,16 @@ public class ManagePlayer implements IManagePlayer {
 									if (gamePlayTerritory.getTerritory_name()
 											.equalsIgnoreCase(trade_card.getCard1().getTerritory_name())
 											|| gamePlayTerritory.getTerritory_name()
-											.equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
+													.equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
 											|| gamePlayTerritory.getTerritory_name()
-											.equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
+													.equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
 
 										/**
 										 * An additional two armies given if the Player controls any territory which is
 										 * present in one of the cards being traded.
 										 */
 										gamePlayTerritory
-										.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);
+												.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);
 										break;
 									}
 								}
@@ -635,10 +636,10 @@ public class ManagePlayer implements IManagePlayer {
 									if (attacker_territory_list.size() > 1) {
 										if (att_territory.getNumber_of_armies() == 1) {
 											territory_list.get(j)
-											.setNumber_of_armies(att_territory.getNumber_of_armies() + 1);
+													.setNumber_of_armies(att_territory.getNumber_of_armies() + 1);
 										} else {
 											territory_list.get(j)
-											.setNumber_of_armies(att_territory.getNumber_of_armies());
+													.setNumber_of_armies(att_territory.getNumber_of_armies());
 										}
 									} else {
 										territory_list.get(j).setNumber_of_armies(att_territory.getNumber_of_armies());
@@ -671,9 +672,9 @@ public class ManagePlayer implements IManagePlayer {
 											attack_army_move = new AttackArmyMove();
 										}
 										attack_army_move
-										.setAttacker_territory(game_play.getAttack().getAttacker_territory());
+												.setAttacker_territory(game_play.getAttack().getAttacker_territory());
 										attack_army_move
-										.setDefender_territory(game_play.getAttack().getDefender_territory());
+												.setDefender_territory(game_play.getAttack().getDefender_territory());
 										attack_army_move.setAmry_count(0);
 										game_play.setArmy_move(attack_army_move);
 										break;
@@ -754,12 +755,12 @@ public class ManagePlayer implements IManagePlayer {
 						return game_play;
 					} else {
 						source_territory_instance
-						.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
-						.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
 						game_play.setStatus(
 								army_count + " army moved from " + source_territory_instance.getTerritory_name()
-								+ " to " + dest_territory_instance.getTerritory_name());
+										+ " to " + dest_territory_instance.getTerritory_name());
 						game_play.setGame_phase("ATTACK_ARMY_ON");
 					}
 					break;
@@ -818,12 +819,12 @@ public class ManagePlayer implements IManagePlayer {
 						return game_play;
 					} else {
 						source_territory_instance
-						.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
-						.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
 						game_play.setStatus(
 								army_count + " army moved from " + source_territory_instance.getTerritory_name()
-								+ " to " + dest_territory_instance.getTerritory_name());
+										+ " to " + dest_territory_instance.getTerritory_name());
 					}
 					break;
 				}
@@ -869,7 +870,7 @@ public class ManagePlayer implements IManagePlayer {
 	 *         Description added by Mayank Jariwala
 	 * @param game_play : GamePlay Object
 	 */
-	private void giveCardAtAttackEnd(GamePlay game_play) {
+	public void giveCardAtAttackEnd(GamePlay game_play) {
 		int current_player_id = game_play.getCurrent_player();
 		boolean is_territory_occupied = false;
 		for (int player_list_index = 0; player_list_index < game_play.getGame_state().size(); player_list_index++) {
