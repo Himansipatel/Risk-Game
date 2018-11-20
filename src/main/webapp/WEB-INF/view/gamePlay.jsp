@@ -8,6 +8,105 @@
 	$(document)
 			.ready(
 					function() {
+						$("#playerBehavior1").hide();
+						$("#playerBehavior2").hide();
+						$("#playerBehavior3").hide();
+						$("#playerBehavior4").hide();
+						$("#playerBehavior5").hide();
+						$("#playerBehavior6").hide();
+						
+						function hideAllTypeAndBehavior(){
+							$("#pl3").hide();
+							$("#pl4").hide();
+							$("#pl5").hide();
+							$("#pl6").hide();
+						}
+						
+						function displayAllTypeAndBehavior(){
+							hideAllTypeAndBehavior();
+							var noOfPlayers = $("#noOfPlayer option:selected")
+							.val();
+							switch (String(noOfPlayers)) {
+							case "6":
+								$("#pl6").show();
+							case "5":
+								$("#pl5").show();
+							case "4":
+								$("#pl4").show();
+							case "3":
+								$("#pl3").show();
+							}
+						};
+						
+						hideAllTypeAndBehavior();
+						
+						$('#noOfPlayer').change(
+								function() {
+									displayAllTypeAndBehavior();
+								});
+						
+						$('#playerType1').change(
+								function() {
+									var type =$("#playerType1 option:selected")
+									.val();
+									if(type == 'HUMAN'){
+										$("#playerBehavior1").hide();
+									}else{
+										$("#playerBehavior1").show();
+									}
+								});
+						$('#playerType2').change(
+								function() {
+									var type =$("#playerType2 option:selected")
+									.val();
+									if(type == 'HUMAN'){
+										$("#playerBehavior2").hide();
+									}else{
+										$("#playerBehavior2").show();
+									}
+								});
+						$('#playerType3').change(
+								function() {
+									var type =$("#playerType3 option:selected")
+									.val();
+									if(type == 'HUMAN'){
+										$("#playerBehavior3").hide();
+									}else{
+										$("#playerBehavior3").show();
+									}
+								});
+						$('#playerType4').change(
+								function() {
+									var type =$("#playerType4 option:selected")
+									.val();
+									if(type == 'HUMAN'){
+										$("#playerBehavior4").hide();
+									}else{
+										$("#playerBehavior4").show();
+									}
+								});
+						$('#playerType5').change(
+								function() {
+									var type =$("#playerType5 option:selected")
+									.val();
+									if(type == 'HUMAN'){
+										$("#playerBehavior5").hide();
+									}else{
+										$("#playerBehavior5").show();
+									}
+								});
+						$('#playerType6').change(
+								function() {
+									var type =$("#playerType6 option:selected")
+									.val();
+									if(type == 'HUMAN'){
+										$("#playerBehavior6").hide();
+									}else{
+										$("#playerBehavior6").show();
+									}
+								});
+						
+						
 						$('#mapSelectModal').modal({
 							backdrop : 'static',
 							keyboard : false
@@ -107,7 +206,7 @@
 						$("#countriesDesc_previous").css("color", "black");
 						$("#continentsDesc_previous").css("color", "black");
 						$("#continentsDesc_next").css("color", "black");
-
+						
 						$
 								.ajax({
 									type : "GET",
@@ -587,27 +686,80 @@
 								keyboard : false
 							});
 						}
+						
+						function makePlayer(i){
+							player={};
+							var id;
+							var type;
+							var behaviour;
+							switch(String(i)){
+								case "1": id=1;
+								type=$("#playerType1 option:selected").val();
+								behaviour =$("#playerBehavior1 option:selected").val();
+								break;
+								case "2": id=2;
+								type=$("#playerType2 option:selected").val();
+								behaviour =$("#playerBehavior2 option:selected").val();
+								break;
+								case "3": id=3;
+								type=$("#playerType3 option:selected").val();
+								behaviour =$("#playerBehavior3 option:selected").val();
+								break;
+								case "4": id=4;
+								type=$("#playerType4 option:selected").val();
+								behaviour =$("#playerBehavior4 option:selected").val();
+								break;
+								case "5": id=5;
+								type=$("#playerType5 option:selected").val();
+								behaviour =$("#playerBehavior5 option:selected").val();
+								break;
+								case "6": id=6;
+								type=$("#playerType6 option:selected").val();
+								behaviour =$("#playerBehavior6 option:selected").val();
+								break;
+							}
+							player={
+									id:id,
+									type:type,
+									behaviour:behaviour
+							}
+							return player;
+						}
 
 						function initStartUpPhase(allocationType) {
+							showLoading();
 							var allocType = 'm';
 							if (allocationType) {
 								allocType = 'a';
 							}
-							showLoading();
+							noOfPlayingPlayer = $(
+							"#noOfPlayer option:selected")
+							.val();
+							playerDetails={};
+							var players = [];
+							for (var i = 1; i <= noOfPlayingPlayer; i++) {
+								var player = makePlayer(i);
+								players.push(player);
+							}
+							playerDetails={
+									players:players,
+									playersNo:$(
+									"#noOfPlayer option:selected")
+									.text(),
+									fileName:$(
+									"#availableMapsName option:selected")
+									.text(),
+									allocationType:allocType
+							}
+							var a = JSON.stringify(playerDetails);
+							
 							$
 									.ajax({
-										type : "GET",
-										data : $
-												.param({
-													playersNo : $(
-															"#noOfPlayer option:selected")
-															.text(),
-													fileName : $(
-															"#availableMapsName option:selected")
-															.text(),
-													allocationType : allocType
-												}),
+										type : "POST",
 										url : "gamePlay/initStartUpPhase",
+										dataType : "json",
+										data : a,
+										contentType : "application/json",
 										success : function(data) {
 											data_game = data;
 											if(typeof(data.gui_map) == undefined || data.gui_map == null){
@@ -1685,7 +1837,7 @@
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="continentName">No of Players : </label> <select
+						<label for="noOfPlayer">No of Players : </label> <select
 							class="form-control form-control-sm" id="noOfPlayer">
 							<option value="2">2</option>
 							<option value="3">3</option>
@@ -1693,6 +1845,105 @@
 							<option value="5">5</option>
 							<option value="6">6</option>
 						</select>
+					</div>
+					<div class='row'>
+						<table class='table'>
+							<tr>
+								<th><b>Player</b></th>
+								<th><b>Type</b></th>
+								<th><b>Behavior</b></th>
+							</tr>
+							<tr id='pl1'>
+								<th><b>Player 1</b></th>
+								<th><select class="form-control form-control-sm"
+									id="playerType1">
+										<option value="HUMAN">Human</option>
+										<option value="COMPUTER">Computer</option>
+								</select></th>
+								<th><select class="form-control form-control-sm"
+									id="playerBehavior1">
+										<option value="AGGRESSIVE">Aggressive</option>
+										<option value="BENEVOLENT">Benevolent</option>
+										<option value="RANDOM">Random</option>
+										<option value="CHEATER">Cheater</option>
+								</select></th>
+							</tr>
+							<tr id='pl2'>
+								<th><b>Player 2</b></th>
+								<th><select class="form-control form-control-sm"
+									id="playerType2">
+										<option value="HUMAN">Human</option>
+										<option value="COMPUTER">Computer</option>
+								</select></th>
+								<th><select class="form-control form-control-sm"
+									id="playerBehavior2">
+										<option value="AGGRESSIVE">Aggressive</option>
+										<option value="BENEVOLENT">Benevolent</option>
+										<option value="RANDOM">Random</option>
+										<option value="CHEATER">Cheater</option>
+								</select></th>
+							</tr>
+							<tr id='pl3'>
+								<th><b>Player 3</b></th>
+								<th><select class="form-control form-control-sm"
+									id="playerType3">
+										<option value="HUMAN">Human</option>
+										<option value="COMPUTER">Computer</option>
+								</select></th>
+								<th><select class="form-control form-control-sm"
+									id="playerBehavior3">
+										<option value="AGGRESSIVE">Aggressive</option>
+										<option value="BENEVOLENT">Benevolent</option>
+										<option value="RANDOM">Random</option>
+										<option value="CHEATER">Cheater</option>
+								</select></th>
+							</tr>
+							<tr id='pl4'>
+								<th><b>Player 4</b></th>
+								<th><select class="form-control form-control-sm"
+									id="playerType4">
+										<option value="HUMAN">Human</option>
+										<option value="COMPUTER">Computer</option>
+								</select></th>
+								<th><select class="form-control form-control-sm"
+									id="playerBehavior4">
+										<option value="AGGRESSIVE">Aggressive</option>
+										<option value="BENEVOLENT">Benevolent</option>
+										<option value="RANDOM">Random</option>
+										<option value="CHEATER">Cheater</option>
+								</select></th>
+							</tr>
+							<tr id='pl5'>
+								<th><b>Player 5</b></th>
+								<th><select class="form-control form-control-sm"
+									id="playerType5">
+										<option value="HUMAN">Human</option>
+										<option value="COMPUTER">Computer</option>
+								</select></th>
+								<th><select class="form-control form-control-sm"
+									id="playerBehavior5">
+										<option value="AGGRESSIVE">Aggressive</option>
+										<option value="BENEVOLENT">Benevolent</option>
+										<option value="RANDOM">Random</option>
+										<option value="CHEATER">Cheater</option>
+								</select></th>
+							</tr>
+							<tr id='pl6'>
+								<th><b>Player 6</b></th>
+								<th><select class="form-control form-control-sm"
+									id="playerType6">
+										<option value="HUMAN">Human</option>
+										<option value="COMPUTER">Computer</option>
+								</select></th>
+								<th><select class="form-control form-control-sm"
+									id="playerBehavior6">
+										<option value="AGGRESSIVE">Aggressive</option>
+										<option value="BENEVOLENT">Benevolent</option>
+										<option value="RANDOM">Random</option>
+										<option value="CHEATER">Cheater</option>
+								</select></th>
+							</tr>
+						</table>
 					</div>
 				</div>
 				<div class="modal-footer">
