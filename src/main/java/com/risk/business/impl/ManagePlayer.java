@@ -374,7 +374,7 @@ public class ManagePlayer implements IManagePlayer {
 	 *                   about game-play. Like the current phase and player.
 	 * @return game_state after updating info on trading of cards.
 	 */
-	private GamePlay tradeCards(GamePlay game_state) {
+	public GamePlay tradeCards(GamePlay game_state) {
 
 		CardTrade trade_card = game_state.getCard_trade();
 		if (trade_card != null) {
