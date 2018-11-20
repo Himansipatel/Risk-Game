@@ -56,4 +56,9 @@ public class GamePlayTerritory {
 		this.number_of_armies = number_of_armies;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return this.getTerritory_name().equalsIgnoreCase(((GamePlayTerritory)obj).getTerritory_name());
+	}
+
 }
