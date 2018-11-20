@@ -78,6 +78,44 @@ public class GamePlay extends Observable {
 	private List<Domination> domination;
 
 	/**
+	 * Captures a series of log messages generated during game play. 
+	 */
+	private List<String> game_play_log;
+
+	/**
+	 * Unique ID that identifies a GamePlay in Tournament Mode. 
+	 */
+	private int game_play_id;
+
+	/**
+	 * @return the unique id for any GamePlay.
+	 */		
+	public int getGame_play_id() {
+		return game_play_id;
+	}
+
+	/**
+	 * @param game_play_id unique id for any GamePlay.
+	 */
+	public void setGame_play_id(int game_play_id) {
+		this.game_play_id = game_play_id;
+	}
+
+	/**
+	 * @return the list of log messages.
+	 */	
+	public List<String> getGame_play_log() {
+		return game_play_log;
+	}
+
+	/**
+	 * @param game_play_log the list of log messages generated during game play.
+	 */
+	public void setGame_play_log(List<String> game_play_log) {
+		this.game_play_log = game_play_log;
+	}
+
+	/**
 	 * @return the domination
 	 */
 	public List<Domination> getDomination() {
@@ -85,9 +123,6 @@ public class GamePlay extends Observable {
 	}
 
 	/**
-	 * Any change in the state of Player based on control over the map will trigger
-	 * calling of update method in ManageGamePlay which is acting as the Observer.
-	 * 
 	 * @param domination List of player domination objects to set
 	 */
 	public void setDomination(List<Domination> domination) {
