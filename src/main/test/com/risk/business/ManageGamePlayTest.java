@@ -2,6 +2,9 @@ package com.risk.business;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,6 +12,7 @@ import com.risk.business.impl.ManageGamePlay;
 import com.risk.business.impl.ManagePlayer;
 import com.risk.model.GamePlay;
 import com.risk.model.gui.PlayerDetails;
+import com.risk.model.gui.SinglePlayer;
 
 /**
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -48,6 +52,16 @@ public class ManageGamePlayTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		GamePlay game_state = player_manager.createPlayer(single_game_input);
 
 		game_state.setCurrent_player(2);
@@ -79,6 +93,16 @@ public class ManageGamePlayTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		GamePlay game_state = player_manager.createPlayer(single_game_input);
 
 		game_state.setCurrent_player(3);
