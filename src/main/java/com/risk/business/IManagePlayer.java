@@ -5,7 +5,7 @@ import java.util.List;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Map;
-import com.risk.model.PlayerDetails;
+import com.risk.model.gui.PlayerDetails;
 
 /**
  * This interface is responsible for handling all player related 

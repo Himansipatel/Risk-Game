@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.risk.business.impl.ManageGamePlay;
 import com.risk.business.impl.ManagePlayer;
 import com.risk.model.GamePlay;
-import com.risk.model.PlayerDetails;
+import com.risk.model.gui.PlayerDetails;
 
 /**
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
