@@ -16,7 +16,6 @@ import com.risk.business.IStrategy;
  */
 public class Player{
 
-	
 	private int id;
 	private String name;
 	private int army_stock;
@@ -39,6 +38,11 @@ public class Player{
 	 * To store the type of player - Human or Computer
 	 */
 	private String type;
+
+	/**
+	 * To store the kind of strategy a player holds.
+	 */
+	private String strategy_name;
 
 	/**
 	 * Represents a particular strategy a Player has. 
@@ -67,6 +71,14 @@ public class Player{
 
 	public void setType(String type) {
 		this.type = type;
+	}
+	
+	public String getStrategy_name() {
+		return strategy_name;
+	}
+
+	public void setStrategy_name(String strategy_name) {
+		this.strategy_name = strategy_name;
 	}
 
 	/**
