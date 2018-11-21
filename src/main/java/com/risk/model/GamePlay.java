@@ -78,11 +78,6 @@ public class GamePlay extends Observable {
 	private List<Domination> domination;
 
 	/**
-	 * Captures a series of log messages generated during game play. 
-	 */
-	private List<String> game_play_log;
-
-	/**
 	 * Unique ID that identifies a GamePlay in Tournament Mode. 
 	 */
 	private int game_play_id;
@@ -99,20 +94,6 @@ public class GamePlay extends Observable {
 	 */
 	public void setGame_play_id(int game_play_id) {
 		this.game_play_id = game_play_id;
-	}
-
-	/**
-	 * @return the list of log messages.
-	 */	
-	public List<String> getGame_play_log() {
-		return game_play_log;
-	}
-
-	/**
-	 * @param game_play_log the list of log messages generated during game play.
-	 */
-	public void setGame_play_log(List<String> game_play_log) {
-		this.game_play_log = game_play_log;
 	}
 
 	/**

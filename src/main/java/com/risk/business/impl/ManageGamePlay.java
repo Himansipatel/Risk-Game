@@ -21,6 +21,7 @@ import com.risk.model.GamePlayTerritory;
 import com.risk.model.Map;
 import com.risk.model.Territory;
 import com.risk.model.Tournament;
+import com.risk.model.gui.TournamentChoices;
 
 /**
  * This class is the Concrete Implementation for interface IManageGamePlay.
@@ -268,8 +269,15 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public Tournament prepareTournamentGamePlay(GamePlay tournament_inp) {
-		return null;
+	public Tournament prepareTournamentGamePlay(TournamentChoices tournament_inp) {
+		Tournament tournament = new Tournament();
+		
+		tournament.setCurrent_game_play_id(1);
+		for (GamePlay game_play : tournament.getTournament()) {
+			game_play.setGame_phase("STARTUP");			
+		} 
+		tournament.setStatus("Tournament Ready. Now starting various Games within it..../nGame 1:/n");
+		return tournament;
 	}
 
 	/**
@@ -278,6 +286,97 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 */	
 	@Override
 	public Tournament playTournamentMode(Tournament tournament) {
+
+		GamePlay current_game_play    = null;
+		AbstractPlayer current_player = null;
+
+		if (tournament!=null) {
+			
+			for (GamePlay game_play : tournament.getTournament()) {
+				if (tournament.getCurrent_game_play_id()==game_play.getGame_play_id()) {
+					current_game_play = game_play;
+					break;
+				}
+			}
+			
+			if (current_game_play != null) {
+				
+				for (AbstractPlayer player : current_game_play.getGame_state()) {
+					if (player.getId()==current_game_play.getCurrent_player()) {
+						current_player = player;
+						break;
+					}
+				}
+
+				if (current_player != null) {
+					Map map = current_game_play.getMap();
+
+					if (map == null) {
+						current_game_play.setStatus("Inavlid Map.");
+						return tournament;
+					} else if (!map.getStatus().equalsIgnoreCase("")) {
+						current_game_play.setStatus(map.getStatus());
+						return tournament;
+					}
+
+					switch (current_game_play.getGame_phase()) {
+
+					case "STARTUP":
+						calculateArmiesReinforce(current_game_play.getGame_state(), map, 1);
+						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						break;
+
+					case "REINFORCEMENT":
+						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						current_game_play = current_player.reinforce(current_game_play);
+						break;
+
+					case "TRADE_CARDS":
+						current_game_play = current_player.reinforce(current_game_play);
+						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						break;
+
+					case "ATTACK_ON":
+						current_player.attack(current_game_play);
+						break;
+
+					case "ATTACK_ALL_OUT":
+						current_player.attack(current_game_play);
+						break;
+
+					case "ATTACK_ARMY_MOVE":
+						current_player.attack(current_game_play);
+						break;
+
+					case "ATTACK_END":
+						current_player.attack(current_game_play);
+						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						break;
+
+					case "FORTIFICATION":
+						current_player.fortify(current_game_play);
+						break;
+
+					case "FORTIFICATION_END":
+						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						calculateArmiesReinforce(current_game_play.getGame_state(), map, current_game_play.getCurrent_player());
+						break;
+
+					default:
+						break;
+					}
+
+					Domination domination = new Domination();
+					ManageDomination manage_domination = new ManageDomination();
+					domination.addObserver(manage_domination);
+					domination.updateDomination(current_game_play);
+					return tournament;
+				} else {
+					current_game_play.setStatus("Current Player is not Valid!");
+					return tournament;				
+				}
+			}
+		}
 		return tournament;
 	}
 
