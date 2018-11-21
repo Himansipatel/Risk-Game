@@ -22,6 +22,8 @@ import com.risk.model.CardTrade;
 import com.risk.model.Fortification;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
+import com.risk.model.Player;
+import com.risk.model.PlayerDetails;
 
 /**
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -51,13 +53,19 @@ public class ManagePlayerTest {
 	@Test
 	public void checkValidAttackTestDiceGreater() {
 		Attack attack = new Attack();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		attack.setAttacker_territory("Neuchtel");
 		attack.setDefender_territory("Varduz");
 		attack.setAttacker_dice_no(6);
 		attack.setDefender_dice_no(2);
 		game_play.setAttack(attack);
-		game_play = manage_player.attack(game_play);
+		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(containsInvalid(message));
 	}
@@ -74,13 +82,19 @@ public class ManagePlayerTest {
 	@Test
 	public void checkValidAttackTestDiceLesser() {
 		Attack attack = new Attack();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+
 		attack.setAttacker_territory("Neuchtel");
 		attack.setDefender_territory("Varduz");
 		attack.setAttacker_dice_no(3);
 		attack.setDefender_dice_no(2);
 		game_play.setAttack(attack);
-		game_play = manage_player.attack(game_play);
+		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(containsWon(message));
 	}
@@ -96,11 +110,16 @@ public class ManagePlayerTest {
 	 */
 	@Test
 	public void checkValidCardCreationTest() {
-		ManagePlayer managePlayer = new ManagePlayer();
-		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "A");
-		List<GamePlayTerritory> map_territory_list = managePlayer.getTerritories(gamePlay.getMap());
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+
+		List<GamePlayTerritory> map_territory_list = manage_player.getTerritories(game_play.getMap());
 		int map_territory_list_size = map_territory_list.size();
-		List<Card> free_card_list = gamePlay.getFree_cards();
+		List<Card> free_card_list = game_play.getFree_cards();
 		int free_card_list_size = free_card_list.size();
 		assertEquals(map_territory_list_size, free_card_list_size);
 	}
@@ -115,10 +134,14 @@ public class ManagePlayerTest {
 	 */
 	@Test
 	public void validateManuallyAssignArmyStock() {
-		ManagePlayer managePlayer = new ManagePlayer();
-		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "M");
-		for (int i = 0; i < gamePlay.getGame_state().size(); i++) {
-			assertEquals(40, gamePlay.getGame_state().get(i).getArmy_stock());
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("M");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+
+		for (int i = 0; i < game_play.getGame_state().size(); i++) {
+			assertEquals(40, game_play.getGame_state().get(i).getArmy_stock());
 		}
 
 	}
@@ -133,10 +156,13 @@ public class ManagePlayerTest {
 	 */
 	@Test
 	public void validateAutomaticallyAssignArmyStock() {
-		ManagePlayer managePlayer = new ManagePlayer();
-		GamePlay gamePlay = managePlayer.createPlayer(2, "Switzerland.map", "A");
-		assertEquals(14, gamePlay.getGame_state().get(0).getTerritory_list().size());
-		assertEquals(13, gamePlay.getGame_state().get(1).getTerritory_list().size());
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		assertEquals(14, game_play.getGame_state().get(0).getTerritory_list().size());
+		assertEquals(13, game_play.getGame_state().get(1).getTerritory_list().size());
 	}
 
 	/**
@@ -150,12 +176,18 @@ public class ManagePlayerTest {
 	@Test
 	public void checkFortifyPhaseInvalidNeighbouringTerritoryTest() {
 		Fortification fortify = new Fortification();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		fortify.setSource_territory("Fribourg");
 		fortify.setDestination_territory("Leistal Canton");
 		fortify.setArmy_count(2);
 		game_play.setFortification(fortify);
-		game_play = manage_player.fortify(game_play);
+		game_play.getGame_state().get(0).executeStrategy("FORTIFY", game_play);		
 		String message = game_play.getStatus();
 		assertEquals("Invalid Move (Not Neighboring Territory)", message);
 	}
@@ -171,12 +203,18 @@ public class ManagePlayerTest {
 	@Test
 	public void checkFortifyPhaseValidNeighbouringTerritoryTest() {
 		Fortification fortify = new Fortification();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		fortify.setSource_territory("Fribourg");
 		fortify.setDestination_territory("Jura Canton");
 		fortify.setArmy_count(2);
 		game_play.setFortification(fortify);
-		game_play = manage_player.fortify(game_play);
+		game_play.getGame_state().get(0).executeStrategy("FORTIFY", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
 	}
@@ -195,9 +233,16 @@ public class ManagePlayerTest {
 		fortify.setSource_territory("Fribourg");
 		fortify.setDestination_territory("Jura Canton");
 		fortify.setArmy_count(3);
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		game_play.setFortification(fortify);
-		game_play = manage_player.fortify(game_play);
+		game_play.getGame_state().get(0).executeStrategy("FORTIFY", game_play);
+		//game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("not having minimum armies"));
 	}
@@ -213,12 +258,19 @@ public class ManagePlayerTest {
 	@Test
 	public void checkFortifyValidFortificationArmyMoveTest() {
 		Fortification fortify = new Fortification();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		fortify.setSource_territory("Fribourg");
 		fortify.setDestination_territory("Jura Canton");
 		fortify.setArmy_count(2);
 		game_play.setFortification(fortify);
-		game_play = manage_player.fortify(game_play);
+		game_play.getGame_state().get(0).executeStrategy("FORTIFY", game_play);
+		//game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
 	}
@@ -240,18 +292,21 @@ public class ManagePlayerTest {
 	 */
 	@Test
 	public void testReinforceAutoAllocate() {
-		IManagePlayer player_manager = new ManagePlayer();
-		GamePlay game_state = new GamePlay();
-		game_state = player_manager.createPlayer(6, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(6);
+		game_play = manage_player.createPlayer(single_game_input);
 
 		// 6 Players should have been created.
-		assertEquals(6, game_state.getGame_state().size());
+		assertEquals(6, game_play.getGame_state().size());
 
 		// Player 1 should be set as the current player.
-		assertEquals(1, game_state.getCurrent_player());
+		assertEquals(1, game_play.getCurrent_player());
 
 		// REINFORCEMENT Phase should be set a the current phase.
-		assertEquals("REINFORCEMENT", game_state.getGame_phase());
+		assertEquals("REINFORCEMENT", game_play.getGame_phase());
 	}
 
 	/**
@@ -269,7 +324,12 @@ public class ManagePlayerTest {
 		// Creating a game state using AutoAllocationMode - A.
 		// Player 3 has an initial army count 4 and zero cards.
 		GamePlay game_state = new GamePlay();
-		game_state = player_manager.createPlayer(6, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(6);
+		game_state = player_manager.createPlayer(single_game_input);
 
 		// Setting Player 3 as current player
 		game_state.setCurrent_player(3);
@@ -306,7 +366,7 @@ public class ManagePlayerTest {
 		// Setting an empty free card list and current trade count for the player as 6.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -335,7 +395,7 @@ public class ManagePlayerTest {
 		 * Player's army stock becomes - 20 Player's card list becomes empty. Player's
 		 * number of trades become - 7
 		 */
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -361,8 +421,12 @@ public class ManagePlayerTest {
 		// Creating a game state using AutoAllocationMode - A.
 		// Player 3 has an initial army count 4 and zero cards.
 		GamePlay game_state = new GamePlay();
-		game_state = player_manager.createPlayer(6, "Switzerland.map", "A");
-
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(6);
+		game_state = player_manager.createPlayer(single_game_input);
+		
 		// Setting Player 3 as current player
 		game_state.setCurrent_player(3);
 
@@ -398,7 +462,7 @@ public class ManagePlayerTest {
 		// Setting an empty free card list and current trade count for the player as 4.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -428,7 +492,7 @@ public class ManagePlayerTest {
 		 * Player's army stock becomes - 12 Player's card list becomes empty. Player's
 		 * number of trades become - 5
 		 */
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -454,7 +518,11 @@ public class ManagePlayerTest {
 		// Creating a game state using AutoAllocationMode - A.
 		// Player 4 has an initial army count 3 and zero cards.
 		GamePlay game_state = new GamePlay();
-		game_state = player_manager.createPlayer(6, "Switzerland.map", "A");
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(6);
+		game_state = player_manager.createPlayer(single_game_input);
 
 		// Setting Player 4 as current player
 		game_state.setCurrent_player(4);
@@ -491,7 +559,7 @@ public class ManagePlayerTest {
 		// Setting an empty free card list and current trade count for the player as 2.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 4) {
 				continue;
 			} else {
@@ -524,7 +592,7 @@ public class ManagePlayerTest {
 		 * Player's army stock stays - 0 Player's card list unchanged. Player's number
 		 * of trades unchanged - 2
 		 */
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 4) {
 				continue;
 			} else {
@@ -553,7 +621,11 @@ public class ManagePlayerTest {
 		// Creating a game state using AutoAllocationMode - A.
 		// With 6 players playing initially each gets an army count - an zero cards.
 		GamePlay game_state = new GamePlay();
-		game_state = player_manager.createPlayer(6, "Switzerland.map", "A");
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(6);
+		game_state = player_manager.createPlayer(single_game_input);
 
 		// Setting Player 3 as current player
 		game_state.setCurrent_player(3);
@@ -592,7 +664,7 @@ public class ManagePlayerTest {
 		// Geneva.
 		game_state.setFree_cards(new ArrayList<Card>());
 
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -625,7 +697,7 @@ public class ManagePlayerTest {
 		 * Player's army stock becomes - 15 Player's card list becomes empty. Player's
 		 * number of trades become - 6 Player's army count on Geneva Should become - 6
 		 */
-		for (AbstractPlayer player : game_state.getGame_state()) {
+		for (Player player : game_state.getGame_state()) {
 			if (player.getId() != 3) {
 				continue;
 			} else {
@@ -657,13 +729,20 @@ public class ManagePlayerTest {
 	@Test
 	public void attackArmyMoveInvalidNeighbouringTest() {
 		AttackArmyMove attack_army_move = new AttackArmyMove();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+		
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+
 		attack_army_move.setAttacker_territory("Fribourg");
 		attack_army_move.setDefender_territory("Leistal Canton");
 		attack_army_move.setAmry_count(2);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		game_play = manage_player.attack(game_play);
+		//game_play = manage_player.attack(game_play);
+		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertEquals("Invalid Move (Not Neighboring Territory)", message);
 	}
@@ -679,13 +758,20 @@ public class ManagePlayerTest {
 	@Test
 	public void attackArmyMoveValidNeighbouringTest() {
 		AttackArmyMove attack_army_move = new AttackArmyMove();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		attack_army_move.setAttacker_territory("Fribourg");
 		attack_army_move.setDefender_territory("Jura Canton");
 		attack_army_move.setAmry_count(2);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		game_play = manage_player.attack(game_play);
+		//game_play = manage_player.attack(game_play);
+		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
 	}
@@ -703,13 +789,20 @@ public class ManagePlayerTest {
 	@Test
 	public void checkInvalidAttackArmyMoveTest() {
 		AttackArmyMove attack_army_move = new AttackArmyMove();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		attack_army_move.setAttacker_territory("Fribourg");
 		attack_army_move.setDefender_territory("Jura Canton");
 		attack_army_move.setAmry_count(3);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		game_play = manage_player.attack(game_play);
+		//game_play = manage_player.attack(game_play);
+		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("not having minimum armies"));
 	}
@@ -727,13 +820,20 @@ public class ManagePlayerTest {
 	@Test
 	public void checkValidAttackArmyMoveTest() {
 		AttackArmyMove attack_army_move = new AttackArmyMove();
-		game_play = manage_player.createPlayer(2, "Switzerland.map", "A");
+
+		PlayerDetails      single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		game_play = manage_player.createPlayer(single_game_input);
+		
 		attack_army_move.setAttacker_territory("Fribourg");
 		attack_army_move.setDefender_territory("Jura Canton");
 		attack_army_move.setAmry_count(2);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		game_play = manage_player.attack(game_play);
+		//game_play = manage_player.attack(game_play);
+		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
 	}

@@ -10,12 +10,12 @@ import java.util.Map.Entry;
 import java.util.Observable;
 import java.util.Observer;
 
-import com.risk.business.AbstractPlayer;
 import com.risk.business.IManageDomination;
 import com.risk.model.Continent;
 import com.risk.model.Domination;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
+import com.risk.model.Player;
 
 /**
  * @author MayankJariwala
@@ -38,7 +38,7 @@ public class ManageDomination implements IManageDomination, Observer {
 		ManagePlayer manage_player = new ManagePlayer();
 		int player_territories_count = 0;
 		int total_map_territories = manage_player.getTerritories(game_play.getMap()).size();
-		for (AbstractPlayer player : game_play.getGame_state()) {
+		for (Player player : game_play.getGame_state()) {
 			List<String> continent_occupy = new ArrayList<>();
 			HashMap<String, Integer> continent_territory_count = continentTerritoryCount(game_play);
 			domination = new Domination();

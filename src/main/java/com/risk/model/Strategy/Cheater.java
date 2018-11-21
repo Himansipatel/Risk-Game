@@ -1,20 +1,23 @@
-package com.risk.model;
+package com.risk.model.Strategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.risk.business.AbstractPlayer;
+import com.risk.business.IStrategy;
 import com.risk.business.impl.ManagePlayer;
+import com.risk.model.GamePlay;
+import com.risk.model.GamePlayTerritory;
+import com.risk.model.Player;
 
 /**
- * This Player Model represents a Cheater Computer Player in terms of
- * Strategy-Pattern implementation, during our GamePlay.
+ * Concrete implementation of Cheating Strategy in terms of
+ * Strategy design Pattern, during our GamePlay.
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @version 0.0.1
  */
-public class CheaterPlayer extends AbstractPlayer {
+public class Cheater implements IStrategy {
 
 	/**
 	 * Reinforcement of an Cheater Player.
@@ -24,7 +27,7 @@ public class CheaterPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public GamePlay reinforce(GamePlay game_play) {
-		for (AbstractPlayer player : game_play.getGame_state()) {
+		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				player.setArmy_stock(0);
 				for (GamePlayTerritory territory : player.getTerritory_list()) {
@@ -46,13 +49,13 @@ public class CheaterPlayer extends AbstractPlayer {
 	@Override
 	public GamePlay attack(GamePlay game_play) {
 		boolean any_territory_occupied = false;
-		AbstractPlayer current_player = null;
-		AbstractPlayer defender_player = null;
+		Player current_player = null;
+		Player defender_player = null;
 		List<String> neighbours = null;
 		List<String> player_territories = new ArrayList<>();
 		GamePlayTerritory defender_territory_data = null;
 		GamePlayTerritory attacker_territory_data = null;
-		for (AbstractPlayer player : game_play.getGame_state()) {
+		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				current_player = player;
 				break;
@@ -91,7 +94,7 @@ public class CheaterPlayer extends AbstractPlayer {
 						continue;
 					} else {
 						Boolean flag_attack_over = false;
-						for (AbstractPlayer defender : game_play.getGame_state()) {
+						for (Player defender : game_play.getGame_state()) {
 							if (defender.getId() == current_player.getId()) {
 								continue;
 							}
@@ -108,7 +111,7 @@ public class CheaterPlayer extends AbstractPlayer {
 									current_player.getTerritory_list().add(defender_territory_data);
 									player_territories.add(defender_territory_data.getTerritory_name());
 									attacker_territory_data
-											.setNumber_of_armies(attacker_territory_data.getNumber_of_armies() - 1);
+									.setNumber_of_armies(attacker_territory_data.getNumber_of_armies() - 1);
 									current_player.getTerritory_list().set(
 											current_player.getTerritory_list().indexOf(attacker_territory_data),
 											attacker_territory_data);
@@ -144,12 +147,12 @@ public class CheaterPlayer extends AbstractPlayer {
 	 */
 	@Override
 	public GamePlay fortify(GamePlay game_play) {
-		AbstractPlayer current_player = null;
+		Player current_player = null;
 		List<String> neighbours = null;
 		List<String> player_territories = new ArrayList<>();
 		GamePlayTerritory attacker_territory_data = null;
 
-		for (AbstractPlayer player : game_play.getGame_state()) {
+		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				current_player = player;
 				break;

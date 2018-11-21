@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.risk.business.AbstractPlayer;
 import com.risk.file.IManageGamePlayFile;
 import com.risk.model.Card;
 import com.risk.model.GamePlay;
@@ -45,33 +44,33 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		boolean file_writer_message = false;
 		String file_name = gamePlay.getFile_name();
 		String game_phase = gamePlay.getGame_phase();
-		List<AbstractPlayer> player_list = gamePlay.getGame_state();
+		List<Player> player_list = gamePlay.getGame_state();
 		try (PrintStream player_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/gameplay/" + file_name + ".txt")))) {
 			player_file_writer.println("Map name=" + file_name);
 			player_file_writer.println("Phase=" + game_phase);
 			player_file_writer.println();
-//			Fetching all Current Players Object Playing in the Game
+			//			Fetching all Current Players Object Playing in the Game
 			for (int player_index = 0; player_index < player_list.size(); player_index++) {
 				player_file_writer.println("[Player]");
 				player_file_writer.println("Id=" + player_list.get(player_index).getId());
 				player_file_writer.println("Name=" + player_list.get(player_index).getName());
 				player_file_writer.println("Armies Stock=" + player_list.get(player_index).getArmy_stock());
 				player_file_writer.println("[Territories]");
-//				Getting territories occupied by each player and writing it to file
+				//				Getting territories occupied by each player and writing it to file
 				for (int j = 0; j < player_list.get(player_index).getTerritory_list().size(); j++)
 					player_file_writer
-							.println(player_list.get(player_index).getTerritory_list().get(j).getTerritory_name() + ","
-									+ player_list.get(player_index).getTerritory_list().get(j).getContinent_name() + ","
-									+ player_list.get(player_index).getTerritory_list().get(j).getNumber_of_armies());
+					.println(player_list.get(player_index).getTerritory_list().get(j).getTerritory_name() + ","
+							+ player_list.get(player_index).getTerritory_list().get(j).getContinent_name() + ","
+							+ player_list.get(player_index).getTerritory_list().get(j).getNumber_of_armies());
 				player_file_writer.println();
 				player_file_writer.println("[Cards]");
-//				Getting cards occupied by each player and writing it to file
+				//				Getting cards occupied by each player and writing it to file
 				if (player_list.get(player_index).getCard_list() != null) {
 					for (int k = 0; k < player_list.get(player_index).getCard_list().size(); k++)
 						player_file_writer
-								.println(player_list.get(player_index).getCard_list().get(k).getTerritory_name() + ","
-										+ player_list.get(player_index).getCard_list().get(k).getArmy_type());
+						.println(player_list.get(player_index).getCard_list().get(k).getTerritory_name() + ","
+								+ player_list.get(player_index).getCard_list().get(k).getArmy_type());
 				}
 				player_file_writer.println();
 			}
@@ -93,7 +92,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 	 * @see com.risk.file.IManageGamePlayFile#fetchGameState(java.lang.String)
 	 */
 	public GamePlay fetchGameState(String file_name) {
-		List<AbstractPlayer> players_list = new ArrayList<>();
+		List<Player> players_list = new ArrayList<>();
 		GamePlay game_play = new GamePlay();
 		try (BufferedReader game_file_reader = new BufferedReader(
 				new FileReader("src/main/resource/gameplay/" + file_name))) {
