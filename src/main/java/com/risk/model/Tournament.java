@@ -21,6 +21,11 @@ public class Tournament {
 	 */
 	private int current_game_play_id;
 	
+	/**
+	 * Status message for Tournament. Contains messages from various validations
+	 * during Tournament Creation and Execution.
+	 */
+	private String status;
 	
 	public int getCurrent_game_play_id() {
 		return current_game_play_id;
@@ -38,4 +43,13 @@ public class Tournament {
 		this.tournament = tournament;
 	}
 
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.risk.model.GamePlay;
 import com.risk.model.Map;
 import com.risk.model.Tournament;
+import com.risk.model.gui.TournamentChoices;
 
 /**
  * This Interface handles the GamePlay as per RiskRules and manages game state
@@ -35,7 +36,7 @@ public interface IManageGamePlay {
 	 * @param tournament_inp Inputs from UI to prepare a tournament.
 	 * @return Tournament containing the current as well as the set of pending and executed GamePlays.
 	 */
-	Tournament prepareTournamentGamePlay(GamePlay tournament_inp);
+	Tournament prepareTournamentGamePlay(TournamentChoices tournament_inp);
 
 	/**
 	 * This method is responsible for managing the flow of Game in Tournament Mode.
