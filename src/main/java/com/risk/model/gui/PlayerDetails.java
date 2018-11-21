@@ -1,4 +1,4 @@
-package com.risk.model;
+package com.risk.model.gui;
 
 import java.util.List;
 
