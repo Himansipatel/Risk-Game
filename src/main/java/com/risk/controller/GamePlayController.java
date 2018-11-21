@@ -17,7 +17,8 @@ import com.risk.business.IManageGamePlay;
 import com.risk.business.IManageMap;
 import com.risk.business.IManagePlayer;
 import com.risk.model.GamePlay;
-import com.risk.model.PlayerDetails;
+import com.risk.model.gui.PlayerDetails;
+import com.risk.model.gui.TournamentChoices;
 
 /**
  * GamePlay Controller is a part of MVC Controller which handle the actions and
@@ -87,15 +88,14 @@ public class GamePlayController {
 	 *                      the client
 	 * @param PlayerDetails object with details about players who will be playing
 	 *                      the game
-	 * @return List of Player Object
+	 * @return gamePlay
 	 * @throws Exception NullPointerException when game state object is null
 	 */
 	@RequestMapping(value = "/initStartUpPhase", method = RequestMethod.POST)
 	@ResponseBody
 	public GamePlay initStartUpPhase(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody PlayerDetails playerDetails) throws Exception {
-		gamePlay = iManagePlayer.createPlayer(playerDetails.getPlayersNo(), playerDetails.getFileName(),
-				playerDetails.getAllocationType());
+		gamePlay = iManagePlayer.createPlayer(playerDetails);
 		gamePlay.addObserver((Observer) iManageGamePlay);
 		return gamePlay;
 	}
@@ -141,5 +141,27 @@ public class GamePlayController {
 		gamePlay.setGui_map(gamePlayFromView.getGui_map());
 		gamePlay.setDomination(gamePlayFromView.getDomination());
 		gamePlay.setGame_state(gamePlayFromView.getGame_state());
+	}
+
+	/**
+	 * This function start the tournament by providing the necessary details as
+	 * given by user.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request           Request Payload
+	 * @param response          An object to assist a servlet in sending a response
+	 *                          to the client
+	 * @param TournamentChoices object with details about tournament maps and
+	 *                          strategies
+	 * @return List of Player Object
+	 * @throws Exception NullPointerException when game state object is null
+	 */
+	@RequestMapping(value = "/startTournament", method = RequestMethod.POST)
+	@ResponseBody
+	public GamePlay startTournament(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody TournamentChoices tournamentChoices) throws Exception {
+		GamePlay gamePlay = new GamePlay();
+
+		return gamePlay;
 	}
 }
