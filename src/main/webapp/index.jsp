@@ -13,7 +13,7 @@
 <style type="text/css">
 body {
 	background: url("images/420838.png") fixed;
-	background-size:cover;
+	background-size: cover;
 }
 
 #loadingmsg {
@@ -95,6 +95,7 @@ body {
 				success : function(data) {
 					$("#manageMap").addClass("active");
 					$("#play").removeClass("active");
+					$("#tournament").removeClass("active");
 					$("#jumbotron").html(data);
 
 				},
@@ -110,6 +111,24 @@ body {
 				url : "gamePlay/getPlayView",
 				success : function(data) {
 					$("#play").addClass("active");
+					$("#manageMap").removeClass("active");
+					$("#tournament").removeClass("active");
+					$("#jumbotron").html(data);
+
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					alert("Failure");
+				}
+			});
+		});
+
+		$("#tournament").click(function() {
+			$.ajax({
+				type : "GET",
+				url : "gamePlay/getTournamentView",
+				success : function(data) {
+					$("#tournament").addClass("active");
+					$("#play").removeClass("active");
 					$("#manageMap").removeClass("active");
 					$("#jumbotron").html(data);
 
@@ -143,6 +162,8 @@ body {
 					</a></li>
 					<li class="nav-item" id="play"><a class="nav-link" href="#"
 						style="color: #5d88d6">Play</a></li>
+					<li class="nav-item" id="tournament"><a class="nav-link"
+						href="#" style="color: #5d88d6">Tournament</a></li>
 				</ul>
 			</div>
 		</nav>
@@ -162,7 +183,7 @@ body {
 	<div id='loadingmsg' style='display: none;'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img
 			style="height: 20%; width: 20%" alt="" src="images/loading popup.gif">
-		<br/>Loading, please wait...
+		<br />Loading, please wait...
 	</div>
 	<div id='loadingover' style='display: none;'></div>
 

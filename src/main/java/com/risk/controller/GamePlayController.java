@@ -68,12 +68,12 @@ public class GamePlayController {
 	 * @param request  Request Payload
 	 * @param response An object to assist a servlet in sending a response to the
 	 *                 client
-	 * @return Web Page of Game Play
+	 * @return Web Page of Tournament Play
 	 * @throws Exception NullPointerException when model object is null
 	 */
 	@RequestMapping(value = "/getTournamentView", method = RequestMethod.GET)
 	public ModelAndView getTournamentView(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView model = new ModelAndView("gamePlay");
+		ModelAndView model = new ModelAndView("tournamentPlay");
 		return model;
 	}
 
