@@ -27,6 +27,7 @@ import com.risk.model.Territory;
 import com.risk.model.Strategy.Aggressive;
 import com.risk.model.Strategy.Benevolent;
 import com.risk.model.Strategy.Cheater;
+import com.risk.model.Strategy.Human;
 
 /**
  * This class is the Concrete Implementation for interface IManagePlayer
@@ -73,7 +74,7 @@ public class ManagePlayer implements IManagePlayer {
 			p.setType(player.getType());
 			
 			if (player.getBehaviour().equalsIgnoreCase("Human")) {
-				p.setStrategy(new Aggressive());
+				p.setStrategy(new Human());
 			}else if (player.getBehaviour().equalsIgnoreCase("Aggressive")) {
 				p.setStrategy(new Aggressive());
 			}else if (player.getBehaviour().equalsIgnoreCase("Benevolent")) {

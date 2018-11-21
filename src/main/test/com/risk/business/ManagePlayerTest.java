@@ -24,6 +24,7 @@ import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Player;
 import com.risk.model.gui.PlayerDetails;
+import com.risk.model.gui.SinglePlayer;
 
 /**
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -58,6 +59,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+		
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		attack.setAttacker_territory("Neuchtel");
@@ -87,6 +98,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 
 		attack.setAttacker_territory("Neuchtel");
@@ -115,6 +136,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 
 		List<GamePlayTerritory> map_territory_list = manage_player.getTerritories(game_play.getMap());
@@ -138,6 +169,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("M");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 
 		for (int i = 0; i < game_play.getGame_state().size(); i++) {
@@ -159,7 +200,17 @@ public class ManagePlayerTest {
 		PlayerDetails      single_game_input = new PlayerDetails();
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
+		List<SinglePlayer> players = new ArrayList<>();
 		single_game_input.setPlayersNo(2);
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+				
 		game_play = manage_player.createPlayer(single_game_input);
 		assertEquals(14, game_play.getGame_state().get(0).getTerritory_list().size());
 		assertEquals(13, game_play.getGame_state().get(1).getTerritory_list().size());
@@ -181,6 +232,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+		
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		fortify.setSource_territory("Fribourg");
@@ -208,6 +269,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+		
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		fortify.setSource_territory("Fribourg");
@@ -238,6 +309,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		game_play.setFortification(fortify);
@@ -262,6 +343,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		fortify.setSource_territory("Fribourg");
@@ -295,6 +386,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 
 		// 6 Players should have been created.
@@ -327,6 +428,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+		
 		game_state = player_manager.createPlayer(single_game_input);
 
 		// Setting Player 3 as current player
@@ -423,6 +534,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_state = player_manager.createPlayer(single_game_input);
 		
 		// Setting Player 3 as current player
@@ -520,6 +641,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+		
 		game_state = player_manager.createPlayer(single_game_input);
 
 		// Setting Player 4 as current player
@@ -623,6 +754,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+		
 		game_state = player_manager.createPlayer(single_game_input);
 
 		// Setting Player 3 as current player
@@ -732,6 +873,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+		
 		game_play = manage_player.createPlayer(single_game_input);
 
 		attack_army_move.setAttacker_territory("Fribourg");
@@ -760,6 +911,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		attack_army_move.setAttacker_territory("Fribourg");
@@ -790,6 +951,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		attack_army_move.setAttacker_territory("Fribourg");
@@ -820,6 +991,16 @@ public class ManagePlayerTest {
 		single_game_input.setAllocationType("A");
 		single_game_input.setFileName("Switzerland.map");
 		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 2; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
 		game_play = manage_player.createPlayer(single_game_input);
 		
 		attack_army_move.setAttacker_territory("Fribourg");
