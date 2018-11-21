@@ -1,15 +1,126 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-
-
-
 <script type="text/javascript">
 	$(document).ready(function() {
+		
+		$("#noOfGames").keydown(function (e) {
+	        // Allow: backspace, delete, tab, escape, enter and .
+	        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+	             // Allow: Ctrl+A, Command+A
+	            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+	             // Allow: home, end, left, right, down, up
+	            (e.keyCode >= 35 && e.keyCode <= 40)) {
+	                 // let it happen, don't do anything
+	                 return;
+	        }
+	        // Ensure that it is a number and stop the keypress
+	        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+	            e.preventDefault();
+	        }
+	    });
+		
+		$("#maxTurns").keydown(function (e) {
+	        // Allow: backspace, delete, tab, escape, enter and .
+	        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
+	             // Allow: Ctrl+A, Command+A
+	            (e.keyCode === 65 && (e.ctrlKey === true || e.metaKey === true)) || 
+	             // Allow: home, end, left, right, down, up
+	            (e.keyCode >= 35 && e.keyCode <= 40)) {
+	                 // let it happen, don't do anything
+	                 return;
+	        }
+	        // Ensure that it is a number and stop the keypress
+	        if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+	            e.preventDefault();
+	        }
+	    });
+
+		$.ajax({
+			type : "GET",
+			url : "maps/getAvailableMaps",
+			success : function(data) {
+				$('#availableMapsName').find('option').remove();
+				for (var i = 0; i < data.length; i++) {
+					$('#availableMapsName').append($('<option>', {
+						value : data[i],
+						text : data[i]
+					}));
+				}
+			},
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("Failure fetching map");
+			}
+		});
+
 		$('#choicesSelectModal').modal({
 			backdrop : 'static',
 			keyboard : false
 		});
+		
+		function fetchTournamentChoices(){
+			var tournametChoices={};
+			var maps=[];
+			$('#availableMapsName :selected').each(function(i, sel){ 
+				 maps.push($(sel).val());
+				});
+			
+			var strategies=[];
+			$('#strategies :selected').each(function(i, sel){ 
+				strategies.push($(sel).val());
+				});
+			
+			var noOfGames = $('#noOfGames').val();
+			var maxTurns = $('#maxTurns').val();
+			debugger;
+			if((maps == null || (maps != null && (maps.length > 5 || maps.length < 1))) || (strategies != null || (strategies != null && (strategies.length > 4 || strategies.length < 2))) || (noOfGames == null || (noOfGames != null && noOfGames < 1)) || (maxTurns == null || (maxTurns != null && maxTurns < 1))){
+				return;
+			}
+			
+			tournamentChoices = {
+					mapNames:maps,
+					multipleStrategies:strategies,
+					noOfGamesToPlay:noOfGames,
+					maxTurns:maxTurns
+			}
+			 
+			return tournamentChoices;
+		}
+		
+		function startTournament(){
+			showLoading();
+			var tournamentChoices = fetchTournamentChoices();
+			if(typeof tournamentChoices == undefined || tournamentChoices == null){
+				alert("Please select map(1-5), strategies(2-4) and atleast one no of games and max turns");
+				stopLoading();
+				return;
+			}
+			var a = JSON.stringify(tournamentChoices);
+			$
+			.ajax({
+				type : "POST",
+				url : "gamePlay/startTournament",
+				dataType : "json",
+				data : a,
+				contentType : "application/json",
+				success : function(data) {
+					stopLoading();
+					alert("success");
+				},
+				error : function(XMLHttpRequest,
+						textStatus, errorThrown) {
+					stopLoading();
+					alert("Startup Phase Failure");
+				}
+			});
+		}
+		
+		$('#startTournament')
+		.on(
+				'click',
+				function() {
+					startTournament();					
+				});
 	});
 </script>
 
@@ -27,133 +138,37 @@
 
 				</div>
 				<div class="modal-body">
-					<h6>Select Map and Players :</h6>
+					<h6>Select Maps :</h6>
 					<div class="form-group">
 						<label for="availableMapsName">Map : </label> <select
-							class="form-control form-control-sm" id="availableMapsName">
+							class="form-control form-control-sm" id="availableMapsName"
+							multiple>
 							<option></option>
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="noOfPlayer">No of Players : </label> <select
-							class="form-control form-control-sm" id="noOfPlayer">
-							<option value="2">2</option>
-							<option value="3">3</option>
-							<option value="4">4</option>
-							<option value="5">5</option>
-							<option value="6">6</option>
+						<label for="strategies">Select Strategies : </label> <select
+							class="form-control form-control-sm" id="strategies" multiple>
+							<option value="AGGRESSIVE">Aggressive</option>
+							<option value="BENEVOLENT">Benevolent</option>
+							<option value="RANDOM">Random</option>
+							<option value="CHEATER">Cheater</option>
 						</select>
 					</div>
-					<div class='row'>
-						<table class='table'>
-							<tr>
-								<th><b>Player</b></th>
-								<th><b>Type</b></th>
-								<th><b>Behavior</b></th>
-							</tr>
-							<tr id='pl1'>
-								<th><b>Player 1</b></th>
-								<th><select class="form-control form-control-sm"
-									id="playerType1">
-										<option value="HUMAN">Human</option>
-										<option value="COMPUTER">Computer</option>
-								</select></th>
-								<th><select class="form-control form-control-sm"
-									id="playerBehavior1">
-										<option value="AGGRESSIVE">Aggressive</option>
-										<option value="BENEVOLENT">Benevolent</option>
-										<option value="RANDOM">Random</option>
-										<option value="CHEATER">Cheater</option>
-								</select></th>
-							</tr>
-							<tr id='pl2'>
-								<th><b>Player 2</b></th>
-								<th><select class="form-control form-control-sm"
-									id="playerType2">
-										<option value="HUMAN">Human</option>
-										<option value="COMPUTER">Computer</option>
-								</select></th>
-								<th><select class="form-control form-control-sm"
-									id="playerBehavior2">
-										<option value="AGGRESSIVE">Aggressive</option>
-										<option value="BENEVOLENT">Benevolent</option>
-										<option value="RANDOM">Random</option>
-										<option value="CHEATER">Cheater</option>
-								</select></th>
-							</tr>
-							<tr id='pl3'>
-								<th><b>Player 3</b></th>
-								<th><select class="form-control form-control-sm"
-									id="playerType3">
-										<option value="HUMAN">Human</option>
-										<option value="COMPUTER">Computer</option>
-								</select></th>
-								<th><select class="form-control form-control-sm"
-									id="playerBehavior3">
-										<option value="AGGRESSIVE">Aggressive</option>
-										<option value="BENEVOLENT">Benevolent</option>
-										<option value="RANDOM">Random</option>
-										<option value="CHEATER">Cheater</option>
-								</select></th>
-							</tr>
-							<tr id='pl4'>
-								<th><b>Player 4</b></th>
-								<th><select class="form-control form-control-sm"
-									id="playerType4">
-										<option value="HUMAN">Human</option>
-										<option value="COMPUTER">Computer</option>
-								</select></th>
-								<th><select class="form-control form-control-sm"
-									id="playerBehavior4">
-										<option value="AGGRESSIVE">Aggressive</option>
-										<option value="BENEVOLENT">Benevolent</option>
-										<option value="RANDOM">Random</option>
-										<option value="CHEATER">Cheater</option>
-								</select></th>
-							</tr>
-							<tr id='pl5'>
-								<th><b>Player 5</b></th>
-								<th><select class="form-control form-control-sm"
-									id="playerType5">
-										<option value="HUMAN">Human</option>
-										<option value="COMPUTER">Computer</option>
-								</select></th>
-								<th><select class="form-control form-control-sm"
-									id="playerBehavior5">
-										<option value="AGGRESSIVE">Aggressive</option>
-										<option value="BENEVOLENT">Benevolent</option>
-										<option value="RANDOM">Random</option>
-										<option value="CHEATER">Cheater</option>
-								</select></th>
-							</tr>
-							<tr id='pl6'>
-								<th><b>Player 6</b></th>
-								<th><select class="form-control form-control-sm"
-									id="playerType6">
-										<option value="HUMAN">Human</option>
-										<option value="COMPUTER">Computer</option>
-								</select></th>
-								<th><select class="form-control form-control-sm"
-									id="playerBehavior6">
-										<option value="AGGRESSIVE">Aggressive</option>
-										<option value="BENEVOLENT">Benevolent</option>
-										<option value="RANDOM">Random</option>
-										<option value="CHEATER">Cheater</option>
-								</select></th>
-							</tr>
-						</table>
+					<div>
+						<label for="noOfGames">No of Games : </label> <input type="text"
+							class="form-control" id="noOfGames">
+					</div>
+					<div>
+						<label for="maxTurns">Max Turns : </label> <input type="text"
+							class="form-control" id="maxTurns">
 					</div>
 				</div>
+
 				<div class="modal-footer">
-					<button id="autoAllocate" type="button" class="btn btn-primary"
+					<button id="startTournament" type="button" class="btn btn-primary"
 						style="background-color: black; border-color: black"
-						data-toggle="tooltip" data-placement="top"
-						title="random allocation of initial armies">Auto Allocate</button>
-					<button id="manualAllocate" type="button" class="btn btn-primary"
-						style="background-color: black; border-color: black"
-						data-toggle="tooltip" data-placement="top"
-						title="manual allocation of initial armies">Manual
-						Allocate</button>
+						data-toggle="tooltip">Start Tournament</button>
 				</div>
 			</div>
 		</div>
