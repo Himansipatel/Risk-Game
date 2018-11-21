@@ -23,7 +23,7 @@ import com.risk.model.Fortification;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Player;
-import com.risk.model.PlayerDetails;
+import com.risk.model.gui.PlayerDetails;
 
 /**
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -242,7 +242,6 @@ public class ManagePlayerTest {
 		
 		game_play.setFortification(fortify);
 		game_play.getGame_state().get(0).executeStrategy("FORTIFY", game_play);
-		//game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("not having minimum armies"));
 	}
@@ -270,7 +269,6 @@ public class ManagePlayerTest {
 		fortify.setArmy_count(2);
 		game_play.setFortification(fortify);
 		game_play.getGame_state().get(0).executeStrategy("FORTIFY", game_play);
-		//game_play = manage_player.fortify(game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
 	}
@@ -741,7 +739,6 @@ public class ManagePlayerTest {
 		attack_army_move.setAmry_count(2);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		//game_play = manage_player.attack(game_play);
 		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertEquals("Invalid Move (Not Neighboring Territory)", message);
@@ -770,7 +767,6 @@ public class ManagePlayerTest {
 		attack_army_move.setAmry_count(2);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		//game_play = manage_player.attack(game_play);
 		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
@@ -801,7 +797,6 @@ public class ManagePlayerTest {
 		attack_army_move.setAmry_count(3);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		//game_play = manage_player.attack(game_play);
 		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("not having minimum armies"));
@@ -832,7 +827,6 @@ public class ManagePlayerTest {
 		attack_army_move.setAmry_count(2);
 		game_play.setArmy_move(attack_army_move);
 		game_play.setGame_phase("ATTACK_ARMY_MOVE");
-		//game_play = manage_player.attack(game_play);
 		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
