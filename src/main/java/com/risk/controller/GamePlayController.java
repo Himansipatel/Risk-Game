@@ -17,6 +17,7 @@ import com.risk.business.IManageGamePlay;
 import com.risk.business.IManageMap;
 import com.risk.business.IManagePlayer;
 import com.risk.model.GamePlay;
+import com.risk.model.Tournament;
 import com.risk.model.gui.PlayerDetails;
 import com.risk.model.gui.TournamentChoices;
 
@@ -158,10 +159,9 @@ public class GamePlayController {
 	 */
 	@RequestMapping(value = "/startTournament", method = RequestMethod.POST)
 	@ResponseBody
-	public GamePlay startTournament(HttpServletRequest request, HttpServletResponse response,
+	public Tournament startTournament(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody TournamentChoices tournamentChoices) throws Exception {
-		GamePlay gamePlay = new GamePlay();
-
-		return gamePlay;
+		Tournament tournament = iManageGamePlay.prepareTournamentGamePlay(tournamentChoices);
+		return tournament;
 	}
 }

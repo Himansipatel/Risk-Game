@@ -161,6 +161,27 @@
 						var armiesStockOfPlayer4 = 0;
 						var armiesStockOfPlayer5 = 0;
 						var armiesStockOfPlayer6 = 0;
+						
+						var type1 = "";
+						var type2 = "";
+						var type3 = "";
+						var type4 = "";
+						var type5 = "";
+						var type6 = "";
+						
+						var strategyName1 = "";
+						var strategyName2 = "";
+						var strategyName3 = "";
+						var strategyName4 = "";
+						var strategyName5 = "";
+						var strategyName6 = "";
+						
+						var strategy1;
+						var strategy2;
+						var strategy3;
+						var strategy4;
+						var strategy5;
+						var strategy6;
 
 						var idPlayer1 = "";
 						var idPlayer2 = "";
@@ -368,31 +389,49 @@
 								armiesStockOfPlayer1 = playerData.army_stock;
 								idPlayer1 = playerData.id;
 								namePlayer1 = playerData.name;
+								strategyName1 = playerData.strategy_name;
+								strategy1 = playerData.strategy;
+								type1 = playerData.type;
 								break;
 							case 2:
 								armiesStockOfPlayer2 = playerData.army_stock;
 								idPlayer2 = playerData.id;
 								namePlayer2 = playerData.name;
+								strategyName2 = playerData.strategy_name;
+								strategy2 = playerData.strategy;
+								type2 = playerData.type;
 								break;
 							case 3:
 								armiesStockOfPlayer3 = playerData.army_stock;
 								idPlayer3 = playerData.id;
 								namePlayer3 = playerData.name;
+								strategyName3 = playerData.strategy_name;
+								strategy3 = playerData.strategy;
+								type3 = playerData.type;
 								break;
 							case 4:
 								armiesStockOfPlayer4 = playerData.army_stock;
 								idPlayer4 = playerData.id;
 								namePlayer4 = playerData.name;
+								strategyName4 = playerData.strategy_name;
+								strategy4 = playerData.strategy;
+								type4 = playerData.type;
 								break;
 							case 5:
 								armiesStockOfPlayer5 = playerData.army_stock;
 								idPlayer5 = playerData.id;
 								namePlayer5 = playerData.name;
+								strategyName5 = playerData.strategy_name;
+								strategy5 = playerData.strategy;
+								type5 = playerData.type;
 								break;
 							case 6:
 								armiesStockOfPlayer6 = playerData.army_stock;
 								idPlayer6 = playerData.id;
 								namePlayer6 = playerData.name;
+								strategyName6 = playerData.strategy_name;
+								strategy6 = playerData.strategy;
+								type6 = playerData.type;
 								break;
 							}
 						}
@@ -446,7 +485,42 @@
 							case "6":
 								return namePlayer6;
 							}
+						}						
+						
+						function getEachPlayerType(playerNo) {
+							switch (String(playerNo)) {
+							case "1":
+								return type1;
+							case "2":
+								return type2;
+							case "3":
+								return type3;
+							case "4":
+								return type4;
+							case "5":
+								return type5;
+							case "6":
+								return type6;
+							}
 						}
+						
+						function getEachPlayerStrategy(playerNo) {
+							switch (String(playerNo)) {
+							case "1":
+								return strategy1;
+							case "2":
+								return strategy2;
+							case "3":
+								return strategy3;
+							case "4":
+								return strategy4;
+							case "5":
+								return strategy5;
+							case "6":
+								return strategy6;
+							}
+						}
+						
 
 						function findAndFillPlayerData(data, playerOrder) {
 							for (var i = 0; i < data.length; i++) {
@@ -839,7 +913,9 @@
 								territory_list : countryArray,
 								any_territory_occupied : any_territory_occupied,
 								trade_count : trade_count,
-								card_list : card_list
+								card_list : card_list,
+								type : getEachPlayerType(playerNo),
+								strategy : getEachPlayerStrategy(playerNo)
 							};
 							return playerObject;
 						}
@@ -867,7 +943,8 @@
 								fortification : data_game.fortification,
 								army_move : data_game.army_move,
 								gui_map : data_game.gui_map,
-								domination : data_game.domination
+								domination : data_game.domination,
+								game_play_id : data_game.game_play_id
 							};
 							var a = JSON.stringify(game_Play);
 							$
