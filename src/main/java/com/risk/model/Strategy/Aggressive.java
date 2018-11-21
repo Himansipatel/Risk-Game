@@ -1,33 +1,37 @@
-package com.risk.model;
+package com.risk.model.Strategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.risk.business.AbstractPlayer;
+import com.risk.business.IStrategy;
 import com.risk.business.impl.ManageGamePlay;
 import com.risk.business.impl.ManagePlayer;
+import com.risk.model.Attack;
+import com.risk.model.GamePlay;
+import com.risk.model.GamePlayTerritory;
+import com.risk.model.Player;
 
 /**
- * This Player Model represents a Aggressive Computer Player in terms of
- * Strategy-Pattern implementation, during our GamePlay.
+ * Concrete implementation of Aggressive strategy in terms of
+ * Strategy design Pattern, during our GamePlay.
  * 
  * @author <a href="mailto:apoorv.semwal20@gmail.com">Apoorv Semwal</a>
  * @version 0.0.1
  */
-public class AggressivePlayer extends AbstractPlayer {
+public class Aggressive implements IStrategy {
 
 	/**
 	 * Reinforcement of an Aggressive Player.
 	 * 
-	 * @see com.risk.business.IAbstractPLayer#reinforce(GamePlay)
+	 * @see com.risk.business.IStrategy#reinforce(GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	public GamePlay reinforce(GamePlay game_play) {
 
 		ManagePlayer player_manager = new ManagePlayer();
 		ManageGamePlay game_manager = new ManageGamePlay();
-		AbstractPlayer current_player = null;
+		Player current_player = null;
 		GamePlayTerritory strongest_territory = null;
 
 		if (game_play != null) {
@@ -35,7 +39,7 @@ public class AggressivePlayer extends AbstractPlayer {
 			game_manager.calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(),
 					game_play.getCurrent_player());
 
-			for (AbstractPlayer player : game_play.getGame_state()) {
+			for (Player player : game_play.getGame_state()) {
 				if (player.getId() == game_play.getCurrent_player()) {
 					current_player = player;
 					break;
@@ -69,21 +73,20 @@ public class AggressivePlayer extends AbstractPlayer {
 	/**
 	 * Attack of an Aggressive Player.
 	 * 
-	 * @see com.risk.business.IAbstractPLayer#attack(GamePlay)
+	 * @see com.risk.business.IStrategy#attack(GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	public GamePlay attack(GamePlay game_play) {
 
-		AbstractPlayer current_player = null;
-		AbstractPlayer defender_player = null;
-		Attack attack_details = null;
+		Player current_player  = null;
+		Player defender_player = null;
+		Attack attack_details  = null;
 		GamePlayTerritory strongest_territory = null;
 		List<String> neighbours = new ArrayList<>();
 		List<String> player_territories = new ArrayList<>();
-		ManagePlayer player_manager = new ManagePlayer();
 		GamePlayTerritory defender_territory_data = null;
 
-		for (AbstractPlayer player : game_play.getGame_state()) {
+		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				current_player = player;
 				break;
@@ -123,7 +126,7 @@ public class AggressivePlayer extends AbstractPlayer {
 							|| !neighbours.contains(defender_territory.getName())) {
 						continue;
 					} else {
-						for (AbstractPlayer defender : game_play.getGame_state()) {
+						for (Player defender : game_play.getGame_state()) {
 							defender_player = null;
 							defender_territory_data = null;
 							if (defender.getId() == current_player.getId()) {
@@ -148,7 +151,7 @@ public class AggressivePlayer extends AbstractPlayer {
 							attack_details.setDefender_territory(defender_territory.getName());
 							game_play.setGame_phase("ATTACK_ALL_OUT");
 							game_play.setAttack(attack_details);
-							player_manager.attack(game_play);
+							attack(game_play);
 							if (game_play.getStatus().contains("Attacker Occupies Defender Territory")) {
 								strongest_territory.setNumber_of_armies(strongest_territory.getNumber_of_armies() - 1);
 								defender_territory_data.setNumber_of_armies(1);
@@ -173,15 +176,16 @@ public class AggressivePlayer extends AbstractPlayer {
 	/**
 	 * Fortify of an Aggressive Player.
 	 * 
-	 * @see com.risk.business.IAbstractPLayer#fortify(GamePlay)
+	 * @see com.risk.business.IStrategy#fortify(GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	public GamePlay fortify(GamePlay game_play) {
 
-		AbstractPlayer current_player = null;
+		Player current_player = null;
 		Boolean neighbour_flag = false;
-
-		for (AbstractPlayer player : game_play.getGame_state()) {
+		ManagePlayer player_manager = new ManagePlayer();
+		
+		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				current_player = player;
 				break;
@@ -205,7 +209,7 @@ public class AggressivePlayer extends AbstractPlayer {
 							|| territory_b.getNumber_of_armies() == 1) {
 						continue;
 					} else {
-						neighbour_flag = checkIfNeighbours(territory_a.getTerritory_name(),
+						neighbour_flag = player_manager.checkIfNeighbours(territory_a.getTerritory_name(),
 								territory_b.getTerritory_name(), game_play.getGui_map());
 					}
 
@@ -220,21 +224,4 @@ public class AggressivePlayer extends AbstractPlayer {
 		return game_play;
 	}
 
-	private boolean checkIfNeighbours(String territory_a, String territory_b, com.risk.model.gui.Map map) {
-		Boolean neighbour_flag = false;
-		for (com.risk.model.gui.Territory territory : map.getTerritories()) {
-			if (!territory.getName().equalsIgnoreCase(territory_a)) {
-				continue;
-			} else {
-				if (Arrays.asList(territory.getNeighbours().split(";")).contains(territory_b)) {
-					neighbour_flag = true;
-					break;
-				} else {
-					neighbour_flag = false;
-					break;
-				}
-			}
-		}
-		return neighbour_flag;
-	}
 }

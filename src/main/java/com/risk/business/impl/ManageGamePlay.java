@@ -12,15 +12,20 @@ import java.util.TreeSet;
 
 import org.springframework.stereotype.Service;
 
-import com.risk.business.AbstractPlayer;
 import com.risk.business.IManageGamePlay;
+import com.risk.model.Card;
 import com.risk.model.Continent;
 import com.risk.model.Domination;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Map;
+import com.risk.model.Player;
 import com.risk.model.Territory;
 import com.risk.model.Tournament;
+import com.risk.model.Strategy.Aggressive;
+import com.risk.model.Strategy.Benevolent;
+import com.risk.model.Strategy.Cheater;
+import com.risk.model.Strategy.Random;
 import com.risk.model.gui.TournamentChoices;
 
 /**
@@ -39,11 +44,11 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	@Override
 	public GamePlay managePhase(GamePlay game_play) {
 
-		AbstractPlayer current_player = null;
+		Player current_player = null;
 
 		if (game_play != null) {
 
-			for (AbstractPlayer player : game_play.getGame_state()) {
+			for (Player player : game_play.getGame_state()) {
 				if (player.getId()==game_play.getCurrent_player()) {
 					current_player = player;
 					break;
@@ -70,33 +75,33 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 				case "REINFORCEMENT":
 					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
-					game_play = current_player.reinforce(game_play);
+					game_play = current_player.executeStrategy("REINFORCE", game_play);
 					break;
 
 				case "TRADE_CARDS":
-					game_play = current_player.reinforce(game_play);
+					game_play = current_player.executeStrategy("REINFORCE", game_play);
 					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 					break;
 
 				case "ATTACK_ON":
-					current_player.attack(game_play);
+					current_player.executeStrategy("ATTACK", game_play);
 					break;
 
 				case "ATTACK_ALL_OUT":
-					current_player.attack(game_play);
+					current_player.executeStrategy("ATTACK", game_play);
 					break;
 
 				case "ATTACK_ARMY_MOVE":
-					current_player.attack(game_play);
+					current_player.executeStrategy("ATTACK", game_play);
 					break;
 
 				case "ATTACK_END":
-					current_player.attack(game_play);
+					current_player.executeStrategy("ATTACK", game_play);
 					setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 					break;
 
 				case "FORTIFICATION":
-					current_player.fortify(game_play);
+					current_player.executeStrategy("FORTIFY", game_play);
 					break;
 
 				case "FORTIFICATION_END":
@@ -174,7 +179,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 */
 	@Override
-	public List<AbstractPlayer> calculateArmiesReinforce(List<AbstractPlayer> gameplay, Map map, int current_player) {
+	public List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map, int current_player) {
 
 		List<Continent> continents = new ArrayList<>();
 		List<Territory> territories;
@@ -193,7 +198,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 
 		// Preparing a list of all players along with the continents they hold.
-		for (AbstractPlayer player : gameplay) {
+		for (Player player : gameplay) {
 			if (player.getId() == current_player) {
 				List<GamePlayTerritory> player_territories_game = player.getTerritory_list();
 				territories_player = new TreeSet<>();
@@ -205,7 +210,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 
 		// Preparing List of all players along with their current army stock.
-		for (AbstractPlayer player : gameplay) {
+		for (Player player : gameplay) {
 			if (player.getId() == current_player) {
 				players_army.put(player.getId(), player.getArmy_stock());
 			}
@@ -226,7 +231,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		// Updating Player's army stock on the basis of territories it hold.
 		// If the player holds less than 9 territories then allocate 3 army elements as
 		// per Risk Rules
-		for (AbstractPlayer player : gameplay) {
+		for (Player player : gameplay) {
 			if (player.getId() == current_player) {
 				int army_count = player_territories.get(player.getId()).size() / 3;
 				if (army_count < 3) {
@@ -255,7 +260,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 
 		// Preparing List of all players along with their updated army stock.
-		for (AbstractPlayer player : gameplay) {
+		for (Player player : gameplay) {
 			if (player.getId() == current_player) {
 				player.setArmy_stock(players_army.get(player.getId()));
 			}
@@ -270,16 +275,91 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 */
 	@Override
 	public Tournament prepareTournamentGamePlay(TournamentChoices tournament_inp) {
-		Tournament tournament = new Tournament();
-		
+
+		Tournament     tournament      = new Tournament();
+		List<GamePlay> game_play_set   = new ArrayList<>();
+		ManageMap      map_manager     = new ManageMap();
+		ManagePlayer   player_manager  = new ManagePlayer();
+
+		for (int i = 1; i <= tournament_inp.getNoOfGamesToPlay(); i++) {
+			for (String map  : tournament_inp.getMapNames()) {
+				com.risk.model.Map map_model = map_manager.getFullMap(map);
+
+				if (map_model==null){
+					tournament.setStatus(map+" : Unable to load Map.");
+					return tournament;					
+				}else if (!map_model.getStatus().equals("")) {
+					tournament.setStatus(map+" : "+map_model.getStatus());
+					return tournament;										
+				}else {
+					com.risk.model.gui.Map gui_map = map_manager.fetchMap(map);
+					List<Card> free_cards = player_manager.getFreeCards(map_model);
+					GamePlay game_play = new GamePlay();
+					game_play.setCurrent_player(1);
+					map = (map.endsWith(".map") ? map.split("\\.")[0] : map) + "_"
+							+ String.valueOf(System.currentTimeMillis());
+					game_play.setFile_name(map);
+					game_play.setMap(map_model);
+					game_play.setGui_map(gui_map);
+					game_play.setGame_phase("REINFORCE");
+					game_play.setFree_cards(free_cards);
+					update_tournament_gameplay(game_play, tournament_inp.getMultipleStrategies());
+					Domination domination = new Domination();
+					ManageDomination manage_domination = new ManageDomination();
+					domination.addObserver(manage_domination);
+					domination.updateDomination(game_play);
+					game_play_set.add(game_play);
+				}
+			}			
+		}
+
+		tournament.setTournament(game_play_set);
 		tournament.setCurrent_game_play_id(1);
-		for (GamePlay game_play : tournament.getTournament()) {
-			game_play.setGame_phase("STARTUP");			
-		} 
 		tournament.setStatus("Tournament Ready. Now starting various Games within it..../nGame 1:/n");
 		return tournament;
 	}
 
+	private void update_tournament_gameplay(GamePlay game_play, List<String> strategies) {
+
+		ManagePlayer player_manager  = new ManagePlayer();
+		List<Player> players         = new ArrayList<>();
+
+		int i = 1;
+
+		int army_stock = player_manager.getArmyStock(strategies.size());
+
+		for (String string : strategies) {
+
+			Player p = new Player();
+
+			String player_name = "Player" + 1;
+
+			List<GamePlayTerritory> gameplay_territory_list = new ArrayList<>();
+
+			List<Card> card_list = new ArrayList<Card>();
+
+			if (string.equalsIgnoreCase("Aggressive")) {
+				p.setStrategy(new Aggressive());
+			}else if (string.equalsIgnoreCase("Benevolent")) {
+				p.setStrategy(new Benevolent());
+			}else if (string.equalsIgnoreCase("Cheater")) {
+				p.setStrategy(new Cheater());
+			}else if (string.equalsIgnoreCase("Random")){
+				p.setStrategy(new Random());
+			}
+
+			p.setId(i);
+			p.setName(player_name);
+			i++;
+
+			p.setArmy_stock(army_stock);
+			p.setTerritory_list(gameplay_territory_list);
+			p.setCard_list(card_list);
+			p.setTrade_count(0);
+			players.add(p);			
+		}
+		game_play.setGame_state(players);		
+	}
 	/**
 	 * @see com.risk.business.IManageGamePlay#playTournamentMode(Tournament)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -288,20 +368,20 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	public Tournament playTournamentMode(Tournament tournament) {
 
 		GamePlay current_game_play    = null;
-		AbstractPlayer current_player = null;
+		Player current_player         = null;
 
 		if (tournament!=null) {
-			
+
 			for (GamePlay game_play : tournament.getTournament()) {
 				if (tournament.getCurrent_game_play_id()==game_play.getGame_play_id()) {
 					current_game_play = game_play;
 					break;
 				}
 			}
-			
+
 			if (current_game_play != null) {
-				
-				for (AbstractPlayer player : current_game_play.getGame_state()) {
+
+				for (Player player : current_game_play.getGame_state()) {
 					if (player.getId()==current_game_play.getCurrent_player()) {
 						current_player = player;
 						break;
@@ -328,33 +408,33 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 					case "REINFORCEMENT":
 						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
-						current_game_play = current_player.reinforce(current_game_play);
+						current_player.executeStrategy("REINFORCE", current_game_play);
 						break;
 
 					case "TRADE_CARDS":
-						current_game_play = current_player.reinforce(current_game_play);
+						current_player.executeStrategy("REINFORCE", current_game_play);
 						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
 						break;
 
 					case "ATTACK_ON":
-						current_player.attack(current_game_play);
+						current_player.executeStrategy("ATTACK", current_game_play);
 						break;
 
 					case "ATTACK_ALL_OUT":
-						current_player.attack(current_game_play);
+						current_player.executeStrategy("ATTACK", current_game_play);
 						break;
 
 					case "ATTACK_ARMY_MOVE":
-						current_player.attack(current_game_play);
+						current_player.executeStrategy("ATTACK", current_game_play);
 						break;
 
 					case "ATTACK_END":
-						current_player.attack(current_game_play);
+						current_player.executeStrategy("ATTACK", current_game_play);
 						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
 						break;
 
 					case "FORTIFICATION":
-						current_player.fortify(current_game_play);
+						current_player.executeStrategy("FORTIFY", current_game_play);
 						break;
 
 					case "FORTIFICATION_END":
