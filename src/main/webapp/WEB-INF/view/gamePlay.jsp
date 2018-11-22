@@ -764,32 +764,44 @@
 						function makePlayer(i){
 							player={};
 							var id;
-							var type;
-							var behaviour;
+							var type='';
+							var behaviour='';
 							switch(String(i)){
 								case "1": id=1;
 								type=$("#playerType1 option:selected").val();
-								behaviour =$("#playerBehavior1 option:selected").val();
+								if(type != null && type != ''){
+									behaviour =$("#playerBehavior1 option:selected").val();									
+								}
 								break;
 								case "2": id=2;
 								type=$("#playerType2 option:selected").val();
-								behaviour =$("#playerBehavior2 option:selected").val();
+								if(type != null && type != ''){
+									behaviour =$("#playerBehavior2 option:selected").val();
+								}
 								break;
 								case "3": id=3;
 								type=$("#playerType3 option:selected").val();
-								behaviour =$("#playerBehavior3 option:selected").val();
+								if(type != null && type != ''){
+									behaviour =$("#playerBehavior3 option:selected").val();
+								}
 								break;
 								case "4": id=4;
 								type=$("#playerType4 option:selected").val();
-								behaviour =$("#playerBehavior4 option:selected").val();
+								if(type != null && type != ''){
+									behaviour =$("#playerBehavior4 option:selected").val();
+								}
 								break;
 								case "5": id=5;
 								type=$("#playerType5 option:selected").val();
-								behaviour =$("#playerBehavior5 option:selected").val();
+								if(type != null && type != ''){
+									behaviour =$("#playerBehavior5 option:selected").val();
+								}
 								break;
 								case "6": id=6;
 								type=$("#playerType6 option:selected").val();
-								behaviour =$("#playerBehavior6 option:selected").val();
+								if(type != null && type != ''){
+									behaviour =$("#playerBehavior6 option:selected").val();
+								}
 								break;
 							}
 							player={
