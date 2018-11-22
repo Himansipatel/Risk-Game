@@ -504,6 +504,23 @@
 							}
 						}
 						
+						function getEachPlayerStrategyName(playerNo) {
+							switch (String(playerNo)) {
+							case "1":
+								return strategyName1;
+							case "2":
+								return strategyName2;
+							case "3":
+								return strategyName3;
+							case "4":
+								return strategyName4;
+							case "5":
+								return strategyName5;
+							case "6":
+								return strategyName6;
+							}
+						}
+						
 						function getEachPlayerStrategy(playerNo) {
 							switch (String(playerNo)) {
 							case "1":
@@ -927,6 +944,7 @@
 								trade_count : trade_count,
 								card_list : card_list,
 								type : getEachPlayerType(playerNo),
+								name: getEachPlayerStrategyName(playerNo),
 								strategy : getEachPlayerStrategy(playerNo)
 							};
 							return playerObject;
