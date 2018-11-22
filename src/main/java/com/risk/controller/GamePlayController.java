@@ -141,6 +141,7 @@ public class GamePlayController {
 		gamePlay.setArmy_move(gamePlayFromView.getArmy_move());
 		gamePlay.setGui_map(gamePlayFromView.getGui_map());
 		gamePlay.setDomination(gamePlayFromView.getDomination());
+		gamePlay.setGame_play_id(gamePlayFromView.getGame_play_id());
 		gamePlay.setGame_state(gamePlayFromView.getGame_state());
 	}
 
