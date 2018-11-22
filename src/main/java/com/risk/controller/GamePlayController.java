@@ -1,5 +1,7 @@
 package com.risk.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -142,7 +144,35 @@ public class GamePlayController {
 		gamePlay.setGui_map(gamePlayFromView.getGui_map());
 		gamePlay.setDomination(gamePlayFromView.getDomination());
 		gamePlay.setGame_play_id(gamePlayFromView.getGame_play_id());
-		gamePlay.setGame_state(gamePlayFromView.getGame_state());
+		List<com.risk.model.Player> players = setGameStateData(gamePlayFromView);
+		gamePlay.setGame_state(players);
+	}
+
+	private com.risk.model.Player setCurrentPlayer(com.risk.model.Player player) {
+		com.risk.model.Player player_new = null;
+		for (com.risk.model.Player p : gamePlay.getGame_state()) {
+			if (p.getId() == player.getId()) {
+				p.setArmy_stock(player.getArmy_stock());
+				p.setAny_territory_occupied(player.isAny_territory_occupied());
+				p.setCard_list(player.getCard_list());
+				p.setName(player.getName());
+				p.setTerritory_list(player.getTerritory_list());
+				p.setTrade_count(player.getTrade_count());
+				p.setType(player.getType());
+				p.setStrategy_name(player.getStrategy_name());
+				player_new = p;
+				break;
+			}
+		}
+		return player_new;
+	}
+
+	private List<com.risk.model.Player> setGameStateData(GamePlay gamePlayFromView) {
+		List<com.risk.model.Player> players = new ArrayList<>();
+		for (com.risk.model.Player player : gamePlayFromView.getGame_state()) {
+			players.add(setCurrentPlayer(player));
+		}
+		return players;
 	}
 
 	/**
