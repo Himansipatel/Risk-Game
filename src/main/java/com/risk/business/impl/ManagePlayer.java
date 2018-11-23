@@ -47,20 +47,20 @@ public class ManagePlayer implements IManagePlayer {
 	 */
 	@Override
 	public GamePlay createPlayer(PlayerDetails single_game_input) {
-		
+
 		int    num_of_players       = single_game_input.getPlayersNo(); 
 		String file_name            = single_game_input.getFileName(); 
 		String army_allocation_type = single_game_input.getAllocationType();
-		
+
 		GamePlay game_play = new GamePlay();
-		
+
 		List<Player> player_info_list = new ArrayList<Player>();
-		
+
 		int army_stock = getArmyStock(num_of_players);
-		
+
 		int i = 1; 
 		for (SinglePlayer player : single_game_input.getPlayers()) {
-			
+
 			Player p = new Player();
 			String player_name = "Player" + i;
 			List<GamePlayTerritory> gameplay_territory_list = new ArrayList<>();
@@ -72,8 +72,8 @@ public class ManagePlayer implements IManagePlayer {
 			p.setCard_list(card_list);
 			p.setTrade_count(0);
 			p.setType(player.getType());
-			
-			if (player.getBehaviour().equalsIgnoreCase("Human")) {
+
+			if (player.getType().equalsIgnoreCase("Human")) {
 				p.setStrategy(new Human());
 			}else if (player.getBehaviour().equalsIgnoreCase("Aggressive")) {
 				p.setStrategy(new Aggressive());
@@ -84,11 +84,11 @@ public class ManagePlayer implements IManagePlayer {
 			}else if (player.getBehaviour().equalsIgnoreCase("Cheater")) {
 				p.setStrategy(new Cheater());
 			}
-				
+
 			player_info_list.add(p);
 			i++;
 		}
-		
+
 		ManageMap manage_map_object = new ManageMap();
 		Map map = manage_map_object.getFullMap(file_name);
 
@@ -314,7 +314,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @return game_state after updating info on trading of cards.
 	 */
 	public GamePlay tradeCards(GamePlay game_state) {
-		
+
 		CardTrade trade_card = game_state.getCard_trade();
 		if (trade_card != null) {
 			if (trade_card.getCard1() == null || trade_card.getCard2() == null || trade_card.getCard3() == null) {
@@ -381,6 +381,57 @@ public class ManagePlayer implements IManagePlayer {
 			game_state.setStatus("Inavlid Trade State during Gameplay");
 		}
 		return game_state;
+	}
+
+	/**
+	 * This method prepares a CardTrade Object for any Computer Player
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param current_player Current player who is about to trade cards.
+	 * @return CardTrade has the set of three cards to be traded.
+	 */
+	public CardTrade prepareCardTrade(Player current_player) {
+
+		Boolean trade_prepared = false;
+
+		CardTrade card_trade = null;
+		Card card1 = null;
+		Card card2 = null;
+		Card card3 = null;
+
+		for (int i = 0; i < current_player.getCard_list().size()-2; i++) {
+			card1 = current_player.getCard_list().get(i);
+			for (int j = i+1; j < current_player.getCard_list().size()-1; j++) {
+				card2 = current_player.getCard_list().get(j);
+				for (int k = j+1; k < current_player.getCard_list().size(); k++) {
+					card3 = current_player.getCard_list().get(k);
+					if ((card1.getArmy_type().equalsIgnoreCase(card2.getArmy_type())
+							&& card1.getArmy_type().equalsIgnoreCase(card3.getArmy_type()))
+							|| (!card1.getArmy_type().equalsIgnoreCase(card2.getArmy_type())
+									&& !card2.getArmy_type()
+									.equalsIgnoreCase(card3.getArmy_type())
+									&& !card3.getArmy_type()
+									.equalsIgnoreCase(card1.getArmy_type()))) {
+						trade_prepared = true;
+						break;
+					}
+					if (trade_prepared) {
+						break;
+					}
+
+				}
+				if (trade_prepared) {
+					break;
+				}			
+			}
+		}
+		if (trade_prepared && card1 != null && card2 != null && card3 != null) {
+			card_trade = new CardTrade();
+			card_trade.setCard1(card1);
+			card_trade.setCard2(card2);
+			card_trade.setCard3(card3);
+		}
+		return card_trade;
 	}
 
 	/**
@@ -552,10 +603,10 @@ public class ManagePlayer implements IManagePlayer {
 		}
 		if (is_territory_occupied) {
 			if (game_play.getFree_cards().size() > 0) {
-				
+
 				Random rand = new Random();
 				int idx = rand.nextInt(game_play.getFree_cards().size());
-				
+
 				Card card = game_play.getFree_cards().get(idx);
 				game_play.getFree_cards().remove(idx);
 				for (int player_list_index = 0; player_list_index < game_play.getGame_state()
@@ -822,7 +873,7 @@ public class ManagePlayer implements IManagePlayer {
 		}
 		return Arrays.asList(dice_result_flag);
 	}
-	
+
 	/**
 	 * This method checks if two given territories are neighbors in a Map
 	 * 
@@ -848,5 +899,5 @@ public class ManagePlayer implements IManagePlayer {
 		}
 		return neighbour_flag;
 	}
-	
+
 }

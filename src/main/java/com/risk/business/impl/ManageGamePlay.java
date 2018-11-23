@@ -282,7 +282,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		ManagePlayer   player_manager  = new ManagePlayer();
 
 		for (int i = 1; i <= tournament_inp.getNoOfGamesToPlay(); i++) {
+
 			for (String map  : tournament_inp.getMapNames()) {
+
 				com.risk.model.Map map_model = map_manager.getFullMap(map);
 
 				if (map_model==null){
@@ -292,17 +294,23 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					tournament.setStatus(map+" : "+map_model.getStatus());
 					return tournament;										
 				}else {
+
 					com.risk.model.gui.Map gui_map = map_manager.fetchMap(map);
 					List<Card> free_cards = player_manager.getFreeCards(map_model);
 					GamePlay game_play = new GamePlay();
 					game_play.setCurrent_player(1);
 					map = (map.endsWith(".map") ? map.split("\\.")[0] : map) + "_"
 							+ String.valueOf(System.currentTimeMillis());
+
 					game_play.setFile_name(map);
 					game_play.setMap(map_model);
 					game_play.setGui_map(gui_map);
-					game_play.setGame_phase("REINFORCE");
+					game_play.setGame_phase("REINFORCEMENT");
 					game_play.setFree_cards(free_cards);
+					game_play.setGame_play_id(i);
+					String status = "Game ID: "+i+" being played on Map:"+map+"/n"+"Reinforcement Started/n";
+					game_play.setStatus(status);
+
 					update_tournament_gameplay(game_play, tournament_inp.getMultipleStrategies());
 					Domination domination = new Domination();
 					ManageDomination manage_domination = new ManageDomination();
@@ -319,6 +327,11 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		return tournament;
 	}
 
+	/**
+	 * This method creates Computer Players, each with some strategies, for the tournament.
+	 * @param game_play  GamePlay being created for the tournament.
+	 * @param strategies Input from UI where the user selects Players with some strategy.
+	 */
 	private void update_tournament_gameplay(GamePlay game_play, List<String> strategies) {
 
 		ManagePlayer player_manager  = new ManagePlayer();
@@ -401,45 +414,28 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 					switch (current_game_play.getGame_phase()) {
 
-					case "STARTUP":
-						calculateArmiesReinforce(current_game_play.getGame_state(), map, 1);
-						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
-						break;
-
 					case "REINFORCEMENT":
-						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
 						current_player.executeStrategy("REINFORCE", current_game_play);
+						current_game_play.setGame_phase("ATTACK");
+						tournament.setStatus("ATTACK STARTED FOR PLAYER: :"+current_game_play.getCurrent_player()+"/n");
 						break;
 
-					case "TRADE_CARDS":
-						current_player.executeStrategy("REINFORCE", current_game_play);
-						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
-						break;
-
-					case "ATTACK_ON":
+					case "ATTACK":
 						current_player.executeStrategy("ATTACK", current_game_play);
-						break;
-
-					case "ATTACK_ALL_OUT":
-						current_player.executeStrategy("ATTACK", current_game_play);
-						break;
-
-					case "ATTACK_ARMY_MOVE":
-						current_player.executeStrategy("ATTACK", current_game_play);
-						break;
-
-					case "ATTACK_END":
-						current_player.executeStrategy("ATTACK", current_game_play);
-						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						current_game_play.setGame_phase("ATTACK");
+						tournament.setStatus("FORTIFICATION STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"/n");
 						break;
 
 					case "FORTIFICATION":
 						current_player.executeStrategy("FORTIFY", current_game_play);
-						break;
+						current_game_play.setGame_phase("REINFORCEMENT");
+						if (current_game_play.getCurrent_player() + 1 > current_game_play.getGame_state().size()) {
+							current_game_play.setCurrent_player(1);
+						} else {
+							current_game_play.setCurrent_player(current_game_play.getCurrent_player() + 1);
+						}						
+						tournament.setStatus("REINFORCEMENT STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"/n");
 
-					case "FORTIFICATION_END":
-						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
-						calculateArmiesReinforce(current_game_play.getGame_state(), map, current_game_play.getCurrent_player());
 						break;
 
 					default:
