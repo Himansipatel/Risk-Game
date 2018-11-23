@@ -949,7 +949,58 @@
 							};
 							return playerObject;
 						}
+						
+						function persistGameState(){
+							showLoading();
+							var playerArray = [];
+							for (var i = 1; i <= noOfPlayingPlayer; i++) {
+								var playerD = makePlayerData(i);
+								playerArray.push(playerD);
+							}
+							var phaseBeforeCall = currentPhase;
 
+							var game_Play = {
+								game_state : playerArray,
+								file_name : currentMapName,
+								game_phase : currentPhase,
+								fortify : data_game.fortify,
+								map : data_game.map,
+								current_player : data_game.current_player,
+								free_cards : data_game.free_cards,
+								status : '',
+								card_trade : data_game.card_trade,
+								attack : data_game.attack,
+								fortification : data_game.fortification,
+								army_move : data_game.army_move,
+								gui_map : data_game.gui_map,
+								domination : data_game.domination,
+								game_play_id : data_game.game_play_id
+							};
+							var a = JSON.stringify(game_Play);
+							$
+									.ajax({
+										type : "POST",
+										url : "gamePlay/persistGameState",
+										dataType : "json",
+										data : a,
+										contentType : "application/json",
+										success : function(data) {
+											stopLoading();
+											alert("Save game state success : " + data);
+										},
+										error : function(XMLHttpRequest,
+												textStatus, errorThrown) {
+											stopLoading();
+											alert("Invalid GameState. Please check");
+										}
+									});
+							
+						}
+						
+						$('#persistGameState').on('click', function() {
+							persistGameState();
+						});
+						
 						function saveGameState() {
 							showLoading();
 							var playerArray = [];
@@ -2303,6 +2354,10 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<div>
+		<button id="persistGameState" type="button" class="btn btn-primary"
+			style="background-color: black; border-color: black">Save</button>
 	</div>
 </body>
 </html>
