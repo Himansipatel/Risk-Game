@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.risk.business.IManageGamePlay;
 import com.risk.business.IManageMap;
 import com.risk.business.IManagePlayer;
+import com.risk.file.IManageGamePlayFile;
 import com.risk.model.GamePlay;
 import com.risk.model.Tournament;
 import com.risk.model.gui.PlayerDetails;
@@ -44,6 +45,9 @@ public class GamePlayController {
 
 	@Autowired
 	IManageGamePlay iManageGamePlay;
+
+	@Autowired
+	IManageGamePlayFile iManageGamePlayFile;
 
 	static GamePlay gamePlay;
 
@@ -121,6 +125,25 @@ public class GamePlayController {
 			@RequestBody GamePlay gamePlayFromView) throws Exception {
 		// gamePlay = iManageGamePlay.savePhase(gamePlay);
 		abstractView(gamePlayFromView);
+		return gamePlay;
+	}
+
+	/**
+	 * This function will persist the map state and return boolean true if success.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request          Request Payload
+	 * @param response         An object to assist a servlet in sending a response
+	 *                         to the client
+	 * @param gamePlayFromView game state to save
+	 * @return game play true if success.
+	 * @throws Exception NullPointerException when game state object is null
+	 */
+	@RequestMapping(value = "/persistGameState", method = RequestMethod.POST)
+	@ResponseBody
+	public Boolean persistGameState(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody GamePlay gamePlayFromView) throws Exception {
+		Boolean gamePlay = iManageGamePlayFile.saveGameStateToDisk(gamePlayFromView);
 		return gamePlay;
 	}
 
