@@ -1025,7 +1025,8 @@
 								army_move : data_game.army_move,
 								gui_map : data_game.gui_map,
 								domination : data_game.domination,
-								game_play_id : data_game.game_play_id
+								game_play_id : data_game.game_play_id,
+								game_play_turns : data_game.game_play_turns
 							};
 							var a = JSON.stringify(game_Play);
 							$

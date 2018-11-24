@@ -167,6 +167,7 @@ public class GamePlayController {
 		gamePlay.setGui_map(gamePlayFromView.getGui_map());
 		gamePlay.setDomination(gamePlayFromView.getDomination());
 		gamePlay.setGame_play_id(gamePlayFromView.getGame_play_id());
+		gamePlay.setGame_play_turns(gamePlayFromView.getGame_play_turns());
 		List<com.risk.model.Player> players = setGameStateData(gamePlayFromView);
 		gamePlay.setGame_state(players);
 	}
@@ -208,7 +209,7 @@ public class GamePlayController {
 	 *                          to the client
 	 * @param TournamentChoices object with details about tournament maps and
 	 *                          strategies
-	 * @return List of Player Object
+	 * @return Tournament object with gamePlays object
 	 * @throws Exception NullPointerException when game state object is null
 	 */
 	@RequestMapping(value = "/startTournament", method = RequestMethod.POST)
@@ -216,6 +217,26 @@ public class GamePlayController {
 	public Tournament startTournament(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody TournamentChoices tournamentChoices) throws Exception {
 		Tournament tournament = iManageGamePlay.prepareTournamentGamePlay(tournamentChoices);
+		return tournament;
+	}
+
+	/**
+	 * This function will resume the tournament by providing the necessary details
+	 * as given by user.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request    Request Payload
+	 * @param response   An object to assist a servlet in sending a response to the
+	 *                   client
+	 * @param Tournament object with details about tournament maps and strategies
+	 * @return Tournament object with gamePlays object
+	 * @throws Exception NullPointerException when game state object is null
+	 */
+	@RequestMapping(value = "/playTournament", method = RequestMethod.POST)
+	@ResponseBody
+	public Tournament playTournament(HttpServletRequest request, HttpServletResponse response,
+			@RequestBody Tournament tournament) throws Exception {
+		tournament = iManageGamePlay.playTournamentMode(tournament);
 		return tournament;
 	}
 }
