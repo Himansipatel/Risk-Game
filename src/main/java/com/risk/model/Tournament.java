@@ -27,6 +27,19 @@ public class Tournament {
 	 */
 	private String status;
 	
+	/**
+	 * Maximum number of turns in any GamePlay
+	 */
+	private int max_turns;
+	
+	public int getMax_turns() {
+		return max_turns;
+	}
+
+	public void setMax_turns(int max_turns) {
+		this.max_turns = max_turns;
+	}
+
 	public int getCurrent_game_play_id() {
 		return current_game_play_id;
 	}
