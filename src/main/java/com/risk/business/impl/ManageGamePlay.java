@@ -305,6 +305,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					game_play.setFile_name(map);
 					game_play.setMap(map_model);
 					game_play.setGui_map(gui_map);
+					game_play.setGame_play_turns(0);
 					game_play.setGame_phase("REINFORCEMENT");
 					game_play.setFree_cards(free_cards);
 					game_play.setGame_play_id(i);
@@ -322,6 +323,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		}
 
 		tournament.setTournament(game_play_set);
+		tournament.setMax_turns(tournament_inp.getMaxTurns());
 		tournament.setCurrent_game_play_id(1);
 		tournament.setStatus("Tournament Ready. Now starting various Games within it..../nGame 1:/n");
 		return tournament;
@@ -432,20 +434,26 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						if (current_game_play.getCurrent_player() + 1 > current_game_play.getGame_state().size()) {
 							current_game_play.setCurrent_player(1);
 						} else {
-							current_game_play.setCurrent_player(current_game_play.getCurrent_player() + 1);
+							current_game_play.setCurrent_player(current_game_play.getGame_play_turns() + 1);
 						}						
 						tournament.setStatus("REINFORCEMENT STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"/n");
+						
+						if (current_game_play.getCurrent_player()==current_game_play.getGame_state().size()) {
+							current_game_play.setGame_play_turns(current_game_play.getGame_play_turns()+1);							
+						}
 
 						break;
 
 					default:
 						break;
 					}
-
-					Domination domination = new Domination();
-					ManageDomination manage_domination = new ManageDomination();
-					domination.addObserver(manage_domination);
-					domination.updateDomination(current_game_play);
+					
+					if (current_game_play.getGame_play_turns()==tournament.getMax_turns()) {
+						tournament.setCurrent_game_play_id(tournament.getCurrent_game_play_id()+1);
+						if (tournament.getCurrent_game_play_id()>tournament.getTournament().size()) {
+							tournament.setStatus("Tournament Over");
+						}
+					}
 					return tournament;
 				} else {
 					current_game_play.setStatus("Current Player is not Valid!");

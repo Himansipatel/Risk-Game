@@ -82,6 +82,11 @@ public class GamePlay extends Observable {
 	private int game_play_id;
 
 	/**
+	 * Cycle count - Number of turn cycles over in any game play. 
+	 */
+	private int game_play_turns;
+	
+	/**
 	 * @return the unique id for any GamePlay.
 	 */		
 	public int getGame_play_id() {
@@ -93,6 +98,15 @@ public class GamePlay extends Observable {
 	 */
 	public void setGame_play_id(int game_play_id) {
 		this.game_play_id = game_play_id;
+	}
+
+		
+	public int getGame_play_turns() {
+		return game_play_turns;
+	}
+
+	public void setGame_play_turns(int game_play_turns) {
+		this.game_play_turns = game_play_turns;
 	}
 
 	/**
