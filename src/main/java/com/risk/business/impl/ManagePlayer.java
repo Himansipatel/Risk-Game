@@ -75,14 +75,19 @@ public class ManagePlayer implements IManagePlayer {
 
 			if (player.getType().equalsIgnoreCase("Human")) {
 				p.setStrategy(new Human());
+				p.setStrategy_name("Human");
 			}else if (player.getBehaviour().equalsIgnoreCase("Aggressive")) {
 				p.setStrategy(new Aggressive());
+				p.setStrategy_name("Aggressive");
 			}else if (player.getBehaviour().equalsIgnoreCase("Benevolent")) {
 				p.setStrategy(new Benevolent());
+				p.setStrategy_name("Benevolent");				
 			}else if (player.getBehaviour().equalsIgnoreCase("Random")) {
 				p.setStrategy(new com.risk.model.Strategy.Random());
+				p.setStrategy_name("Random");				
 			}else if (player.getBehaviour().equalsIgnoreCase("Cheater")) {
 				p.setStrategy(new Cheater());
+				p.setStrategy_name("Cheater");				
 			}
 
 			player_info_list.add(p);
@@ -201,8 +206,8 @@ public class ManagePlayer implements IManagePlayer {
 			if (count == total_card_type - 1) {
 				count = -1;
 			}
-
 		}
+		
 		for (int i = 0; i < card_type_list.size(); i++) {
 			String army_type = null;
 			for (int j = 0; j < card_type_list.get(i).size(); j++) {
@@ -220,6 +225,26 @@ public class ManagePlayer implements IManagePlayer {
 		return card_list;
 	}
 
+	/**
+	 * This method finds and returns the strongest territory that
+	 * the current player has.
+	 * 
+	 * @author <a href="mailto:apoorv.semwal20@gmail.com">Apoorv Semwal</a>
+	 * @param current_player Currently playing player.
+	 * @return GamePlayTerritory Strongest Territory.
+	 */
+	public GamePlayTerritory findStrongestTerritory(Player current_player) {
+		GamePlayTerritory strongest_territory = null;
+		int max = 0;
+		for (GamePlayTerritory territory : current_player.getTerritory_list()) {
+			if (territory.getNumber_of_armies() > max) {
+				max = territory.getNumber_of_armies();
+				strongest_territory = territory;
+			}
+		}
+		return strongest_territory;
+	}	
+	
 	/**
 	 * This method is responsible for an initial distribution of armies in Startup
 	 * Phase of the game.

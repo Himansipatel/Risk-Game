@@ -27,6 +27,7 @@ public class Cheater implements IStrategy {
 	 */
 	@Override
 	public GamePlay reinforce(GamePlay game_play) {
+		String territories = "";
 		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				player.setArmy_stock(0);
@@ -34,9 +35,12 @@ public class Cheater implements IStrategy {
 					int old_army_value = territory.getNumber_of_armies();
 					int new_army_value = old_army_value * 2;
 					territory.setNumber_of_armies(new_army_value);
+					territories.concat(territory.getTerritory_name()).concat(" , ");
 				}
 			}
 		}
+		territories = territories.substring(0, territories.length()-3);
+		game_play.setStatus("Cheater Doubled Armies on Territories: "+territories+"/n");
 		return game_play;
 	}
 
@@ -48,6 +52,8 @@ public class Cheater implements IStrategy {
 	 */
 	@Override
 	public GamePlay attack(GamePlay game_play) {
+		
+		String territories_won = "";
 		boolean any_territory_occupied = false;
 		Player current_player = null;
 		Player defender_player = null;
@@ -117,6 +123,7 @@ public class Cheater implements IStrategy {
 											attacker_territory_data);
 									defender_player.getTerritory_list().remove(
 											defender_player.getTerritory_list().indexOf(defender_territory_data));
+									territories_won = territories_won.concat(defender_territory_data.getTerritory_name()).concat(" , ");
 									flag_attack_over = true;
 									any_territory_occupied = true;
 									current_player.setAny_territory_occupied(any_territory_occupied);
@@ -136,6 +143,8 @@ public class Cheater implements IStrategy {
 				manage_player.giveCardAtAttackEnd(game_play);
 			}
 		}
+		territories_won = territories_won.substring(0, territories_won.length()-3);
+		game_play.setStatus("Territories won by Cheater: "+territories_won+"/n");
 		return game_play;
 	}
 
@@ -147,10 +156,12 @@ public class Cheater implements IStrategy {
 	 */
 	@Override
 	public GamePlay fortify(GamePlay game_play) {
+		
+		String territories = "";
 		Player current_player = null;
 		List<String> neighbours = null;
 		List<String> player_territories = new ArrayList<>();
-		GamePlayTerritory attacker_territory_data = null;
+		GamePlayTerritory cheater_territory_data = null;
 
 		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
@@ -165,7 +176,7 @@ public class Cheater implements IStrategy {
 				player_territories.add(territory.getTerritory_name());
 			}
 			for (GamePlayTerritory territory : current_player.getTerritory_list()) {
-				attacker_territory_data = territory;
+				cheater_territory_data = territory;
 				for (com.risk.model.gui.Territory neighbour : game_play.getGui_map().getTerritories()) {
 					if (territory.getTerritory_name().equalsIgnoreCase(neighbour.getName())) {
 						neighbours = new ArrayList<>();
@@ -175,23 +186,24 @@ public class Cheater implements IStrategy {
 						continue;
 					}
 				}
-				for (com.risk.model.gui.Territory defender_territory : game_play.getGui_map().getTerritories()) {
-					if (defender_territory.getName().equalsIgnoreCase(territory.getTerritory_name())
-							|| player_territories.contains(defender_territory.getName())
-							|| !neighbours.contains(defender_territory.getName())) {
+				for (com.risk.model.gui.Territory neighbour_territory : game_play.getGui_map().getTerritories()) {
+					if (neighbour_territory.getName().equalsIgnoreCase(territory.getTerritory_name())
+							|| player_territories.contains(neighbour_territory.getName())
+							|| !neighbours.contains(neighbour_territory.getName())) {
 						continue;
 					} else {
-						attacker_territory_data.setNumber_of_armies(attacker_territory_data.getNumber_of_armies() * 2);
-
+						cheater_territory_data.setNumber_of_armies(cheater_territory_data.getNumber_of_armies() * 2);
+						territories = territories.concat(cheater_territory_data.getTerritory_name()).concat(" , ");
 						current_player.getTerritory_list().set(
-								current_player.getTerritory_list().indexOf(attacker_territory_data),
-								attacker_territory_data);
+								current_player.getTerritory_list().indexOf(cheater_territory_data),
+								cheater_territory_data);
 						break;
 					}
 				}
 			}
 		}
+		territories = territories.substring(0, territories.length()-3);
+		game_play.setStatus("Territories fortified by Cheater: "+territories+"/n");
 		return game_play;
 	}
-
 }

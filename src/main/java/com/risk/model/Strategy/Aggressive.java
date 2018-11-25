@@ -62,13 +62,7 @@ public class Aggressive implements IStrategy {
 					
 				}
 				
-				int max = 0;
-				for (GamePlayTerritory territory : current_player.getTerritory_list()) {
-					if (territory.getNumber_of_armies() > max) {
-						max = territory.getNumber_of_armies();
-						strongest_territory = territory;
-					}
-				}
+				strongest_territory = player_manager.findStrongestTerritory(current_player);
 			}
 
 			if (strongest_territory != null) {
