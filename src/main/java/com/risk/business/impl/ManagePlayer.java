@@ -48,8 +48,8 @@ public class ManagePlayer implements IManagePlayer {
 	@Override
 	public GamePlay createPlayer(PlayerDetails single_game_input) {
 
-		int    num_of_players       = single_game_input.getPlayersNo(); 
-		String file_name            = single_game_input.getFileName(); 
+		int num_of_players = single_game_input.getPlayersNo();
+		String file_name = single_game_input.getFileName();
 		String army_allocation_type = single_game_input.getAllocationType();
 
 		GamePlay game_play = new GamePlay();
@@ -58,7 +58,7 @@ public class ManagePlayer implements IManagePlayer {
 
 		int army_stock = getArmyStock(num_of_players);
 
-		int i = 1; 
+		int i = 1;
 		for (SinglePlayer player : single_game_input.getPlayers()) {
 
 			Player p = new Player();
@@ -76,18 +76,18 @@ public class ManagePlayer implements IManagePlayer {
 			if (player.getType().equalsIgnoreCase("Human")) {
 				p.setStrategy(new Human());
 				p.setStrategy_name("Human");
-			}else if (player.getBehaviour().equalsIgnoreCase("Aggressive")) {
+			} else if (player.getBehaviour().equalsIgnoreCase("Aggressive")) {
 				p.setStrategy(new Aggressive());
 				p.setStrategy_name("Aggressive");
-			}else if (player.getBehaviour().equalsIgnoreCase("Benevolent")) {
+			} else if (player.getBehaviour().equalsIgnoreCase("Benevolent")) {
 				p.setStrategy(new Benevolent());
-				p.setStrategy_name("Benevolent");				
-			}else if (player.getBehaviour().equalsIgnoreCase("Random")) {
+				p.setStrategy_name("Benevolent");
+			} else if (player.getBehaviour().equalsIgnoreCase("Random")) {
 				p.setStrategy(new com.risk.model.Strategy.Random());
-				p.setStrategy_name("Random");				
-			}else if (player.getBehaviour().equalsIgnoreCase("Cheater")) {
+				p.setStrategy_name("Random");
+			} else if (player.getBehaviour().equalsIgnoreCase("Cheater")) {
 				p.setStrategy(new Cheater());
-				p.setStrategy_name("Cheater");				
+				p.setStrategy_name("Cheater");
 			}
 
 			player_info_list.add(p);
@@ -117,7 +117,7 @@ public class ManagePlayer implements IManagePlayer {
 			game_play.setGame_state(player_info_list);
 			game_play.setCard_trade(new CardTrade());
 			List<Card> free_cards = getFreeCards(map);
-			game_play.setFree_cards(free_cards);			
+			game_play.setFree_cards(free_cards);
 			if (army_allocation_type.equalsIgnoreCase("A")) {
 				game_manager.calculateArmiesReinforce(game_play.getGame_state(), map, game_play.getCurrent_player());
 			}
@@ -153,7 +153,7 @@ public class ManagePlayer implements IManagePlayer {
 						int sum_armies = player_info_list.get(player_index).getTerritory_list()
 								.get(territory_list_index).getNumber_of_armies() + 1;
 						player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-						.setNumber_of_armies(sum_armies);
+								.setNumber_of_armies(sum_armies);
 						if (territory_list_index + 1 == player_info_list.get(player_index).getTerritory_list().size()) {
 							territory_list_index = -1;
 						}
@@ -165,7 +165,7 @@ public class ManagePlayer implements IManagePlayer {
 					int sum_armies = player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
 							.getNumber_of_armies() + 1;
 					player_info_list.get(player_index).getTerritory_list().get(territory_list_index)
-					.setNumber_of_armies(sum_armies);
+							.setNumber_of_armies(sum_armies);
 				}
 			}
 		}
@@ -173,6 +173,7 @@ public class ManagePlayer implements IManagePlayer {
 
 	/**
 	 * This method set cards according to territory and army name
+	 * 
 	 * @param map Currently selected Map
 	 * @return List of Cards Total No. of Cards in entire game before game starts
 	 */
@@ -207,7 +208,7 @@ public class ManagePlayer implements IManagePlayer {
 				count = -1;
 			}
 		}
-		
+
 		for (int i = 0; i < card_type_list.size(); i++) {
 			String army_type = null;
 			for (int j = 0; j < card_type_list.get(i).size(); j++) {
@@ -226,8 +227,8 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
-	 * This method finds and returns the strongest territory that
-	 * the current player has.
+	 * This method finds and returns the strongest territory that the current player
+	 * has.
 	 * 
 	 * @author <a href="mailto:apoorv.semwal20@gmail.com">Apoorv Semwal</a>
 	 * @param current_player Currently playing player.
@@ -243,8 +244,8 @@ public class ManagePlayer implements IManagePlayer {
 			}
 		}
 		return strongest_territory;
-	}	
-	
+	}
+
 	/**
 	 * This method is responsible for an initial distribution of armies in Startup
 	 * Phase of the game.
@@ -299,6 +300,7 @@ public class ManagePlayer implements IManagePlayer {
 
 	/**
 	 * This method is randomly linking territories to game play territory object
+	 * 
 	 * @see com.risk.business.IManagePlayer#getTerritories(Map)
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param map Map Object for retrieving Territories.
@@ -355,9 +357,9 @@ public class ManagePlayer implements IManagePlayer {
 						&& trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard3().getArmy_type()))
 						|| (!trade_card.getCard1().getArmy_type().equalsIgnoreCase(trade_card.getCard2().getArmy_type())
 								&& !trade_card.getCard2().getArmy_type()
-								.equalsIgnoreCase(trade_card.getCard3().getArmy_type())
+										.equalsIgnoreCase(trade_card.getCard3().getArmy_type())
 								&& !trade_card.getCard3().getArmy_type()
-								.equalsIgnoreCase(trade_card.getCard1().getArmy_type()))) {
+										.equalsIgnoreCase(trade_card.getCard1().getArmy_type()))) {
 
 					int current_player = game_state.getCurrent_player();
 
@@ -381,16 +383,16 @@ public class ManagePlayer implements IManagePlayer {
 									if (gamePlayTerritory.getTerritory_name()
 											.equalsIgnoreCase(trade_card.getCard1().getTerritory_name())
 											|| gamePlayTerritory.getTerritory_name()
-											.equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
+													.equalsIgnoreCase(trade_card.getCard2().getTerritory_name())
 											|| gamePlayTerritory.getTerritory_name()
-											.equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
+													.equalsIgnoreCase(trade_card.getCard3().getTerritory_name())) {
 
 										/**
 										 * An additional two armies given if the Player controls any territory which is
 										 * present in one of the cards being traded.
 										 */
 										gamePlayTerritory
-										.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);
+												.setNumber_of_armies(gamePlayTerritory.getNumber_of_armies() + 2);
 										break;
 									}
 								}
@@ -424,19 +426,17 @@ public class ManagePlayer implements IManagePlayer {
 		Card card2 = null;
 		Card card3 = null;
 
-		for (int i = 0; i < current_player.getCard_list().size()-2; i++) {
+		for (int i = 0; i < current_player.getCard_list().size() - 2; i++) {
 			card1 = current_player.getCard_list().get(i);
-			for (int j = i+1; j < current_player.getCard_list().size()-1; j++) {
+			for (int j = i + 1; j < current_player.getCard_list().size() - 1; j++) {
 				card2 = current_player.getCard_list().get(j);
-				for (int k = j+1; k < current_player.getCard_list().size(); k++) {
+				for (int k = j + 1; k < current_player.getCard_list().size(); k++) {
 					card3 = current_player.getCard_list().get(k);
 					if ((card1.getArmy_type().equalsIgnoreCase(card2.getArmy_type())
 							&& card1.getArmy_type().equalsIgnoreCase(card3.getArmy_type()))
 							|| (!card1.getArmy_type().equalsIgnoreCase(card2.getArmy_type())
-									&& !card2.getArmy_type()
-									.equalsIgnoreCase(card3.getArmy_type())
-									&& !card3.getArmy_type()
-									.equalsIgnoreCase(card1.getArmy_type()))) {
+									&& !card2.getArmy_type().equalsIgnoreCase(card3.getArmy_type())
+									&& !card3.getArmy_type().equalsIgnoreCase(card1.getArmy_type()))) {
 						trade_prepared = true;
 						break;
 					}
@@ -447,7 +447,7 @@ public class ManagePlayer implements IManagePlayer {
 				}
 				if (trade_prepared) {
 					break;
-				}			
+				}
 			}
 		}
 		if (trade_prepared && card1 != null && card2 != null && card3 != null) {
@@ -564,12 +564,12 @@ public class ManagePlayer implements IManagePlayer {
 						return game_play;
 					} else {
 						source_territory_instance
-						.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
+								.setNumber_of_armies(source_territory_instance.getNumber_of_armies() - army_count);
 						dest_territory_instance
-						.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
+								.setNumber_of_armies(dest_territory_instance.getNumber_of_armies() + army_count);
 						game_play.setStatus(
 								army_count + " army moved from " + source_territory_instance.getTerritory_name()
-								+ " to " + dest_territory_instance.getTerritory_name());
+										+ " to " + dest_territory_instance.getTerritory_name());
 						game_play.setGame_phase("ATTACK_ARMY_ON");
 					}
 					break;
@@ -680,6 +680,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * Territory is occupy by attacker then player cannot attack on his own
 	 * territory)
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param attacker_id
 	 * @param defender_id
 	 * @return Valid Attack Message
@@ -695,6 +697,8 @@ public class ManagePlayer implements IManagePlayer {
 	/**
 	 * This function performs valid attack check.
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param attacker_territory_armies
 	 * @param defender_territory_armies
 	 * @param attacker_dice_no
@@ -732,7 +736,9 @@ public class ManagePlayer implements IManagePlayer {
 	/**
 	 * This method rolls dice for both player and return dice result for respective
 	 * round as list.
-	 * 
+	 *
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param attacker_dice_no : No. of dice attacker decided to roll
 	 * @param defender_dice_no : No. of dice defender decided to roll
 	 * @return List of Attack Result
@@ -769,6 +775,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * This method roll dice for the case of one attacker army v/s one defender
 	 * army.
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceOneOnOne() {
@@ -788,6 +796,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * This method roll dice for the case of one attacker army v/s two defender
 	 * army.
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceOneOnTwo() {
@@ -807,6 +817,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * This method roll dice for the case of two attacker army v/s one defender
 	 * army.
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceTwoOnOne() {
@@ -826,6 +838,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * This method roll dice for the case of two attacker army v/s two defender
 	 * army.
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceTwoOnTwo() {
@@ -851,6 +865,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * This method roll dice for the case of three attacker army v/s two defender
 	 * army.
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceThreeOnTwo() {
@@ -883,6 +899,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * This method roll dice for the case of three attacker army v/s one defender
 	 * army.
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceThreeOnOne() {
@@ -902,9 +920,11 @@ public class ManagePlayer implements IManagePlayer {
 	/**
 	 * This method checks if two given territories are neighbors in a Map
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param territory_a First Territory
 	 * @param territory_b Second Territory
-	 * @param map Current Map being played
+	 * @param map         Current Map being played
 	 * @return True-If territories are neighbors False-Otherwise
 	 */
 	public boolean checkIfNeighbours(String territory_a, String territory_b, com.risk.model.gui.Map map) {
@@ -925,4 +945,136 @@ public class ManagePlayer implements IManagePlayer {
 		return neighbour_flag;
 	}
 
+	/**
+	 * This function checks attack is possible or not and return updated game play
+	 * object
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param game_play The Current GameState
+	 * @return GamePlay object
+	 */
+	public GamePlay checkAttackIsPossible(GamePlay game_play) {
+		boolean is_attack_possible = false;
+		for (Player player : game_play.getGame_state()) {
+			if (player.getId() == game_play.getCurrent_player()) {
+				for (GamePlayTerritory player_territory_list : player.getTerritory_list()) {
+					if (player_territory_list.getNumber_of_armies() != 1) {
+						is_attack_possible = getPlayerTerritoryNeighbours(player_territory_list.getTerritory_name(),
+								game_play, player.getTerritory_list());
+						if (is_attack_possible)
+							break;
+					}
+				}
+			}
+		}
+		if (!is_attack_possible) {
+			game_play.setStatus("No more attack");
+		}
+		return game_play;
+	}
+
+	/**
+	 * This function is use to get Neigbouring Territories of current Attacking
+	 * Territory
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param territory_name        The Attacker Territory Name
+	 * @param game_play             The Current GameState Object of Game
+	 * @param player_territory_list Territory list of player
+	 * @return result
+	 */
+	private static boolean getPlayerTerritoryNeighbours(String territory_name, GamePlay game_play,
+			List<GamePlayTerritory> player_territory_list) {
+		List<String> neighbours = new ArrayList<>();
+		List<String> player_territory = new ArrayList<>();
+		for (Continent entry : game_play.getMap().getContinents().values()) {
+			for (Territory territory : entry.getTerritories()) {
+				if (territory.getName().equalsIgnoreCase(territory_name)) {
+					for (String neighbour_name : territory.getNeighbours()) {
+						neighbours.add(neighbour_name);
+					}
+					neighbours.add(territory_name);
+					break;
+				}
+			}
+		}
+		for (GamePlayTerritory territory : player_territory_list) {
+			player_territory.add(territory.getTerritory_name());
+		}
+		if (player_territory.equals(neighbours)) {
+			// Attack Not Possible but List Equals
+			return false;
+		} else {
+			// Attack Possible but List Not Equals
+			return true;
+		}
+	}
+
+	/**
+	 * This function checks fortification is possible or not and return updated game
+	 * play object
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param game_play The Current GameState
+	 * @return GamePlay object
+	 */
+	public GamePlay checkFortificationIsPossible(GamePlay game_play) {
+		boolean is_fortification_possible = false;
+		for (Player player : game_play.getGame_state()) {
+			if (player.getId() == game_play.getCurrent_player()) {
+				for (GamePlayTerritory territory : player.getTerritory_list()) {
+
+					if (territory.getNumber_of_armies() != 1) {
+						is_fortification_possible = checkValidNeighbourFortification(territory.getTerritory_name(),
+								game_play, player.getTerritory_list());
+						if (is_fortification_possible)
+							break;
+					}
+				}
+			}
+		}
+
+		if (!is_fortification_possible) {
+			game_play.setStatus("Fortification is not possible");
+		}
+		return game_play;
+
+	}
+
+	/**
+	 * This function is use to get Neighbour Territories of current fortifying
+	 * Territory
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param territory_name        The Attacker Territory Name
+	 * @param game_play             The Current GameState Object of Game
+	 * @param player_territory_list Territory list of player
+	 * @return result
+	 */
+	private boolean checkValidNeighbourFortification(String territory_name, GamePlay game_play,
+			List<GamePlayTerritory> player_territory_list) {
+		List<String> neighbours = new ArrayList<>();
+		for (Continent entry : game_play.getMap().getContinents().values()) {
+			for (Territory territory : entry.getTerritories()) {
+				if (territory.getName().equalsIgnoreCase(territory_name)) {
+					for (String neighbour_name : territory.getNeighbours()) {
+						neighbours.add(neighbour_name);
+					}
+					break;
+				}
+			}
+		}
+		for (String neighbour_territory : neighbours) {
+			for (GamePlayTerritory player_territory : player_territory_list) {
+				if (neighbour_territory.equalsIgnoreCase(player_territory.getTerritory_name())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
