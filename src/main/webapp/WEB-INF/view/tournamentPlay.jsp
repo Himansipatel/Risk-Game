@@ -72,8 +72,7 @@
 			
 			var noOfGames = $('#noOfGames').val();
 			var maxTurns = $('#maxTurns').val();
-			debugger;
-			if((maps == null || (maps != null && (maps.length > 5 || maps.length < 1))) || (strategies != null || (strategies != null && (strategies.length > 4 || strategies.length < 2))) || (noOfGames == null || (noOfGames != null && noOfGames < 1)) || (maxTurns == null || (maxTurns != null && maxTurns < 1))){
+			if((maps == null || (maps != null && (maps.length > 5 || maps.length < 1))) || (strategies == null || (strategies != null && (strategies.length > 4 || strategies.length < 2))) || (noOfGames == null || (noOfGames != null && noOfGames < 1)) || (maxTurns == null || (maxTurns != null && maxTurns < 1))){
 				return;
 			}
 			
