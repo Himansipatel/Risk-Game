@@ -43,6 +43,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a> *
 	 */
+	@Override
 	public Boolean saveGameStateToDisk(GamePlay game_play) {
 		boolean file_writer_message = false;
 		String file_name = game_play.getFile_name();
@@ -140,6 +141,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 */
+	@Override
 	public GamePlay fetchGamePlay(String file_name) {
 		List<GamePlayTerritory> player_territory_info = new ArrayList<>();
 		List<Card> player_card_info = new ArrayList<>();
@@ -230,7 +232,26 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		}
 		return game_play;
 	}
-
+	
+	@Override
+	/**
+	 * @see com.risk.file.IManageGamePlayFile#fetchGamePlayFilesFromResource()
+	 * @author <a href="mailto:apoorv.semwal20@gmail.com">Apoorv Semmwal</a>
+	 * @return List of GamePlay Files.
+	 */
+	public List<String> fetchGamePlayFilesFromResource() {
+		List<String> list_of_gameplay_files = new ArrayList<>();
+		java.io.File resource_folder = new java.io.File("src/main/resource/gameplay");
+		java.io.File[] listOfGamePlayFiles = resource_folder.listFiles();
+		if (listOfGamePlayFiles.length > 0) {
+			for (java.io.File file : listOfGamePlayFiles) {
+				if (file.isFile() && file.getName().endsWith(".map")) {
+					list_of_gameplay_files.add(file.getName());
+				}
+			}
+		}
+		return list_of_gameplay_files;
+	}
 	/**
 	 * This function is use to set domination information for each player's
 	 * continent list

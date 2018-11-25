@@ -1,5 +1,7 @@
 package com.risk.file;
 
+import java.util.List;
+
 import com.risk.model.GamePlay;
 
 /**
@@ -31,4 +33,13 @@ public interface IManageGamePlayFile {
 	 */
 	GamePlay fetchGamePlay(String file_name);
 
+	/**
+	 * This method is used to load and display the list of available GamePlays from resource folder.
+	 * 
+	 * @author <a href="apoorv.semwal20@gmail.com">Apoorv Semwal</a>
+	 * @param file_name The Playing Game File Name
+	 * @return GamePlay : The current ongoing game state object
+	 */
+	List<String> fetchGamePlayFilesFromResource();
+	
 }

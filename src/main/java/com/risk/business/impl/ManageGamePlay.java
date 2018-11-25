@@ -13,6 +13,8 @@ import java.util.TreeSet;
 import org.springframework.stereotype.Service;
 
 import com.risk.business.IManageGamePlay;
+import com.risk.file.IManageGamePlayFile;
+import com.risk.file.impl.ManageGamePlayFile;
 import com.risk.model.Card;
 import com.risk.model.Continent;
 import com.risk.model.Domination;
@@ -284,7 +286,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		for (int i = 1; i <= tournament_inp.getNoOfGamesToPlay(); i++) {
 
 			for (String map  : tournament_inp.getMapNames()) {
-
+				
 				com.risk.model.Map map_model = map_manager.getFullMap(map);
 
 				if (map_model==null){
@@ -299,9 +301,6 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					List<Card> free_cards = player_manager.getFreeCards(map_model);
 					GamePlay game_play = new GamePlay();
 					game_play.setCurrent_player(1);
-					map = (map.endsWith(".map") ? map.split("\\.")[0] : map) + "_"
-							+ String.valueOf(System.currentTimeMillis());
-
 					game_play.setFile_name(map);
 					game_play.setMap(map_model);
 					game_play.setGui_map(gui_map);
@@ -309,15 +308,11 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					game_play.setGame_phase("REINFORCEMENT");
 					game_play.setFree_cards(free_cards);
 					game_play.setGame_play_id(i);
-					String status = "Game ID: "+i+" being played on Map:"+map+"/n"+"Reinforcement Started/n";
+					String status = "Game ID: "+i+" being played on Map: "+map+"/n"+"REINFORCEMENT STARTED FOR PLAYER: 1/n";
 					game_play.setStatus(status);
 
 					update_tournament_gameplay(game_play, tournament_inp.getMultipleStrategies());
-					Domination domination = new Domination();
-					ManageDomination manage_domination = new ManageDomination();
-					domination.addObserver(manage_domination);
-					domination.updateDomination(game_play);
-					game_play_set.add(game_play);
+					game_play_set.add(game_play);			
 				}
 			}			
 		}
@@ -355,12 +350,16 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 			if (string.equalsIgnoreCase("Aggressive")) {
 				p.setStrategy(new Aggressive());
+				p.setStrategy_name("Aggressive");
 			}else if (string.equalsIgnoreCase("Benevolent")) {
 				p.setStrategy(new Benevolent());
+				p.setStrategy_name("Benevolent");
 			}else if (string.equalsIgnoreCase("Cheater")) {
 				p.setStrategy(new Cheater());
+				p.setStrategy_name("Cheater");
 			}else if (string.equalsIgnoreCase("Random")){
 				p.setStrategy(new Random());
+				p.setStrategy_name("Random");
 			}
 
 			p.setId(i);
@@ -373,6 +372,8 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			p.setTrade_count(0);
 			players.add(p);			
 		}
+		player_manager.assingTerritoriesToPlayers(game_play.getMap(), players);
+		player_manager.assignArmiesOnTerritories(army_stock, players);
 		game_play.setGame_state(players);		
 	}
 	/**
@@ -404,22 +405,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				}
 
 				if (current_player != null) {
-					Map map = current_game_play.getMap();
-
-					if (map == null) {
-						current_game_play.setStatus("Inavlid Map.");
-						return tournament;
-					} else if (!map.getStatus().equalsIgnoreCase("")) {
-						current_game_play.setStatus(map.getStatus());
-						return tournament;
-					}
 
 					switch (current_game_play.getGame_phase()) {
 
 					case "REINFORCEMENT":
 						current_player.executeStrategy("REINFORCE", current_game_play);
 						current_game_play.setGame_phase("ATTACK");
-						tournament.setStatus("ATTACK STARTED FOR PLAYER: :"+current_game_play.getCurrent_player()+"/n");
+						tournament.setStatus("ATTACK STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"/n");
 						break;
 
 					case "ATTACK":
@@ -462,6 +454,28 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			}
 		}
 		return tournament;
+	}
+
+	/**
+	 * @see com.risk.business.IManageGamePlay#fetchGamePlay(String)
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Override
+	public GamePlay fetchGamePlay(String file) {
+		IManageGamePlayFile game_file_manager = new ManageGamePlayFile();
+		return game_file_manager.fetchGamePlay(file);
+	}
+
+	/**
+	 * @see com.risk.business.IManageGamePlay#fetchGamePlays()
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 */
+	@Override
+	public List<String> fetchGamePlays() {
+		List<String> game_play_list = new ArrayList<>();
+		IManageGamePlayFile file_object = new ManageGamePlayFile();
+		game_play_list = file_object.fetchGamePlayFilesFromResource();
+		return game_play_list;
 	}
 
 	/**

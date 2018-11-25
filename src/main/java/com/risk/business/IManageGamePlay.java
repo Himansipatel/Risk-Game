@@ -60,4 +60,24 @@ public interface IManageGamePlay {
 	 * @return State of the game in form of a List of Players.
 	 */
 	List<Player> calculateArmiesReinforce(List<Player> gameplay, Map map, int current_player);
+
+	/**
+	 * This method retrieves a list of saved GamePlay Files from Resource Folder.
+	 * User then selects a GamePlay file from the given list.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @return List of existing GamePlay Files from Resource Folder.
+	 */
+	List<String> fetchGamePlays();
+
+	/**
+	 * This method reads a selected GamePlay File, parses it and 
+	 * the converts it to a GamePlay Object while loading a GamePlay.
+	 * 
+	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
+	 * @param file File Name of the currently selected GamePlay file.
+	 * @return GamePlay Object representing the GamePlay to be loaded.
+	 */
+	GamePlay fetchGamePlay(String file);
+	
 }
