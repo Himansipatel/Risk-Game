@@ -55,7 +55,7 @@ public class Aggressive implements IStrategy {
 					if (game_play.getCard_trade()!=null) {
 						game_play.setStatus("3 Cards Traded.");
 						player_manager.tradeCards(game_play);
-						game_play.setStatus(game_play.getStatus()+"/n"+"New Army Stock for Reinforcement: "+current_player.getArmy_stock());
+						game_play.setStatus(game_play.getStatus()+"\n"+"New Army Stock for Reinforcement: "+current_player.getArmy_stock());
 					}else {
 						game_play.setStatus("No Card Trading.");
 					}
@@ -71,9 +71,9 @@ public class Aggressive implements IStrategy {
 				current_player.setArmy_stock(0);
 			}
 		}
-		game_play.setStatus(game_play.getStatus()+"/n"+
-				            "Strongest Territory Reinforced: "+ strongest_territory.getTerritory_name()+"/n"+
-				            "New Army count on:"+ strongest_territory.getNumber_of_armies()+"/n");
+		game_play.setStatus(game_play.getStatus()+"\n"+
+				            "Strongest Territory Reinforced: "+ strongest_territory.getTerritory_name()+"\n"+
+				            "New Army count on:"+ strongest_territory.getNumber_of_armies()+"\n");
 		return game_play;
 	}
 
@@ -230,5 +230,4 @@ public class Aggressive implements IStrategy {
 		}
 		return game_play;
 	}
-
 }

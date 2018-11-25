@@ -35,12 +35,12 @@ public class Cheater implements IStrategy {
 					int old_army_value = territory.getNumber_of_armies();
 					int new_army_value = old_army_value * 2;
 					territory.setNumber_of_armies(new_army_value);
-					territories.concat(territory.getTerritory_name()).concat(" , ");
+					territories = territories.concat(territory.getTerritory_name()).concat(" , ");
 				}
 			}
 		}
 		territories = territories.substring(0, territories.length()-3);
-		game_play.setStatus("Cheater Doubled Armies on Territories: "+territories+"/n");
+		game_play.setStatus("Cheater Doubled Armies on Territories: "+territories+"\n");
 		return game_play;
 	}
 
@@ -144,7 +144,7 @@ public class Cheater implements IStrategy {
 			}
 		}
 		territories_won = territories_won.substring(0, territories_won.length()-3);
-		game_play.setStatus("Territories won by Cheater: "+territories_won+"/n");
+		game_play.setStatus("Territories won by Cheater: "+territories_won+"\n");
 		return game_play;
 	}
 
@@ -203,7 +203,7 @@ public class Cheater implements IStrategy {
 			}
 		}
 		territories = territories.substring(0, territories.length()-3);
-		game_play.setStatus("Territories fortified by Cheater: "+territories+"/n");
+		game_play.setStatus("Territories fortified by Cheater: "+territories+"\n");
 		return game_play;
 	}
 }
