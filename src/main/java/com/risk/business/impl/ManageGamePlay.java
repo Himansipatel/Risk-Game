@@ -138,9 +138,8 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
 							game_play.setCurrent_player(1);
 						} else {
-							game_play.setCurrent_player(game_play.getGame_play_turns() + 1);
+							game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 						}
-						game_play.setStatus("");
 						for (Player player : game_play.getGame_state()) {
 							if (player.getId()==game_play.getCurrent_player() && player.getType().equalsIgnoreCase("Computer")) {
 								game_play.setStatus(game_play.getStatus()+"\n REINFORCEMENT STARTED FOR PLAYER: "+game_play.getCurrent_player()+"\n");
