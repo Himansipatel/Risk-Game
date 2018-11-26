@@ -399,6 +399,12 @@
 								strategyName1 = playerData.strategy_name;
 								strategy1 = playerData.strategy;
 								type1 = playerData.type;
+								var text = type1;
+								if(text.toUpperCase() == 'COMPUTER'){
+									text = text+"-"+strategyName1;
+								}
+								$("#p1Type").text(
+										text);
 								break;
 							case 2:
 								armiesStockOfPlayer2 = playerData.army_stock;
@@ -407,6 +413,12 @@
 								strategyName2 = playerData.strategy_name;
 								strategy2 = playerData.strategy;
 								type2 = playerData.type;
+								var text = type2;
+								if(text == 'COMPUTER'){
+									text = text+"-"+strategyName2;
+								}
+								$("#p2Type").text(
+										text);
 								break;
 							case 3:
 								armiesStockOfPlayer3 = playerData.army_stock;
@@ -415,6 +427,12 @@
 								strategyName3 = playerData.strategy_name;
 								strategy3 = playerData.strategy;
 								type3 = playerData.type;
+								var text = type3;
+								if(text == 'COMPUTER'){
+									text = text+"-"+strategyName3;
+								}
+								$("#p3Type").text(
+										text);
 								break;
 							case 4:
 								armiesStockOfPlayer4 = playerData.army_stock;
@@ -423,6 +441,12 @@
 								strategyName4 = playerData.strategy_name;
 								strategy4 = playerData.strategy;
 								type4 = playerData.type;
+								var text = type4;
+								if(text == 'COMPUTER'){
+									text = text+"-"+strategyName4;
+								}
+								$("#p4Type").text(
+										text);
 								break;
 							case 5:
 								armiesStockOfPlayer5 = playerData.army_stock;
@@ -431,6 +455,12 @@
 								strategyName5 = playerData.strategy_name;
 								strategy5 = playerData.strategy;
 								type5 = playerData.type;
+								var text = type5;
+								if(text == 'COMPUTER'){
+									text = text+"-"+strategyName5;
+								}
+								$("#p5Type").text(
+										text);
 								break;
 							case 6:
 								armiesStockOfPlayer6 = playerData.army_stock;
@@ -439,6 +469,12 @@
 								strategyName6 = playerData.strategy_name;
 								strategy6 = playerData.strategy;
 								type6 = playerData.type;
+								var text = type6;
+								if(text == 'COMPUTER'){
+									text = text+"-"+strategyName6;
+								}
+								$("#p6Type").text(
+										text);
 								break;
 							}
 						}
@@ -955,7 +991,7 @@
 								trade_count : trade_count,
 								card_list : card_list,
 								type : getEachPlayerType(playerNo),
-								name: getEachPlayerStrategyName(playerNo),
+								strategy_name: getEachPlayerStrategyName(playerNo),
 								strategy : getEachPlayerStrategy(playerNo)
 							};
 							return playerObject;
@@ -1015,7 +1051,7 @@
 						function checkIfCurrentPlayerIsHuman(data){
 							var cid = data.current_player;
 							for(var i=0;i<data.game_state.length;i++){
-								if(cid == data.game_state[i].id && data.game_state[i].type == "Human"){
+								if(cid == data.game_state[i].id && data.game_state[i].type.toUpperCase() == "HUMAN"){
 									return true;
 									break;
 								}
@@ -1832,7 +1868,9 @@
 	<div>
 		<h2>Game Play</h2>
 		<div id="p1">
-			<h3>Player 1 :</h3>
+			<h3>
+				Player 1 :<span id="p1Type"></span>
+			</h3>
 			<table id="player1" class="display" style="width: 100%">
 				<thead>
 					<tr>
@@ -1859,7 +1897,9 @@
 				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p2">
-			<h3>Player 2 :</h3>
+			<h3>
+				Player 2 :<span id="p2Type"></span>
+			</h3>
 			<table id="player2" class="display" style="width: 100%">
 				<thead>
 					<tr>
@@ -1886,7 +1926,9 @@
 				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p3">
-			<h3>Player 3 :</h3>
+			<h3>
+				Player 3 :<span id="p3Type"></span>
+			</h3>
 			<table id="player3" class="display" style="width: 100%">
 				<thead>
 					<tr>
@@ -1913,7 +1955,9 @@
 				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p4">
-			<h3>Player 4 :</h3>
+			<h3>
+				Player 4 :<span id="p4Type"></span>
+			</h3>
 			<table id="player4" class="display" style="width: 100%">
 				<thead>
 					<tr>
@@ -1940,7 +1984,9 @@
 				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p5">
-			<h3>Player 5 :</h3>
+			<h3>
+				Player 5 :<span id="p5Type"></span>
+			</h3>
 			<table id="player5" class="display" style="width: 100%">
 				<thead>
 					<tr>
@@ -1967,7 +2013,9 @@
 				style="background-color: black; border-color: black">Fortification</button>
 		</div>
 		<div id="p6">
-			<h3>Player 6 :</h3>
+			<h3>
+				Player 6 :<span id="p6Type"></span>
+			</h3>
 			<table id="player6" class="display" style="width: 100%">
 				<thead>
 					<tr>
