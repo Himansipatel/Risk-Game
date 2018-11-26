@@ -115,9 +115,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					default:
 						break;
 					}
-					
+
 				}else if (current_player.getType().equalsIgnoreCase("Computer")) {
-					
+
 					switch (game_play.getGame_phase()) {
 
 					case "REINFORCEMENT":
@@ -146,6 +146,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 								break;
 							}
 						}
+						calculateArmiesReinforce(game_play.getGame_state(), map, game_play.getCurrent_player());
 						break;
 
 					default:
@@ -448,13 +449,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					case "REINFORCEMENT":
 						current_player.executeStrategy("REINFORCE", current_game_play);
 						current_game_play.setGame_phase("ATTACK");
-						tournament.setStatus("ATTACK STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
+						tournament.setStatus(current_game_play.getStatus()+"\n ATTACK STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
 						break;
 
 					case "ATTACK":
 						current_player.executeStrategy("ATTACK", current_game_play);
-						current_game_play.setGame_phase("ATTACK");
-						tournament.setStatus("FORTIFICATION STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
+						current_game_play.setGame_phase("FORTIFICATION");
+						tournament.setStatus(current_game_play.getStatus()+"\n FORTIFICATION STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
 						break;
 
 					case "FORTIFICATION":
@@ -463,9 +464,10 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						if (current_game_play.getCurrent_player() + 1 > current_game_play.getGame_state().size()) {
 							current_game_play.setCurrent_player(1);
 						} else {
-							current_game_play.setCurrent_player(current_game_play.getGame_play_turns() + 1);
+							current_game_play.setCurrent_player(current_game_play.getCurrent_player() + 1);
 						}						
-						tournament.setStatus("REINFORCEMENT STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
+						current_game_play.setStatus(current_game_play.getStatus()+"\n REINFORCEMENT STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
+						calculateArmiesReinforce(current_game_play.getGame_state(), current_game_play.getMap(), current_game_play.getCurrent_player());
 
 						if (current_game_play.getCurrent_player()==current_game_play.getGame_state().size()) {
 							current_game_play.setGame_play_turns(current_game_play.getGame_play_turns()+1);							
