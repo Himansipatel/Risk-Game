@@ -8,6 +8,13 @@
 	$(document)
 			.ready(
 					function() {
+						
+						//"paging":   false,
+						var computerPlayerLogsDataTable = $('#auditLogs').DataTable({
+					        "info":     false,
+					        "ordering": false,
+					        "searching": false
+					    });
 						$("#playerBehavior1").hide();
 						$("#playerBehavior2").hide();
 						$("#playerBehavior3").hide();
@@ -884,7 +891,13 @@
 											if (!allocationType) {
 												startArmyAllocation();
 											}
-											checkForNextPhaseAndDisplayOption();
+											if(checkIfCurrentPlayerIsHuman(data)){
+												checkForNextPhaseAndDisplayOption();
+											}else{
+												addMessagesToAuditLogs(data.status);
+												saveGameState();
+											}
+											stopLoading();
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -899,7 +912,6 @@
 							initStartUpPhase(false);
 							$('#mapSelectModal').modal('toggle');
 							whichPlayerChance = 1;
-							//armiesStockOfPlayer1 = 3;
 						});
 
 						$('#autoAllocate').on('click', function() {
@@ -907,7 +919,6 @@
 							initStartUpPhase(true);
 							$('#mapSelectModal').modal('toggle');
 							whichPlayerChance = 1;
-							//armiesStockOfPlayer1 = 3;
 						});
 
 						$('#check').on('click', function() {
@@ -1001,6 +1012,23 @@
 							persistGameState();
 						});
 						
+						function checkIfCurrentPlayerIsHuman(data){
+							var cid = data.current_player;
+							for(var i=0;i<data.game_state.length;i++){
+								if(cid == data.game_state[i].id && data.game_state[i].type == "Human"){
+									return true;
+									break;
+								}
+							}
+							return false;
+						}
+						
+						function addMessagesToAuditLogs(status){
+						var currStatus = status;						
+						computerPlayerLogsDataTable.row.add([ currStatus ])
+						.draw(false);			
+					}
+						
 						function saveGameState() {
 							showLoading();
 							var playerArray = [];
@@ -1072,7 +1100,14 @@
 											if(phaseBeforeCall == 'ATTACK_ARMY_MOVE' && currentPhase !='ATTACK_ARMY_MOVE'){
 												$('#attackArmiesMovementModal').modal('toggle');												
 											}
-											checkForNextPhaseAndDisplayOption();
+											
+											
+											if(checkIfCurrentPlayerIsHuman(data)){
+												checkForNextPhaseAndDisplayOption();
+											}else{
+												addMessagesToAuditLogs(data.status);
+												saveGameState();
+											}
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -1739,6 +1774,11 @@
 							saveGameState();
 						});	
 						
+						$('#continueForComputerPlayer').on('click', function(){
+							$('#computerPlayerLogsModal').modal('toggle');
+							saveGameState();	
+						});	
+						
 					});
 </script>
 
@@ -1953,6 +1993,22 @@
 				class="btn btn-primary"
 				style="background-color: black; border-color: black">Fortification</button>
 		</div>
+	</div>
+
+	<div id="computerPlayerLogs">
+		<h3>Computer Player Logs :</h3>
+		<table id="auditLogs" class="display" style="width: 100%">
+			<thead>
+				<tr>
+					<th>Computer Game Play Logs</th>
+				</tr>
+			</thead>
+			<tfoot>
+				<tr>
+					<th>Computer Game Play Logs</th>
+				</tr>
+			</tfoot>
+		</table>
 	</div>
 
 	<div id="worldDominationView">
