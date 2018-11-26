@@ -143,7 +143,9 @@ public class Cheater implements IStrategy {
 				manage_player.giveCardAtAttackEnd(game_play);
 			}
 		}
-		territories_won = territories_won.substring(0, territories_won.length()-3);
+		if (territories_won.length()>=4) {
+			territories_won = territories_won.substring(0, territories_won.length()-3);			
+		}
 		game_play.setStatus("Territories won by Cheater: "+territories_won+"\n");
 		return game_play;
 	}
