@@ -245,7 +245,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		java.io.File[] listOfGamePlayFiles = resource_folder.listFiles();
 		if (listOfGamePlayFiles.length > 0) {
 			for (java.io.File file : listOfGamePlayFiles) {
-				if (file.isFile() && file.getName().endsWith(".map")) {
+				if (file.isFile() && file.getName().endsWith(".txt")) {
 					list_of_gameplay_files.add(file.getName());
 				}
 			}
