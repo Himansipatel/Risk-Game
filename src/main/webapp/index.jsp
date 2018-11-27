@@ -42,23 +42,25 @@ body {
 	opacity: 0.8;
 }
 
-.footer{
+.footer {
 	position: fixed;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background-color:rgba(0,0,0,0.8);
-	height:130px;
-	width:100%;
-	color:white;
-	padding:10px;
-	border-radius:2px;
-	display:none;
-	overflow-y:scroll;
+	background-color: rgba(0, 0, 0, 0.8);
+	height: 180px;
+	width: 100%;
+	color: white;
+	padding: 10px;
+	border-radius: 2px;
+	display: none;
+	overflow-y: scroll;
 }
+
 .active {
 	background-color: #9288b36e;
 }
+
 </style>
 <!-- Bootstrap core CSS -->
 <link href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"
@@ -127,7 +129,7 @@ body {
 					$("#manageMap").removeClass("active");
 					$("#tournament").removeClass("active");
 					$("#jumbotron").html(data);
-					$("#footer").css('display','block');
+					$("#footer").css('display', 'block');
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -144,7 +146,7 @@ body {
 					$("#play").removeClass("active");
 					$("#manageMap").removeClass("active");
 					$("#jumbotron").html(data);
-					$("#footer").css('display','block');
+					$("#footer").css('display', 'block');
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -189,7 +191,7 @@ body {
 				to continue.</p>
 
 		</div>
-		
+
 	</div>
 	<!-- /container -->
 
