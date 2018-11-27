@@ -46,7 +46,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	@Override
 	public GamePlay managePhase(GamePlay game_play) {
 
-		Player current_player = null;
+		Player current_player       = null;
 
 		if (game_play != null) {
 
@@ -72,25 +72,30 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					switch (game_play.getGame_phase()) {
 
 					case "STARTUP":
+						game_play.setStatus("");
 						calculateArmiesReinforce(game_play.getGame_state(), map, 1);
 						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 						break;
 
 					case "REINFORCEMENT":
+						game_play.setStatus("");						
 						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 						game_play = current_player.executeStrategy("REINFORCE", game_play);
 						break;
 
 					case "TRADE_CARDS":
+						game_play.setStatus("");						
 						game_play = current_player.executeStrategy("REINFORCE", game_play);
 						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 						break;
 
 					case "ATTACK_ON":
+						game_play.setStatus("");						
 						current_player.executeStrategy("ATTACK", game_play);
 						break;
 
 					case "ATTACK_ALL_OUT":
+						game_play.setStatus("");						
 						current_player.executeStrategy("ATTACK", game_play);
 						break;
 
@@ -99,15 +104,18 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						break;
 
 					case "ATTACK_END":
+						game_play.setStatus("");						
 						current_player.executeStrategy("ATTACK", game_play);
 						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 						break;
 
 					case "FORTIFICATION":
-						current_player.executeStrategy("FORTIFY", game_play);
+						game_play.setStatus("");
+						current_player.executeStrategy("FORTIFY", game_play);							
 						break;
 
 					case "FORTIFICATION_END":
+						game_play.setStatus("");						
 						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 						calculateArmiesReinforce(game_play.getGame_state(), map, game_play.getCurrent_player());
 						break;
@@ -121,18 +129,19 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					switch (game_play.getGame_phase()) {
 
 					case "REINFORCEMENT":
+						game_play.setStatus("");						
 						current_player.executeStrategy("REINFORCE", game_play);
-						game_play.setGame_phase("ATTACK");
-						game_play.setStatus(game_play.getStatus()+"\n ATTACK STARTED FOR PLAYER: "+game_play.getCurrent_player()+"\n");
+						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 						break;
 
 					case "ATTACK":
+						game_play.setStatus("");						
 						current_player.executeStrategy("ATTACK", game_play);
-						game_play.setGame_phase("FORTIFICATION");
-						game_play.setStatus(game_play.getStatus()+"\n FORTIFICATION STARTED FOR PLAYER: "+game_play.getCurrent_player()+"\n");
+						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
 						break;
 
 					case "FORTIFICATION":
+						game_play.setStatus("");
 						current_player.executeStrategy("FORTIFY", game_play);
 						game_play.setGame_phase("REINFORCEMENT");
 						if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
@@ -142,7 +151,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						}
 						for (Player player : game_play.getGame_state()) {
 							if (player.getId()==game_play.getCurrent_player() && player.getType().equalsIgnoreCase("Computer")) {
-								game_play.setStatus(game_play.getStatus()+"\n REINFORCEMENT STARTED FOR PLAYER: "+game_play.getCurrent_player()+"\n");
+								game_play.setStatus(game_play.getStatus()+"\n REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n");
 								break;
 							}
 						}
@@ -173,38 +182,142 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * This method decides the next player and the phase during game-play.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
-	 * @param game_state State of the game at point of time holding the entire info
+	 * @param game_play State of the game at point of time holding the entire info
 	 *                   about game-play. Like the current phase and player.
 	 * @param game_phase Name of the phase which is ending.
 	 */
-	private void setCurrentPlayerAndPhase(GamePlay game_state, String game_phase) {
+	private void setCurrentPlayerAndPhase(GamePlay game_play, String game_phase) {
 
+		ManagePlayer player_manager = new ManagePlayer();
+		String old_message = "";
+		
+		Boolean attack_ok    = false;
+		Boolean fortify_ok   = false;
+		
 		switch (game_phase) {
 
 		case "STARTUP":
-			game_state.setCurrent_player(1);
-			game_state.setGame_phase("REINFORCEMENT");
+			game_play.setCurrent_player(1);
+			game_play.setGame_phase("REINFORCEMENT");
 			break;
 
 		case "REINFORCEMENT":
-			game_state.setGame_phase("ATTACK");
+			game_play.setGame_phase("ATTACK");
+			old_message    = game_play.getStatus();
+			game_play.setStatus("");
+			player_manager.checkAttackIsPossible(game_play);
+			if (game_play.getStatus().length()==0) {
+				game_play.setStatus(old_message);
+				attack_ok = true;
+			}else {
+				game_play.setGame_phase("FORTIFICATION");
+				game_play.setStatus(old_message+" \n "+game_play.getStatus());
+				old_message = game_play.getStatus();
+				game_play.setStatus("");
+				player_manager.checkFortificationIsPossible(game_play);
+				if (game_play.getStatus().length()==0) {
+					game_play.setStatus(old_message);
+					fortify_ok = true;
+				}else {					
+					old_message = old_message + "\n" +game_play.getStatus();
+					if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+						game_play.setCurrent_player(1);
+					} else {
+						game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+					}
+					game_play.setGame_phase("REINFORCEMENT");
+				}
+			}
+			for (Player player : game_play.getGame_state()) {
+				if (player.getId()==game_play.getCurrent_player() && player.getType().equalsIgnoreCase("Computer")) {
+					if (attack_ok) {
+						game_play.setStatus(old_message+"\n ATTACK WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n");						
+					}else if (!attack_ok && fortify_ok) {
+						game_play.setStatus(old_message+"\n FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n");
+					}else if (!attack_ok && !fortify_ok){
+						game_play.setStatus(old_message+"\n REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n");
+						calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());
+					}
+					break;
+				}else if (player.getId()==game_play.getCurrent_player() && player.getType().equalsIgnoreCase("Human")) {
+					game_play.setStatus(old_message+"\n");
+					if (!attack_ok && !fortify_ok) {
+						calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());						
+					}
+					break;							
+				}
+			}			
 			break;
 
 		case "TRADE_CARDS":
-			game_state.setGame_phase("REINFORCEMENT");
+			game_play.setGame_phase("REINFORCEMENT");
 			break;
+		
+		case "ATTACK":
+			game_play.setGame_phase("FORTIFICATION");
 
+			old_message = game_play.getStatus();
+			game_play.setStatus("");
+			player_manager.checkFortificationIsPossible(game_play);
+			if (game_play.getStatus().length()==0) {
+				game_play.setStatus(old_message);
+				fortify_ok = true;
+			}else {
+				game_play.setGame_phase("REINFORCEMENT");
+				old_message = old_message + "\n" +game_play.getStatus();
+				if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+					game_play.setCurrent_player(1);
+				} else {
+					game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+				}
+			}
+			
+			for (Player player : game_play.getGame_state()) {
+				if (player.getId()==game_play.getCurrent_player() && player.getType().equalsIgnoreCase("Computer")) {
+					if (fortify_ok) {
+						game_play.setStatus(old_message+"\n FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n");
+					}else {
+						game_play.setStatus(old_message+"\n REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n");
+						calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());
+					}
+					break;
+				}else if (player.getId()==game_play.getCurrent_player() && player.getType().equalsIgnoreCase("Human")) {
+					game_play.setStatus(old_message+"\n");
+					if (!fortify_ok) {
+						calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());						
+					}
+					break;							
+				}
+			}			
+			break;
+			
 		case "ATTACK_END":
-			game_state.setGame_phase("FORTIFICATION");
+			game_play.setGame_phase("FORTIFICATION");
+			old_message = game_play.getStatus();
+			game_play.setStatus("");
+			player_manager.checkFortificationIsPossible(game_play);
+			if (game_play.getStatus().length()==0) {
+				game_play.setStatus(old_message);							
+			}else {
+				if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+					game_play.setCurrent_player(1);
+				} else {
+					game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+				}
+				game_play.setGame_phase("REINFORCEMENT");
+				calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());
+				game_play.setStatus(old_message+" \n "+game_play.getStatus());
+			}
+
 			break;
 
 		case "FORTIFICATION_END":
-			if (game_state.getCurrent_player() + 1 > game_state.getGame_state().size()) {
-				game_state.setCurrent_player(1);
+			if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+				game_play.setCurrent_player(1);
 			} else {
-				game_state.setCurrent_player(game_state.getCurrent_player() + 1);
+				game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 			}
-			game_state.setGame_phase("REINFORCEMENT");
+			game_play.setGame_phase("REINFORCEMENT");
 			break;
 
 		default:
@@ -447,18 +560,21 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					switch (current_game_play.getGame_phase()) {
 
 					case "REINFORCEMENT":
+						current_game_play.setStatus("");						
 						current_player.executeStrategy("REINFORCE", current_game_play);
-						current_game_play.setGame_phase("ATTACK");
-						tournament.setStatus(current_game_play.getStatus()+"\n ATTACK STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
+						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						tournament.setStatus("");
 						break;
 
 					case "ATTACK":
+						current_game_play.setStatus("");
 						current_player.executeStrategy("ATTACK", current_game_play);
-						current_game_play.setGame_phase("FORTIFICATION");
-						tournament.setStatus(current_game_play.getStatus()+"\n FORTIFICATION STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
+						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
+						tournament.setStatus("");
 						break;
 
 					case "FORTIFICATION":
+						current_game_play.setStatus("");
 						current_player.executeStrategy("FORTIFY", current_game_play);
 						current_game_play.setGame_phase("REINFORCEMENT");
 						if (current_game_play.getCurrent_player() + 1 > current_game_play.getGame_state().size()) {
@@ -466,7 +582,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						} else {
 							current_game_play.setCurrent_player(current_game_play.getCurrent_player() + 1);
 						}						
-						current_game_play.setStatus(current_game_play.getStatus()+"\n REINFORCEMENT STARTED FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
+						current_game_play.setStatus(current_game_play.getStatus()+"\n REINFORCEMENT WILL START FOR PLAYER: "+current_game_play.getCurrent_player()+"\n");
 						calculateArmiesReinforce(current_game_play.getGame_state(), current_game_play.getMap(), current_game_play.getCurrent_player());
 
 						if (current_game_play.getCurrent_player()==current_game_play.getGame_state().size()) {
