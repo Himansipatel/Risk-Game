@@ -49,7 +49,13 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		String file_name = game_play.getFile_name();
 		String game_phase = game_play.getGame_phase();
 		int current_player_id = game_play.getCurrent_player();
-		String status_message = game_play.getStatus();
+		String status_message;
+		if(game_play.getStatus()=="") {
+			status_message=null;
+		}else {
+			status_message=game_play.getStatus();
+		}
+		
 		int game_play_id = 1;
 		int game_play_turn = game_play.getGame_play_turns();
 		List<Domination> domination_list = game_play.getDomination();
@@ -84,7 +90,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 					player_file_writer.println();
 //				Getting territories occupied by each player and writing it to file
 					player_file_writer.println("[Player Continent list]");
-					if (domination_list.get(domination_index).getPlayer_continent_list().size() > 0) {
+					if (domination_list.get(domination_index).getPlayer_continent_list()!=null && domination_list.get(domination_index).getPlayer_continent_list().size() > 0) {
 						for (int j = 0; j < domination_list.get(domination_index).getPlayer_continent_list()
 								.size(); j++) {
 							player_file_writer
