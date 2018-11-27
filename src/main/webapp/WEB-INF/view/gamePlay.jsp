@@ -114,9 +114,74 @@
 								});
 						
 						
-						$('#mapSelectModal').modal({
-							backdrop : 'static',
-							keyboard : false
+						function selectMapModal(){
+							$('#mapSelectModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						}
+						
+						function chooseNewAndLoadGameModal(){
+							$('#chooseNewAndLoadModal').modal({
+								backdrop : 'static',
+								keyboard : false
+							});
+						}
+						
+						$
+						.ajax({
+							type : "GET",
+							url : "gamePlay/getSavedGames",
+							success : function(data) {
+								$('#savedGames').find('option')
+										.remove();
+								for (var i = 0; i < data.length; i++) {
+									$('#savedGames').append(
+											$('<option>', {
+												value : data[i],
+												text : data[i]
+											}));
+								}
+								stopLoading();
+								$('#chooseNewAndLoadModal').modal('toggle');
+							},
+							error : function(XMLHttpRequest,
+									textStatus, errorThrown) {
+								alert("Failure fetching map");
+								stopLoading();
+							}
+						});
+						
+						$('#loadGame').on('click', function(){
+							$('#chooseNewAndLoadModal').modal('toggle');
+							fetchGameState();
+						});
+						$('#newGame').on('click', function(){
+							showLoading();
+							$('#chooseNewAndLoadModal').modal('toggle');
+							$
+							.ajax({
+								type : "GET",
+								url : "maps/getAvailableMaps",
+								success : function(data) {
+									$('#availableMapsName').find('option')
+											.remove();
+									for (var i = 0; i < data.length; i++) {
+										$('#availableMapsName').append(
+												$('<option>', {
+													value : data[i],
+													text : data[i]
+												}));
+									}
+									stopLoading();
+									selectMapModal();
+								},
+								error : function(XMLHttpRequest,
+										textStatus, errorThrown) {
+									alert("Failure fetching map");
+									stopLoading();
+								}
+							});	
 						});
 						
 						$("#armiesToShift").keydown(function (e) {
@@ -235,27 +300,6 @@
 						$("#continentsDesc_previous").css("color", "black");
 						$("#continentsDesc_next").css("color", "black");
 						
-						$
-								.ajax({
-									type : "GET",
-									url : "maps/getAvailableMaps",
-									success : function(data) {
-										$('#availableMapsName').find('option')
-												.remove();
-										for (var i = 0; i < data.length; i++) {
-											$('#availableMapsName').append(
-													$('<option>', {
-														value : data[i],
-														text : data[i]
-													}));
-										}
-									},
-									error : function(XMLHttpRequest,
-											textStatus, errorThrown) {
-										alert("Failure fetching map");
-									}
-								});
-
 						function clearGameState() {
 							var noOfPlayers = $("#noOfPlayer option:selected")
 									.val();
@@ -933,7 +977,7 @@
 												addMessagesToAuditLogs(data.status);
 												saveGameState();
 											}
-											stopLoading();
+											alert(data.status);
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -1065,6 +1109,32 @@
 						.draw(false);			
 					}
 						
+						function fetchGameState(){
+							var selectedSavedGame = $( "#savedGames option:selected" ).text();
+							$
+							.ajax({
+								type : "GET",
+								data: $.param({ savedGameName: selectedSavedGame }),
+								url : "gamePlay/fetchGame",
+								success : function(data) {
+									data_game = data;
+									clearGameState();
+									noOfPlayingPlayer = data.game_state.length;
+									parseGamePlayData(data.game_state);
+									//parse domination view
+									parseDominationView(data.domination);
+									currentMapName = (data.file_name);
+									currentPhase = data.game_phase;
+									whichPlayerChance = data.current_player;
+								},
+								error : function(XMLHttpRequest,
+										textStatus, errorThrown) {
+									stopLoading();
+									alert("Startup Phase Failure");
+								}
+							});
+						}
+						
 						function saveGameState() {
 							showLoading();
 							var playerArray = [];
@@ -1142,6 +1212,7 @@
 												checkForNextPhaseAndDisplayOption();
 											}else{
 												addMessagesToAuditLogs(data.status);
+												stopLoading();
 												saveGameState();
 											}
 										},
@@ -2456,6 +2527,33 @@
 					<button id="attackArmiesMovementDone" type="button"
 						class="btn btn-primary"
 						style="background-color: black; border-color: black">Move</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Modal Attack Armies movement -->
+	<div class="modal fade" id="chooseNewAndLoadModal" tabindex="-1"
+		role="dialog" aria-labelledby="chooseNewAndLoadModalTitle"
+		aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLongTitle">Options :</h5>
+				</div>
+				<div class="modal-body">
+					<p>Please select new for new game or load saved game</p>
+					<label for="savedGames">Saved Game : </label> <select
+						class="form-control form-control-sm" id="savedGames">
+						<option></option>
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button id="newGame" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">New
+						Game</button>
+					<button id="loadGame" type="button" class="btn btn-primary"
+						style="background-color: black; border-color: black">Load
+						Game</button>
 				</div>
 			</div>
 		</div>
