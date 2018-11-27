@@ -364,7 +364,7 @@
 												}
 												if (data.status != null
 														&& data.status != '') {
-													alert(data.status);
+													$("#footer p").prepend(data.status.replace(/\n/g, "<br/>")).append("<br/>");
 												}
 											} else {
 												alert("Error while loading map");
@@ -760,8 +760,8 @@
 								armySelectionInStartupPhase(
 										currentPlayerDTable,
 										currentPlayerArmyStock);
-								alert("Player " + newPlayerNo
-										+ " - Allocate your army");
+								$("#footer p").prepend("Player " + newPlayerNo
+										+ " - Allocate your army<br/>");
 							} else {
 								$('#mapSelectArmy').modal('toggle');
 								saveGameState();
@@ -909,7 +909,7 @@
 										success : function(data) {
 											data_game = data;
 											if(typeof(data.gui_map) == undefined || data.gui_map == null){
-												alert(data.status);
+												$("#footer p").prepend(data.status.replace(/\n/g, "<br/>")).append("<br/>");
 												stopLoading();
 												return;
 											}
@@ -1116,7 +1116,7 @@
 													|| currentPhase =='FORTIFICATION'
 													|| currentPhase =='ATTACK_ARMY_MOVE') {
 												if(data.status != null && data.status != ''){
-													alert(data.status);
+													$("#footer p").prepend(data.status.replace(/\n/g, "<br/>")).append("<br/>");
 												}
 											}
 											if (currentPhase != 'ATTACK'
@@ -1124,11 +1124,11 @@
 													&& currentPhase != "ATTACK_ALL_OUT" 
 													&& currentPhase != "FORTIFICATION"
 													&& currentPhase != "ATTACK_ARMY_MOVE") {
-												alert(currentPhase + " ended");
+												$("#footer p").prepend(currentPhase + " ended<br/>");
 											}
 											currentPhase = data.game_phase;
 											if(data.status == 'No more attacks'){
-												alert("Attack ended");
+												$("#footer p").prepend("Attack ended<br/>");
 												hideAttackButtonForPlayer();												
 											}
 											whichPlayerChance = data.current_player;

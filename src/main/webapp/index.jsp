@@ -42,6 +42,20 @@ body {
 	opacity: 0.8;
 }
 
+.footer{
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background-color:rgba(0,0,0,0.8);
+	height:130px;
+	width:100%;
+	color:white;
+	padding:10px;
+	border-radius:2px;
+	display:none;
+	overflow-y:scroll;
+}
 .active {
 	background-color: #9288b36e;
 }
@@ -97,7 +111,6 @@ body {
 					$("#play").removeClass("active");
 					$("#tournament").removeClass("active");
 					$("#jumbotron").html(data);
-
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -114,7 +127,7 @@ body {
 					$("#manageMap").removeClass("active");
 					$("#tournament").removeClass("active");
 					$("#jumbotron").html(data);
-
+					$("#footer").css('display','block');
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -131,7 +144,7 @@ body {
 					$("#play").removeClass("active");
 					$("#manageMap").removeClass("active");
 					$("#jumbotron").html(data);
-
+					$("#footer").css('display','block');
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -147,7 +160,7 @@ body {
 	<div class="container">
 
 		<nav class="navbar navbar-expand-lg navbar-light bg-light"
-			style="background-color: #16161780 !important; border: 1px solid #5094da">
+			style="background-color: #16161780 !important; border: 1px solid #5094da;">
 			<a class="navbar-brand" href="#" style="color: #5d88d6">Risk</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarNav" aria-controls="navbarNav"
@@ -170,15 +183,19 @@ body {
 
 		<!-- Main component for a primary marketing message or call to action -->
 		<div class="jumbotron" id="jumbotron"
-			style="background-color: #d7e2fd8f">
+			style="background-color: #d7e2fd8f;">
 			<h1>Risk Game</h1>
 			<p>Welcome to the Risk Game. Please choose navigation tool above
 				to continue.</p>
 
 		</div>
-
+		
 	</div>
 	<!-- /container -->
+
+	<div class="footer container-fluid" id="footer">
+		<p>Game Starts</p>
+	</div>
 
 	<div id='loadingmsg' style='display: none;'>
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img
