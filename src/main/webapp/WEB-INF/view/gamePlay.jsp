@@ -408,7 +408,7 @@
 												}
 												if (data.status != null
 														&& data.status != '') {
-													alert(data.status);
+													$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
 												}
 											} else {
 												alert("Error while loading map");
@@ -804,8 +804,8 @@
 								armySelectionInStartupPhase(
 										currentPlayerDTable,
 										currentPlayerArmyStock);
-								alert("Player " + newPlayerNo
-										+ " - Allocate your army");
+								$("#footer p").prepend("Player " + newPlayerNo
+										+ " - Allocate your army<br/>");
 							} else {
 								$('#mapSelectArmy').modal('toggle');
 								saveGameState();
@@ -953,7 +953,7 @@
 										success : function(data) {
 											data_game = data;
 											if(typeof(data.gui_map) == undefined || data.gui_map == null){
-												alert(data.status);
+												$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
 												stopLoading();
 												return;
 											}
@@ -977,7 +977,7 @@
 												addMessagesToAuditLogs(data.status);
 												saveGameState();
 											}
-											alert(data.status);
+											$("#footer p").prepend(data.status.replace(/\n/,"<br/>")+"<br/>");
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
@@ -1186,7 +1186,7 @@
 													|| currentPhase =='FORTIFICATION'
 													|| currentPhase =='ATTACK_ARMY_MOVE') {
 												if(data.status != null && data.status != ''){
-													alert(data.status);
+													$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
 												}
 											}
 											if (currentPhase != 'ATTACK'
@@ -1194,11 +1194,11 @@
 													&& currentPhase != "ATTACK_ALL_OUT" 
 													&& currentPhase != "FORTIFICATION"
 													&& currentPhase != "ATTACK_ARMY_MOVE") {
-												alert(currentPhase + " ended");
+												$("#footer p").prepend("<br/>"+currentPhase + " ended<br/>");
 											}
 											currentPhase = data.game_phase;
 											if(data.status == 'No more attacks'){
-												alert("Attack ended");
+												$("#footer p").prepend("<br/>Attack ended<br/>");
 												hideAttackButtonForPlayer();												
 											}
 											whichPlayerChance = data.current_player;

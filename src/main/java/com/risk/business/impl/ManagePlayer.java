@@ -797,8 +797,8 @@ public class ManagePlayer implements IManagePlayer {
 		int dice_result_flag = 0;
 		int attacker_dice_result = random.nextInt(6) + 1;
 		int defender_dice_result = random.nextInt(6) + 1;
-		roll_dice_message += "Attacker Rolls 1 dice which showed number " + attacker_dice_result + " and ";
-		roll_dice_message += "Defender Rolls 1 dice which showed number " + defender_dice_result + "\n";
+		roll_dice_message += "Attacker Rolls 1 dice on which max showed number " + attacker_dice_result + " and ";
+		roll_dice_message += "Defender Rolls 1 dice on which max showed number " + defender_dice_result + "\n";
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
 			roll_dice_message += "Winner : Attacker";
@@ -823,7 +823,7 @@ public class ManagePlayer implements IManagePlayer {
 		int dice_result_flag = 0;
 		int attacker_dice_result = random.nextInt(6) + 1;
 		int defender_dice_result = Math.max(random.nextInt(6) + 1, random.nextInt(6) + 1);
-		roll_dice_message += "Attacker Rolls 1 dice which showed number " + attacker_dice_result + " and ";
+		roll_dice_message += "Attacker Rolls 1 dice on which max showed number " + attacker_dice_result + " and ";
 		roll_dice_message += "Defender Rolls 2 dice on which max showed number " + defender_dice_result + "\n";
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
@@ -850,7 +850,7 @@ public class ManagePlayer implements IManagePlayer {
 		int attacker_dice_result = Math.max(random.nextInt(6) + 1, random.nextInt(6) + 1);
 		int defender_dice_result = random.nextInt(6) + 1;
 		roll_dice_message += "Attacker Rolls 2 dice on which max showed number " + attacker_dice_result + " and ";
-		roll_dice_message += "Defender Rolls 1 dice which showed number " + defender_dice_result + "\n";
+		roll_dice_message += "Defender Rolls 1 dice on which max showed number " + defender_dice_result + "\n";
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
 			roll_dice_message += "Winner : Attacker";
@@ -949,8 +949,8 @@ public class ManagePlayer implements IManagePlayer {
 		int attacker_dice_result = Math.max(Math.max(random.nextInt(6) + 1, random.nextInt(6) + 1),
 				random.nextInt(6) + 1);
 		int defender_dice_result = random.nextInt(6) + 1;
-		roll_dice_message += "Attacker Rolls 3 dice which showed number " + attacker_dice_result + " and ";
-		roll_dice_message += "Defender Rolls 1 dice which showed number " + defender_dice_result + "\n";
+		roll_dice_message += "Attacker Rolls 3 dice on which max showed number " + attacker_dice_result + " and ";
+		roll_dice_message += "Defender Rolls 1 dice on which max showed number " + defender_dice_result + "\n";
 
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
