@@ -117,7 +117,7 @@ public class ManagePlayerTest {
 		game_play.setAttack(attack);
 		game_play.getGame_state().get(0).executeStrategy("ATTACK", game_play);
 		String message = game_play.getStatus();
-		assertTrue(containsWon(message));
+		assertTrue(message.contains("Winner"));
 	}
 
 	/**
@@ -362,11 +362,6 @@ public class ManagePlayerTest {
 		game_play.getGame_state().get(0).executeStrategy("FORTIFY", game_play);
 		String message = game_play.getStatus();
 		assertTrue(message.contains("move"));
-	}
-
-	@Ignore
-	public boolean containsWon(String s) {
-		return s.contains("Won");
 	}
 
 	@Ignore

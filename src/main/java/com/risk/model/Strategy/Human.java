@@ -11,8 +11,8 @@ import com.risk.model.GamePlayTerritory;
 import com.risk.model.Player;
 
 /**
- * Concrete implementation of Human Strategy in terms of
- * Strategy design Pattern, during our GamePlay.
+ * Concrete implementation of Human Strategy in terms of Strategy design
+ * Pattern, during our GamePlay.
  * 
  * @author <a href="mailto:apoorv.semwal20@gmail.com">Apoorv Semwal</a>
  * @version 0.0.1
@@ -22,7 +22,7 @@ public class Human implements IStrategy {
 	/**
 	 * Reinforcement for a Human Player as per Strategy Design Pattern.
 	 * 
-	 * @see com.risk.business.IStrategy#reinforce(com.risk.model.GamePlay) 
+	 * @see com.risk.business.IStrategy#reinforce(com.risk.model.GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param game_play state of the game i.e. entire game related info when
 	 *                  reinforcement starts for a player.
@@ -38,7 +38,7 @@ public class Human implements IStrategy {
 
 	/**
 	 * Attack for a Human Player as per Strategy Design Pattern.
-	 *  
+	 * 
 	 * @see com.risk.business.IStrategy#attack(com.risk.model.GamePlay)
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
 	 * @param game_play state of the game i.e. entire game related info when attack
@@ -46,11 +46,11 @@ public class Human implements IStrategy {
 	 * @return GamePlay updated state of the game after attack phase ends.
 	 */
 	public GamePlay attack(GamePlay game_play) {
-		
+
 		boolean is_territory_occupied = false;
-		
+
 		ManagePlayer player_manager = new ManagePlayer();
-		
+
 		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ARMY_MOVE")) {
 			player_manager.attackArmyMove(game_play);
 			return game_play;
@@ -111,19 +111,18 @@ public class Human implements IStrategy {
 			attacker_dice_no = game_play.getAttack().getAttacker_dice_no();
 			defender_dice_no = game_play.getAttack().getDefender_dice_no();
 
-			String valid_attack_message = player_manager.checkForValidAttack(attacker_terrtiory_armies, defender_territory_armies,
-					attacker_dice_no, defender_dice_no);
+			String valid_attack_message = player_manager.checkForValidAttack(attacker_terrtiory_armies,
+					defender_territory_armies, attacker_dice_no, defender_dice_no);
 			if (valid_attack_message.trim().length() == 0) {
 				// Roll Dice
 				List<Integer> attack_result = player_manager.rollDiceDecision(attacker_dice_no, defender_dice_no);
+				attack_message_list.add(player_manager.getRollDiceMessage());
 				for (int i = 0; i < attack_result.size(); i++) {
 					int result = attack_result.get(i);
 					if (result == 1) {
 						// Attacker Won
 						GamePlayTerritory def_obj = defender_territory_list.get(0);
 						def_obj.setNumber_of_armies(def_obj.getNumber_of_armies() - 1);
-						attack_message = "Attacker Won";
-						attack_message_list.add(attack_message);
 						if (def_obj.getNumber_of_armies() == 0) {
 							attacker_territory_list.add(def_obj);
 							attack_message = "Attacker Occupies Defender Territory";
@@ -133,8 +132,6 @@ public class Human implements IStrategy {
 						// Defender Won
 						GamePlayTerritory att_obj = attacker_territory_list.get(0);
 						att_obj.setNumber_of_armies(att_obj.getNumber_of_armies() - 1);
-						attack_message = "Defender Won";
-						attack_message_list.add(attack_message);
 					}
 				}
 
