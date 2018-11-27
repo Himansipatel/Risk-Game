@@ -2558,7 +2558,7 @@
 			</div>
 		</div>
 	</div>
-	<div>
+	<div style="margin-bottom: 8%">
 		<button id="persistGameState" type="button" class="btn btn-primary"
 			style="background-color: black; border-color: black">Save</button>
 	</div>
