@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -238,5 +239,41 @@ public class GamePlayController {
 			@RequestBody Tournament tournament) throws Exception {
 		tournament = iManageGamePlay.playTournamentMode(tournament);
 		return tournament;
+	}
+
+	/**
+	 * This function fetches all available saved games from resource folder
+	 * 
+	 * @param request  Request Payload
+	 * @param response An object to assist a servlet in sending a response to the
+	 *                 client
+	 * @return List of Available Saved Games
+	 * @throws Exception NullPointerException when list of player is empty
+	 */
+	@RequestMapping(value = "/getSavedGames", method = RequestMethod.GET)
+	@ResponseBody
+	public List<String> getSavedGames(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		List<String> availableGames = iManageGamePlay.fetchGamePlays();
+		return availableGames;
+	}
+
+	/**
+	 * This method is an abstraction for the process of retrieving a saved game
+	 * state.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request       Request Payload
+	 * @param response      An object to assist a servlet in sending a response to
+	 *                      the client
+	 * @param savedGameName Saved Game Name
+	 * @return GamePlay Object
+	 * @throws Exception NullPointerException when map object is null
+	 */
+	@RequestMapping(value = "/fetchGame", method = RequestMethod.GET)
+	@ResponseBody
+	public GamePlay fetchGame(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "savedGameName", required = false) String savedGameName) throws Exception {
+		GamePlay gamePlay = iManageGamePlay.fetchGamePlay(savedGameName);
+		return gamePlay;
 	}
 }
