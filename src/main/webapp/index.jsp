@@ -60,7 +60,6 @@ body {
 .active {
 	background-color: #9288b36e;
 }
-
 </style>
 <!-- Bootstrap core CSS -->
 <link href="webjars/bootstrap/4.1.3/css/bootstrap.min.css"
@@ -113,6 +112,7 @@ body {
 					$("#play").removeClass("active");
 					$("#tournament").removeClass("active");
 					$("#jumbotron").html(data);
+					$("#footer").css('display', 'none');
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -129,7 +129,10 @@ body {
 					$("#manageMap").removeClass("active");
 					$("#tournament").removeClass("active");
 					$("#jumbotron").html(data);
-					$("#footer").css('display', 'block');
+					$("#footer").css({
+						'display' : 'block',
+						'height' : '180px'
+					});
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -146,7 +149,11 @@ body {
 					$("#play").removeClass("active");
 					$("#manageMap").removeClass("active");
 					$("#jumbotron").html(data);
-					$("#footer").css('display', 'block');
+					$("#footer").css({
+						'display' : 'block',
+						'height' : '350px'
+					});
+					$("#footer p").text("Tournament starts");
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
