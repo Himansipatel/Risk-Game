@@ -741,7 +741,7 @@ public class ManagePlayer implements IManagePlayer {
 			int player_territory_count = player_occupied_territory.size();
 			if (player_territory_count == total_territory_in_game) {
 				game_play.setGame_phase("GAME_FINISH");
-				game_play.setStatus("Player" + game_play.getCurrent_player() + " Winner Winner Chicken Dinner !!");
+				game_play.setStatus("\nCongrats Player" + game_play.getCurrent_player() + "You are the Winner for this Game!!!!\n");
 				return game_play;
 			}
 		}

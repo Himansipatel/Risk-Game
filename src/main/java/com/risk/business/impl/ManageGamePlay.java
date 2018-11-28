@@ -24,6 +24,7 @@ import com.risk.model.Map;
 import com.risk.model.Player;
 import com.risk.model.Territory;
 import com.risk.model.Tournament;
+import com.risk.model.TournamentResults;
 import com.risk.model.Strategy.Aggressive;
 import com.risk.model.Strategy.Benevolent;
 import com.risk.model.Strategy.Cheater;
@@ -465,7 +466,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					game_play.setGame_phase("REINFORCEMENT");
 					game_play.setFree_cards(free_cards);
 					game_play.setGame_play_id(i);
-					String status = "Game ID: "+i+" being played on Map: "+map+"\n"+"REINFORCEMENT WILL START FOR PLAYER: 1\n";
+					String status = "REINFORCEMENT WILL START FOR PLAYER: 1\n"+"Game ID: "+i+" being played on Map: "+map+"\n";
 					game_play.setStatus(status);
 
 					update_tournament_gameplay(game_play, tournament_inp.getMultipleStrategies());
@@ -579,6 +580,10 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					case "ATTACK":
 						current_game_play.setStatus("");
 						current_player.executeStrategy("ATTACK", current_game_play);
+						if (current_game_play.getGame_phase().equalsIgnoreCase("GAME_FINISH")) {
+							updateNewGamePlay(tournament);
+							checkIfTournamentOver(tournament);
+						}
 						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
 						tournament.setStatus("");
 						break;
@@ -605,9 +610,10 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 					if (current_game_play.getGame_play_turns()==tournament.getMax_turns()) {
 						tournament.setCurrent_game_play_id(tournament.getCurrent_game_play_id()+1);
-						
+
 						if (tournament.getCurrent_game_play_id()>tournament.getTournament().size()) {
 							tournament.setStatus("TOURNAMENT_OVER");
+							fillTournamentResult(tournament);
 						}
 					}
 					return tournament;
@@ -620,6 +626,65 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		return tournament;
 	}
 
+	/**
+	 * This method checks if the tournament is over or not
+	 * @param tournament Tournament object
+	 */
+	private void checkIfTournamentOver(Tournament tournament) {
+		int finished_game = 0;
+		for (GamePlay gamePlay : tournament.getTournament()) {
+			if (gamePlay.getStatus().equalsIgnoreCase("GAME_FINISH")) {
+				finished_game++;
+			}
+		}
+		if (finished_game==tournament.getTournament().size()) {
+			tournament.setStatus("TOURNAMENT_OVER");
+			fillTournamentResult(tournament);
+		}
+	}
+
+	/**
+	 * This method shifts the tournament to a new GamePlay as the previous one is over.
+	 * @param tournament Tournament object
+	 */
+	private void updateNewGamePlay(Tournament tournament) {
+		tournament.setCurrent_game_play_id(tournament.getCurrent_game_play_id()+1);
+		if (tournament.getCurrent_game_play_id()>tournament.getTournament().size()) {
+			tournament.setStatus("TOURNAMENT_OVER");
+			fillTournamentResult(tournament);
+		}
+	}
+
+	/**
+	 * This method prepares and populates the final result of the tournament
+	 * @param tournament Tournament object
+	 */
+	private void fillTournamentResult(Tournament tournament) {
+		
+		TournamentResults tournament_results = new TournamentResults();
+		
+		java.util.Map<String, List<GamePlay>> each_map_results = new HashMap<>();
+		List<GamePlay> game_plays = null;
+		List<String> unique_maps  = new ArrayList<>();
+		
+		for (GamePlay gamePlay : tournament.getTournament()) {
+			unique_maps.add(gamePlay.getFile_name());
+		}
+		
+		for (String string : unique_maps) {
+			game_plays = new ArrayList<>();
+			for (GamePlay gamePlay : tournament.getTournament()) {
+				if (gamePlay.getFile_name().equalsIgnoreCase(string)) {
+					game_plays.add(gamePlay);
+				}
+			}
+			each_map_results.put(string, game_plays);
+		}
+		
+		tournament_results.setEach_map_results(each_map_results);
+		tournament.setTournament_results(tournament_results);		
+	}
+	
 	/**
 	 * @see com.risk.business.IManageGamePlay#fetchGamePlay(String)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
