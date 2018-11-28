@@ -52,6 +52,8 @@ public class GamePlayController {
 
 	static GamePlay gamePlay;
 
+	static Tournament tournament;
+
 	/**
 	 * This function renders the gamePlay.jsp file on which players can start
 	 * playing their game.
@@ -217,7 +219,7 @@ public class GamePlayController {
 	@ResponseBody
 	public Tournament startTournament(HttpServletRequest request, HttpServletResponse response,
 			@RequestBody TournamentChoices tournamentChoices) throws Exception {
-		Tournament tournament = iManageGamePlay.prepareTournamentGamePlay(tournamentChoices);
+		tournament = iManageGamePlay.prepareTournamentGamePlay(tournamentChoices);
 		return tournament;
 	}
 
@@ -236,7 +238,7 @@ public class GamePlayController {
 	@RequestMapping(value = "/playTournament", method = RequestMethod.POST)
 	@ResponseBody
 	public Tournament playTournament(HttpServletRequest request, HttpServletResponse response,
-			@RequestBody Tournament tournament) throws Exception {
+			@RequestBody Tournament tournamentFromView) throws Exception {
 		tournament = iManageGamePlay.playTournamentMode(tournament);
 		return tournament;
 	}

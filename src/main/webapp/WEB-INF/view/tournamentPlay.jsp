@@ -4,6 +4,13 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		
+		var auditLogsDataTable = $('#auditLogs').DataTable({
+	        "paging":   false,
+	        "ordering": false,
+	        "info":     false,
+	        "searching": false
+	    });
+		
 		$("#noOfGames").keydown(function (e) {
 	        // Allow: backspace, delete, tab, escape, enter and .
 	        if ($.inArray(e.keyCode, [46, 8, 9, 27, 13, 110]) !== -1 ||
@@ -86,6 +93,52 @@
 			return tournamentChoices;
 		}
 		
+		function addMessagesToAuditLogs(data){
+			var currentId = data.current_game_play_id;
+			var tourStatus = data.status;
+			var currStatus;
+			for (var i=0;i<data.tournament.length;i++){
+				if(currentId == data.tournament[i].game_play_id){
+					currStatus = data.tournament[i].status;
+				}
+			}
+			while(tourStatus != null && (tourStatus.includes("/n") || tourStatus.includes("\n"))){
+				tourStatus = tourStatus.replace(/\n/g, "<br/>");
+			}
+			while(currStatus != null && (currStatus.includes("/n") || currStatus.includes("\n"))){
+				currStatus = currStatus.replace(/\n/g, "<br/>");
+			}
+			
+			auditLogsDataTable.row.add([ tourStatus,currStatus ])
+			.draw(false);			
+		}
+		
+		function continueTournament(data){
+			var a = JSON.stringify(data);
+			$
+			.ajax({
+				type : "POST",
+				url : "gamePlay/playTournament",
+				dataType : "json",
+				data : a,
+				contentType : "application/json",
+				success : function(data) {
+					stopLoading();
+					if(data.status != 'TOURNAMENT_OVER'){
+						addMessagesToAuditLogs(data);
+						continueTournament(data);
+					}else{
+						alert(data.status);
+					}
+				},
+				error : function(XMLHttpRequest,
+						textStatus, errorThrown) {
+					stopLoading();
+					alert("Startup Phase Failure");
+				}
+			});			
+		}
+		
 		function startTournament(){
 			showLoading();
 			var tournamentChoices = fetchTournamentChoices();
@@ -104,7 +157,11 @@
 				contentType : "application/json",
 				success : function(data) {
 					stopLoading();
-					alert("success");
+					$('#choicesSelectModal').modal('toggle');
+					if(data.status != 'TOURNAMENT_OVER'){
+						addMessagesToAuditLogs(data);
+						continueTournament(data);
+					}
 				},
 				error : function(XMLHttpRequest,
 						textStatus, errorThrown) {
@@ -125,6 +182,20 @@
 
 </head>
 <body>
+	<table id="auditLogs" class="display" style="width: 100%">
+		<thead>
+			<tr>
+				<th>Tournament Logs</th>
+				<th>Current Game Play Logs</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				<th>Tournament Logs</th>
+				<th>Current Game Play Logs</th>
+			</tr>
+		</tfoot>
+	</table>
 	<!-- Modal map selection -->
 	<div class="modal fade" id="choicesSelectModal" tabindex="-1"
 		role="dialog" aria-labelledby="choicesSelectModalTitle"
