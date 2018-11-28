@@ -232,6 +232,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					game_play.setStatus(old_message);
 					fortify_ok = true;
 				}else {					
+					if (game_play.getCurrent_player()==game_play.getGame_state().size()) {
+						game_play.setGame_play_turns(game_play.getGame_play_turns()+1);							
+					}					
 					old_message = game_play.getStatus()+"\n"+old_message+"\n";
 					if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
 						game_play.setCurrent_player(1);
@@ -277,6 +280,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				game_play.setStatus(old_message);
 				fortify_ok = true;
 			}else {
+				if (game_play.getCurrent_player()==game_play.getGame_state().size()) {
+					game_play.setGame_play_turns(game_play.getGame_play_turns()+1);							
+				}
 				game_play.setGame_phase("REINFORCEMENT");
 				old_message = game_play.getStatus()+"\n"+old_message+"\n";
 				if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
@@ -290,7 +296,8 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					} else {
 						game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 					}							
-				}				
+				}
+				
 			}
 
 			for (Player player : game_play.getGame_state()) {
@@ -623,6 +630,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 							updateNewGamePlay(tournament);
 							checkIfTournamentOver(tournament);
 						}
+						if (tournament.getStatus().equalsIgnoreCase("TOURNAMENT_OVER\n")) {
+							break;
+						}
 						setCurrentPlayerAndPhase(current_game_play, current_game_play.getGame_phase());
 						tournament.setStatus("");
 						break;
@@ -630,6 +640,10 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					case "FORTIFICATION":
 						current_game_play.setStatus("");
 						current_player.executeStrategy("FORTIFY", current_game_play);
+						if (current_game_play.getCurrent_player()==current_game_play.getGame_state().size()) {
+							current_game_play.setGame_play_turns(current_game_play.getGame_play_turns()+1);							
+						}
+
 						current_game_play.setGame_phase("REINFORCEMENT");
 						if (current_game_play.getCurrent_player() + 1 > current_game_play.getGame_state().size()) {
 							current_game_play.setCurrent_player(1);
@@ -645,9 +659,6 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						}
 						current_game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+current_game_play.getCurrent_player()+"\n"+current_game_play.getStatus()+"\n");
 						calculateArmiesReinforce(current_game_play.getGame_state(), current_game_play.getMap(), current_game_play.getCurrent_player());
-						if (current_game_play.getCurrent_player()==current_game_play.getGame_state().size()) {
-							current_game_play.setGame_play_turns(current_game_play.getGame_play_turns()+1);							
-						}
 						break;
 
 					default:
@@ -658,7 +669,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						tournament.setCurrent_game_play_id(tournament.getCurrent_game_play_id()+1);
 
 						if (tournament.getCurrent_game_play_id()>tournament.getTournament().size()) {
-							tournament.setStatus("TOURNAMENT_OVER");
+							tournament.setStatus("TOURNAMENT_OVER\n");
 							fillTournamentResult(tournament);
 						}
 					}
@@ -679,12 +690,12 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	private void checkIfTournamentOver(Tournament tournament) {
 		int finished_game = 0;
 		for (GamePlay gamePlay : tournament.getTournament()) {
-			if (gamePlay.getStatus().equalsIgnoreCase("GAME_FINISH")) {
+			if (gamePlay.getGame_phase().equalsIgnoreCase("GAME_FINISH")) {
 				finished_game++;
 			}
 		}
 		if (finished_game==tournament.getTournament().size()) {
-			tournament.setStatus("TOURNAMENT_OVER");
+			tournament.setStatus("TOURNAMENT_OVER\n");
 			fillTournamentResult(tournament);
 		}
 	}
@@ -696,7 +707,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	private void updateNewGamePlay(Tournament tournament) {
 		tournament.setCurrent_game_play_id(tournament.getCurrent_game_play_id()+1);
 		if (tournament.getCurrent_game_play_id()>tournament.getTournament().size()) {
-			tournament.setStatus("TOURNAMENT_OVER");
+			tournament.setStatus("TOURNAMENT_OVER\n");
 			fillTournamentResult(tournament);
 		}
 	}
@@ -713,15 +724,18 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		List<GamePlay> game_plays = null;
 		List<String> unique_maps  = new ArrayList<>();
 
-		for (GamePlay gamePlay : tournament.getTournament()) {
-			unique_maps.add(gamePlay.getFile_name());
+		for (GamePlay game_play : tournament.getTournament()) {
+			unique_maps.add(game_play.getFile_name());
 		}
 
 		for (String string : unique_maps) {
 			game_plays = new ArrayList<>();
-			for (GamePlay gamePlay : tournament.getTournament()) {
-				if (gamePlay.getFile_name().equalsIgnoreCase(string)) {
-					game_plays.add(gamePlay);
+			for (GamePlay game_play : tournament.getTournament()) {
+				if (game_play.getFile_name().equalsIgnoreCase(string)) {
+					if (game_play.getWinner()==null || game_play.getWinner().equals("")) {
+						game_play.setWinner("Draw");
+					}
+					game_plays.add(game_play);
 				}
 			}
 			each_map_results.put(string, game_plays);

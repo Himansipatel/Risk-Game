@@ -132,7 +132,7 @@
 				contentType : "application/json",
 				success : function(data) {
 					stopLoading();
-					fillResults(data);					
+					fillResults(data.gameResult);					
 				},
 				error : function(XMLHttpRequest,
 						textStatus, errorThrown) {
@@ -153,11 +153,12 @@
 				contentType : "application/json",
 				success : function(data) {
 					stopLoading();
-					if(data.status != 'TOURNAMENT_OVER'){
+					if(data.status != 'TOURNAMENT_OVER\n'){
 						addMessagesToAuditLogs(data);
 						continueTournament(data);
 					}else{
-						$("#footer p").prepend(data.status);
+						var tourStatus = data.status.replace(/\n/g, "<br/>");
+						$("#footer p").prepend(tourStatus);
 						getResults(data);
 					}
 				},
