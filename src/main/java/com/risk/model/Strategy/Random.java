@@ -73,9 +73,89 @@ public class Random implements IStrategy {
 		return game_play;
 	}
 
-	@Override
+	/**
+	 * This function is use by random player to fortify armies from source to
+	 * territory by selecting random source and any of its random neighbors
+	 * 
+	 * @see com.risk.business.IStrategy#fortify(com.risk.model.GamePlay)
+	 * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
+	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 *         Modifications done by Mayank Jariwala
+	 * @param game_play state of the game i.e. entire game related info when
+	 *                  fortification starts for a player.
+	 * @return GamePlay Object
+	 */
 	public GamePlay fortify(GamePlay game_play) {
-		// TODO Auto-generated method stub
-		return null;
+		boolean fortify_possible = true;
+		Player current_player = game_play.getGame_state().get(game_play.getCurrent_player() - 1);
+		int random_territory = 0;
+		int random_destination = 0;
+		// To check the army count of random territory selected
+		int attacker_army_count = 0;
+		int territory_processed = 0;
+		GamePlayTerritory source_territory = null;
+		GamePlayTerritory destination_territory = null;
+		List<String> neighbours = new ArrayList<>();
+		List<GamePlayTerritory> own_neighbour_territory = new ArrayList<>();
+		List<GamePlayTerritory> player_territories_list = current_player.getTerritory_list();
+		java.util.Random random = new java.util.Random();
+		String fortify_message = "";
+		l1: while (own_neighbour_territory.size() == 0) {
+			random_territory = random.nextInt(player_territories_list.size());
+			source_territory = player_territories_list.get(random_territory);
+			attacker_army_count = source_territory.getNumber_of_armies();
+			if (attacker_army_count <= 1) {
+				// Handling Case in which player each territory has 1 army
+				if (territory_processed == current_player.getTerritory_list().size()) {
+					fortify_possible = true;
+					break l1;
+				}
+				territory_processed++;
+				continue l1;
+			}
+			for (com.risk.model.gui.Territory territory : game_play.getGui_map().getTerritories()) {
+				if (territory.getName().equalsIgnoreCase(source_territory.getTerritory_name())) {
+					if (territory.getNeighbours().isEmpty()) {
+						continue l1;
+					} else {
+						neighbours = Arrays.asList(territory.getNeighbours().split(";"));
+						for (String neighbour_territory : neighbours) {
+							for (GamePlayTerritory player_territory : player_territories_list) {
+								if (neighbour_territory.equalsIgnoreCase(player_territory.getTerritory_name())) {
+									own_neighbour_territory.add(player_territory);
+								}
+							}
+						}
+					}
+
+				}
+			}
+			if (own_neighbour_territory.size() == 0) {
+				continue l1;
+			}
+		}
+		if (!fortify_possible) {
+			game_play.setStatus("Fortificaition not possible for random player");
+		} else {
+			random_destination = random.nextInt(own_neighbour_territory.size());
+			destination_territory = player_territories_list.get(random_destination);
+			fortify_message += "Random Player Fortification Started\n";
+			fortify_message += "Source Territory : [ " + source_territory.getTerritory_name() + ","
+					+ source_territory.getNumber_of_armies() + "]";
+			fortify_message += " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
+					+ destination_territory.getNumber_of_armies() + "]\n";
+			source_territory.setNumber_of_armies(source_territory.getNumber_of_armies() - 1);
+			destination_territory.setNumber_of_armies(destination_territory.getNumber_of_armies() + 1);
+			fortify_message += "Moved 1 army from " + source_territory.getTerritory_name() + " to "
+					+ destination_territory.getTerritory_name() + "\n";
+			fortify_message += "After Fortification Results : \n";
+			fortify_message += "Source Territory : [ " + source_territory.getTerritory_name() + ","
+					+ source_territory.getNumber_of_armies() + "]";
+			fortify_message += " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
+					+ destination_territory.getNumber_of_armies() + "]\n";
+			fortify_message += "Random Player Fortification Ended\n";
+			game_play.setStatus(fortify_message);
+		}
+		return game_play;
 	}
 }
