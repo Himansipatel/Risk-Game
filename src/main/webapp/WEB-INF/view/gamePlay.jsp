@@ -1229,7 +1229,8 @@
 								gui_map : data_game.gui_map,
 								domination : data_game.domination,
 								game_play_id : data_game.game_play_id,
-								game_play_turns : data_game.game_play_turns
+								game_play_turns : data_game.game_play_turns,
+								winner : data_game.winner
 							};
 							var a = JSON.stringify(game_Play);
 							$
@@ -2167,7 +2168,7 @@
 		</div>
 	</div>
 
-	<div id="computerPlayerLogs">
+	<!-- <div id="computerPlayerLogs">
 		<h3>Computer Player Logs :</h3>
 		<table id="auditLogs" class="display" style="width: 100%">
 			<thead>
@@ -2181,7 +2182,7 @@
 				</tr>
 			</tfoot>
 		</table>
-	</div>
+	</div> -->
 
 	<div id="worldDominationView">
 		<h3>World domination view :</h3>

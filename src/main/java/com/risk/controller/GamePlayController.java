@@ -2,6 +2,7 @@ package com.risk.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import com.risk.business.IManagePlayer;
 import com.risk.file.IManageGamePlayFile;
 import com.risk.model.GamePlay;
 import com.risk.model.Tournament;
+import com.risk.model.gui.GameResult;
 import com.risk.model.gui.PlayerDetails;
 import com.risk.model.gui.TournamentChoices;
 
@@ -171,6 +173,7 @@ public class GamePlayController {
 		gamePlay.setDomination(gamePlayFromView.getDomination());
 		gamePlay.setGame_play_id(gamePlayFromView.getGame_play_id());
 		gamePlay.setGame_play_turns(gamePlayFromView.getGame_play_turns());
+		gamePlay.setWinner(gamePlayFromView.getWinner());
 		List<com.risk.model.Player> players = setGameStateData(gamePlayFromView);
 		gamePlay.setGame_state(players);
 	}
@@ -244,6 +247,25 @@ public class GamePlayController {
 	}
 
 	/**
+	 * This function will fetch tournament results.
+	 * 
+	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
+	 * @param request    Request Payload
+	 * @param response   An object to assist a servlet in sending a response to the
+	 *                   client
+	 * @param Tournament object with details about tournament maps and strategies
+	 * @return Tournament object with gamePlays object
+	 * @throws Exception NullPointerException when game state object is null
+	 */
+	@RequestMapping(value = "/getTournamentResult", method = RequestMethod.POST)
+	@ResponseBody
+	public com.risk.model.gui.TournamentResults getTournamentResult(HttpServletRequest request,
+			HttpServletResponse response, @RequestBody Tournament tournamentFromView) throws Exception {
+		com.risk.model.gui.TournamentResults tournamentResult = gatherResultsFromTournament();
+		return tournamentResult;
+	}
+
+	/**
 	 * This function fetches all available saved games from resource folder
 	 * 
 	 * @param request  Request Payload
@@ -278,5 +300,23 @@ public class GamePlayController {
 		gamePlay = iManageGamePlay.fetchGamePlay(savedGameName);
 		gamePlay.addObserver((Observer) iManageGamePlay);
 		return gamePlay;
+	}
+
+	public com.risk.model.gui.TournamentResults gatherResultsFromTournament() {
+		com.risk.model.gui.TournamentResults results = new com.risk.model.gui.TournamentResults();
+		List<GameResult> gameResult = new ArrayList<>();
+		com.risk.model.TournamentResults tournamentResults = tournament.getTournament_results();
+		Map<String, List<GamePlay>> each_map_result = tournamentResults.getEach_map_results();
+		for (Map.Entry<String, List<GamePlay>> entry : each_map_result.entrySet()) {
+			for (int i = 0; i < entry.getValue().size(); i++) {
+				com.risk.model.gui.GameResult gr = new com.risk.model.gui.GameResult();
+				gr.setWinner(entry.getValue().get(i).getWinner());
+				gr.setGameNo((i + 1));
+				gr.setMapName(entry.getKey());
+				gameResult.add(gr);
+			}
+		}
+		results.setGameResult(gameResult);
+		return results;
 	}
 }

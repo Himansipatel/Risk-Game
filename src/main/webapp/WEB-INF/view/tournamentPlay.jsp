@@ -114,6 +114,34 @@
 			//.draw(false);			
 		}
 		
+		function fillResults(data){
+			for(var i=0; i < data.length; i++){
+				auditLogsDataTable.row.add([ data[i].mapName,data[i].gameNo,data[i].winner ])
+				.draw(false);
+			}
+		}
+		
+		function getResults(data){
+			var a = JSON.stringify(data);
+			$
+			.ajax({
+				type : "POST",
+				url : "gamePlay/getTournamentResult",
+				dataType : "json",
+				data : a,
+				contentType : "application/json",
+				success : function(data) {
+					stopLoading();
+					fillResults(data);					
+				},
+				error : function(XMLHttpRequest,
+						textStatus, errorThrown) {
+					stopLoading();
+					alert("Startup Phase Failure");
+				}
+			});
+		}
+		
 		function continueTournament(data){
 			var a = JSON.stringify(data);
 			$
@@ -129,7 +157,8 @@
 						addMessagesToAuditLogs(data);
 						continueTournament(data);
 					}else{
-						alert(data.status);
+						$("#footer p").prepend(data.status);
+						getResults(data);
 					}
 				},
 				error : function(XMLHttpRequest,
@@ -186,14 +215,16 @@
 	<table id="auditLogs" class="display" style="width: 100%">
 		<thead>
 			<tr>
-				<th>Tournament Logs</th>
-				<th>Current Game Play Logs</th>
+				<th>Map Name</th>
+				<th>Game no</th>
+				<th>Winner</th>
 			</tr>
 		</thead>
 		<tfoot>
 			<tr>
-				<th>Tournament Logs</th>
-				<th>Current Game Play Logs</th>
+				<th>Map Name</th>
+				<th>Game no</th>
+				<th>Winner</th>
 			</tr>
 		</tfoot>
 	</table>
