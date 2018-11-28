@@ -1058,7 +1058,7 @@
 								map : data_game.map,
 								current_player : data_game.current_player,
 								free_cards : data_game.free_cards,
-								status : '',
+								status : data_game.status,
 								card_trade : data_game.card_trade,
 								attack : data_game.attack,
 								fortification : data_game.fortification,
@@ -1117,15 +1117,18 @@
 								data: $.param({ savedGameName: selectedSavedGame }),
 								url : "gamePlay/fetchGame",
 								success : function(data) {
+									parseMapData(data.gui_map);
 									data_game = data;
 									clearGameState();
 									noOfPlayingPlayer = data.game_state.length;
+									$("#noOfPlayer").val(noOfPlayingPlayer);
 									parseGamePlayData(data.game_state);
 									//parse domination view
 									parseDominationView(data.domination);
 									currentMapName = (data.file_name);
 									currentPhase = data.game_phase;
 									whichPlayerChance = data.current_player;
+									checkForNextPhaseAndDisplayOption();
 								},
 								error : function(XMLHttpRequest,
 										textStatus, errorThrown) {
@@ -1189,16 +1192,16 @@
 													$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
 												}
 											}
-											if (currentPhase != 'ATTACK'
+											/* if (currentPhase != 'ATTACK'
 													&& currentPhase != "ATTACK_ON"
 													&& currentPhase != "ATTACK_ALL_OUT" 
 													&& currentPhase != "FORTIFICATION"
 													&& currentPhase != "ATTACK_ARMY_MOVE") {
 												$("#footer p").prepend("<br/>"+currentPhase + " ended<br/>");
-											}
+											} */
 											currentPhase = data.game_phase;
-											if(data.status == 'No more attacks'){
-												$("#footer p").prepend("<br/>Attack ended<br/>");
+											if(data.status == 'No more attacks' || data.game_phase == 'GAME_FINISH'){
+												//$("#footer p").prepend("<br/>Attack ended<br/>");
 												hideAttackButtonForPlayer();												
 											}
 											whichPlayerChance = data.current_player;
