@@ -1181,27 +1181,11 @@
 											parseDominationView(data.domination);
 											currentMapName = (data.file_name);
 											
-											//read player no from data
-											if (currentPhase == 'ATTACK'
-													|| currentPhase == 'ATTACK_ON'
-													|| currentPhase == 'ATTACK_ALL_OUT'
-													|| currentPhase == 'ATTACK_END' 
-													|| currentPhase =='FORTIFICATION'
-													|| currentPhase =='ATTACK_ARMY_MOVE') {
-												if(data.status != null && data.status != ''){
-													$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
-												}
+											if(data.status != null && data.status != ''){
+												$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
 											}
-											/* if (currentPhase != 'ATTACK'
-													&& currentPhase != "ATTACK_ON"
-													&& currentPhase != "ATTACK_ALL_OUT" 
-													&& currentPhase != "FORTIFICATION"
-													&& currentPhase != "ATTACK_ARMY_MOVE") {
-												$("#footer p").prepend("<br/>"+currentPhase + " ended<br/>");
-											} */
 											currentPhase = data.game_phase;
 											if(data.status == 'No more attacks' || data.game_phase == 'GAME_FINISH'){
-												//$("#footer p").prepend("<br/>Attack ended<br/>");
 												hideAttackButtonForPlayer();												
 											}
 											whichPlayerChance = data.current_player;
