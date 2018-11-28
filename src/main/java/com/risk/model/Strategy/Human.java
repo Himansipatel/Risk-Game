@@ -53,7 +53,7 @@ public class Human implements IStrategy {
 
 		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ARMY_MOVE")) {
 			player_manager.attackArmyMove(game_play);
-			game_play = player_manager.checkForWinner(game_play);
+			player_manager.checkForWinner(game_play);
 			return game_play;
 		}
 
@@ -65,7 +65,7 @@ public class Human implements IStrategy {
 		int attacker_id = 0;
 		int defender_id = 0;
 		String attack_message = "";
-
+		String old_message = "";
 		// Counter Variable : Keep track of territory found for attacker and defender
 		int found_territory = 0;
 		List<GamePlayTerritory> attacker_territory_list = new ArrayList<>();
@@ -78,6 +78,8 @@ public class Human implements IStrategy {
 		int defender_territory_armies = 0;
 		String attacker_territory_name = game_play.getAttack().getAttacker_territory();
 		String defender_territory_name = game_play.getAttack().getDefender_territory();
+		attack_message += "\nAttacker territory: " + attacker_territory_name
+				+ " Defender Territory: " + defender_territory_name + "\n";
 		List<Player> players_list = game_play.getGame_state();
 
 		for (Player player : players_list) {
@@ -126,8 +128,8 @@ public class Human implements IStrategy {
 						def_obj.setNumber_of_armies(def_obj.getNumber_of_armies() - 1);
 						if (def_obj.getNumber_of_armies() == 0) {
 							attacker_territory_list.add(def_obj);
-							attack_message = "Attacker Occupies Defender Territory";
-							attack_message_list.add(attack_message);
+							old_message = "\nAttacker Occupies Defender Territory\n";
+							attack_message = attack_message + old_message;
 						}
 					} else {
 						// Defender Won
@@ -198,13 +200,6 @@ public class Human implements IStrategy {
 						}
 					}
 				}
-//				game_play = player_manager.checkForWinner(game_play);
-//				if (game_play.getGame_phase().equalsIgnoreCase("GAME_FINISH")) {
-//					return game_play;
-//				} else {
-//					attack_message = String.join("\n", attack_message_list);
-//					game_play.setStatus(attack_message);
-//				}
 				attack_message = String.join("\n", attack_message_list);
 				game_play.setStatus(attack_message);
 			} else {
