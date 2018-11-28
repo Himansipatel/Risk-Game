@@ -358,7 +358,7 @@ public class ManagePlayer implements IManagePlayer {
 		CardTrade trade_card = game_state.getCard_trade();
 		if (trade_card != null) {
 			if (trade_card.getCard1() == null || trade_card.getCard2() == null || trade_card.getCard3() == null) {
-				game_state.setStatus("Trading requires a minimum of three cards to be selected.");
+				game_state.setStatus("Trading requires a minimum of three cards to be selected.\n");
 			} else {
 
 				/**
@@ -414,11 +414,11 @@ public class ManagePlayer implements IManagePlayer {
 						}
 					}
 				} else {
-					game_state.setStatus("Either all three cards should have same image or all three different.");
+					game_state.setStatus("Either all three cards should have same image or all three different.\n");
 				}
 			}
 		} else {
-			game_state.setStatus("Inavlid Trade State during Gameplay");
+			game_state.setStatus("Inavlid Trade State during Gameplay.\n");
 		}
 		return game_state;
 	}
