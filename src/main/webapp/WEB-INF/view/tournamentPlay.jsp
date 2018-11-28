@@ -108,9 +108,10 @@
 			while(currStatus != null && (currStatus.includes("/n") || currStatus.includes("\n"))){
 				currStatus = currStatus.replace(/\n/g, "<br/>");
 			}
-			
-			auditLogsDataTable.row.add([ tourStatus,currStatus ])
-			.draw(false);			
+			$("#footer p").prepend(tourStatus);
+			$("#footer p").prepend(currStatus);
+			//auditLogsDataTable.row.add([ tourStatus,currStatus ])
+			//.draw(false);			
 		}
 		
 		function continueTournament(data){
