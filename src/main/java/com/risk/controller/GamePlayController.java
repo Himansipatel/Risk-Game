@@ -276,6 +276,7 @@ public class GamePlayController {
 	public GamePlay fetchGame(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "savedGameName", required = false) String savedGameName) throws Exception {
 		gamePlay = iManageGamePlay.fetchGamePlay(savedGameName);
+		gamePlay.addObserver((Observer) iManageGamePlay);
 		return gamePlay;
 	}
 }
