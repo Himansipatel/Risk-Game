@@ -798,7 +798,8 @@
 								newPlayerNo) {
 							var currentPlayerDataTable = fetchDataTableforCurrentPlayer(newPlayerNo);
 							var currentPlayerArmyStock = getEachPlayerArmiesStock(newPlayerNo);
-							if (currentPlayerArmyStock > 0) {
+							var currentPlayerType = getEachPlayerType(newPlayerNo);
+							if (currentPlayerArmyStock > 0 && currentPlayerType != 'COMPUTER') {
 								currentPlayerDTable = currentPlayerDataTable
 										.rows().data();
 								armySelectionInStartupPhase(
@@ -806,7 +807,18 @@
 										currentPlayerArmyStock);
 								$("#footer p").prepend("Player " + newPlayerNo
 										+ " - Allocate your army<br/>");
-							} else {
+							} else if(currentPlayerArmyStock > 0 && currentPlayerType == 'COMPUTER'){
+								//automatically allocate the territory with min armies by one
+								//addArmyToPlayerChosenCountry();
+								addAArmyToComputerPlayer();
+								//set next Player no
+								var whichPlayer = $("#playerNo")
+										.text();
+								var newPlayerNo = calculateNextPlayerNo(whichPlayer);
+								$("#playerNo").text(newPlayerNo);
+								checkAndDisplayIfMoreArmyAllocationNeeded(newPlayerNo);
+								
+							}else {
 								$('#mapSelectArmy').modal('toggle');
 								saveGameState();
 							}
@@ -839,6 +851,54 @@
 											$("#playerNo").text(newPlayerNo);
 											checkAndDisplayIfMoreArmyAllocationNeeded(newPlayerNo);
 										});
+						
+						function findCountryWithLowestArmies(currentPlayerDataTable){
+							var data = currentPlayerDataTable.rows().data();
+							var countryName = data[0][0];
+							var armies = data[0][2];
+							for (var i = 0; i < data.length; i++) {
+								if(data[i][2] < armies){
+									armies = data[i][2];
+									countryName = data[i][0];
+								}
+							}
+							return countryName;
+						}
+						
+						function addAArmyToComputerPlayer(playerDTable){
+							
+							var whichPlayer = $("#playerNo").text();
+							var currentPlayerArmies = $("#RemainingArmies")
+									.text();
+							var currentPlayerDataTable = fetchDataTableforCurrentPlayer(whichPlayer);
+							var countrySelected = findCountryWithLowestArmies(currentPlayerDataTable);
+							addArmy(currentPlayerDataTable, countrySelected);
+							$("#footer p").prepend("Player " + whichPlayer
+									+ " - Allocated one army to "+countrySelected+"<br/>");
+
+							//decrease current player armies stock by one
+							switch (String(whichPlayer)) {
+							case "1":
+								armiesStockOfPlayer1 = armiesStockOfPlayer1 - 1;
+								break;
+							case "2":
+								armiesStockOfPlayer2 = armiesStockOfPlayer2 - 1;
+								break;
+							case "3":
+								armiesStockOfPlayer3 = armiesStockOfPlayer3 - 1;
+								break;
+							case "4":
+								armiesStockOfPlayer4 = armiesStockOfPlayer4 - 1;
+								break;
+							case "5":
+								armiesStockOfPlayer5 = armiesStockOfPlayer5 - 1;
+								break;
+							case "6":
+								armiesStockOfPlayer6 = armiesStockOfPlayer6 - 1;
+								break;
+							}
+							
+						}
 
 						function armySelectionInStartupPhase(playerDTable,
 								remaingArmies) {
@@ -856,13 +916,15 @@
 							var noOfPlayers = $("#noOfPlayer option:selected")
 									.val();
 							$("#playerNo").text("1");
-							player1DTable = player1DataTable.rows().data();
+							checkAndDisplayIfMoreArmyAllocationNeeded(1);
+							
+							/* player1DTable = player1DataTable.rows().data();
 							armySelectionInStartupPhase(player1DTable,
-									armiesStockOfPlayer1);
+									armiesStockOfPlayer1);*/
 							$('#mapSelectArmy').modal({
 								backdrop : 'static',
 								keyboard : false
-							});
+							}); 
 						}
 						
 						function makePlayer(i){
@@ -975,9 +1037,13 @@
 												checkForNextPhaseAndDisplayOption();
 											}else{
 												addMessagesToAuditLogs(data.status);
-												saveGameState();
+												if(currentPhase != 'STARTUP'){
+													saveGameState();
+												}
 											}
-											$("#footer p").prepend(data.status.replace(/\n/,"<br/>")+"<br/>");
+											if(currentPhase != 'STARTUP'){
+												$("#footer p").prepend(data.status.replace(/\n/,"<br/>")+"<br/>");
+											}
 										},
 										error : function(XMLHttpRequest,
 												textStatus, errorThrown) {
