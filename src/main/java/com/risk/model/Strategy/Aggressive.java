@@ -264,13 +264,14 @@ public class Aggressive implements IStrategy {
 				if (attacker_territory.getTerritory_name().equalsIgnoreCase(player_territory.getTerritory_name())) {
 					player_territory.setNumber_of_armies(attacker_territory.getNumber_of_armies());
 					break;
-				} else {
+				} else if (!game_play.getGame_state().get(game_play.getCurrent_player() - 1)
+						.getTerritory_list().contains(attacker_territory)) {
 					attacker_territory.setNumber_of_armies(1);
 					game_play.getGame_state().get(game_play.getCurrent_player() - 1).getTerritory_list()
-					.add(attacker_territory);
+							.add(attacker_territory);
 					is_territory_occupied = true;
 					game_play.getGame_state().get(game_play.getCurrent_player() - 1)
-					.setAny_territory_occupied(is_territory_occupied);
+							.setAny_territory_occupied(is_territory_occupied);
 					break;
 				}
 			}
