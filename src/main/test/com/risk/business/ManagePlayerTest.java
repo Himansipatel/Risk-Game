@@ -723,7 +723,7 @@ public class ManagePlayerTest {
 				assertEquals(2, player.getTrade_count());
 				assertEquals(3, player.getCard_list().size());
 				assertEquals(0, player.getArmy_stock());
-				assertEquals("Either all three cards should have same image or all three different.",
+				assertEquals("Either all three cards should have same image or all three different.\n",
 						game_state.getStatus());
 				break;
 			}
