@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.risk.business.IStrategy;
-import com.risk.business.impl.ManageGamePlay;
 import com.risk.business.impl.ManagePlayer;
 import com.risk.model.Attack;
 import com.risk.model.GamePlay;
@@ -30,15 +29,9 @@ public class Aggressive implements IStrategy {
 	public GamePlay reinforce(GamePlay game_play) {
 
 		ManagePlayer player_manager = new ManagePlayer();
-		ManageGamePlay game_manager = new ManageGamePlay();
 		Player current_player = null;
 		GamePlayTerritory strongest_territory = null;
-
 		if (game_play != null) {
-
-			game_manager.calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(),
-					game_play.getCurrent_player());
-
 			for (Player player : game_play.getGame_state()) {
 				if (player.getId() == game_play.getCurrent_player()) {
 					current_player = player;
@@ -47,7 +40,6 @@ public class Aggressive implements IStrategy {
 					continue;
 				}
 			}
-
 			if (current_player != null) {
 
 				if (current_player.getCard_list().size() > 4) {
@@ -286,6 +278,7 @@ public class Aggressive implements IStrategy {
 			game_play.setStatus(aggressive_attack_message);
 		}
 		game_play.setGame_phase("ATTACK");
+		player_manager.checkForWinner(game_play);
 		return game_play;
 	}
 

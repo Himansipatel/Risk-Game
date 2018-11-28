@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import com.risk.business.IStrategy;
-import com.risk.business.impl.ManageGamePlay;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Player;
@@ -41,24 +40,24 @@ public class Benevolent implements IStrategy {
 	 * @return GamePlay updated state of the game after reinforcement phase ends.
 	 */
 	public GamePlay reinforce(GamePlay game_play) {
-		ManageGamePlay game_play_manager = new ManageGamePlay();
-		game_play_manager.calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(),
-				game_play.getCurrent_player());
-		List<Player> players_list = game_play.getGame_state();
-		for (Player abstractPlayer : players_list) {
-			if (game_play.getCurrent_player() == abstractPlayer.getId()) {
-				armies_to_place = abstractPlayer.getArmy_stock();
-				while (armies_to_place != 0) {
-					List<Integer> armies_no_list = getListofArmiesValues(abstractPlayer.getTerritory_list());
-					int weak_territory_index = armies_no_list.indexOf(Collections.min(armies_no_list));
-					int current_armies_on_weak_territory = abstractPlayer.getTerritory_list().get(weak_territory_index)
-							.getNumber_of_armies();
-					abstractPlayer.getTerritory_list().get(weak_territory_index)
-							.setNumber_of_armies(current_armies_on_weak_territory + 1);
-					armies_to_place--;
-				}
-			}
+		Player current_player = game_play.getGame_state().get(game_play.getCurrent_player() - 1);
+		System.out.println(current_player.getArmy_stock());
+		armies_to_place = current_player.getArmy_stock();
+		String message = "Got " + armies_to_place + "armies to place";
+		List<Integer> armies_no_list = getListofArmiesValues(current_player.getTerritory_list());
+		int weak_territory_index = armies_no_list.indexOf(Collections.min(armies_no_list));
+		while (armies_to_place != 0) {
+			int current_armies_on_weak_territory = current_player.getTerritory_list().get(weak_territory_index)
+					.getNumber_of_armies();
+			current_player.getTerritory_list().get(weak_territory_index)
+					.setNumber_of_armies(current_armies_on_weak_territory + 1);
+			String old_message = "Placed 1 Army on "
+					+ current_player.getTerritory_list().get(weak_territory_index).getTerritory_name() + "\n";
+			message = old_message + message;
+			armies_to_place--;
+			current_player.setArmy_stock(current_player.getArmy_stock()-1);
 		}
+		game_play.setStatus(message);
 		return game_play;
 	}
 
@@ -87,14 +86,10 @@ public class Benevolent implements IStrategy {
 	 * @return GamePlay Object
 	 */
 	public GamePlay fortify(GamePlay game_play) {
-		List<Player> game_players_list = game_play.getGame_state();
-		for (Player abstractPlayer : game_players_list) {
-			if (game_play.getCurrent_player() == abstractPlayer.getId()) {
-				player_occupied_territory = new ArrayList<>();
-				List<Integer> armies_no_list = getListofArmiesValues(abstractPlayer.getTerritory_list());
-				moveArmiesFromStrongToWeakTerritory(armies_no_list, abstractPlayer.getTerritory_list(), game_play);
-			}
-		}
+		Player current_player = game_play.getGame_state().get(game_play.getCurrent_player() - 1);
+		player_occupied_territory = new ArrayList<>();
+		List<Integer> armies_no_list = getListofArmiesValues(current_player.getTerritory_list());
+		moveArmiesFromStrongToWeakTerritory(armies_no_list, current_player.getTerritory_list(), game_play);
 		return game_play;
 	}
 
@@ -134,7 +129,7 @@ public class Benevolent implements IStrategy {
 					int diff = (int) Math.floor(
 							Math.abs(strong_territory.getNumber_of_armies() - weak_territory.getNumber_of_armies())
 									/ 2);
-					if (diff <= 1) {
+					if (diff < 1) {
 						message += "Fortification not possible because ";
 						message += " Strong Territory Info : [ " + strong_territory.getTerritory_name() + ","
 								+ strong_territory.getNumber_of_armies() + " ] and ";

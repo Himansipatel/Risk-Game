@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.risk.business.IStrategy;
-import com.risk.business.impl.ManageGamePlay;
 import com.risk.business.impl.ManagePlayer;
 import com.risk.model.Attack;
 import com.risk.model.GamePlay;
@@ -37,13 +36,10 @@ public class Random implements IStrategy {
 	 */
 	public GamePlay reinforce(GamePlay game_play) {
 		String reinforce_message = "Reinforcement Started For Random Player\n";
-		ManageGamePlay manage_obj = new ManageGamePlay();
 		java.util.Random random = new java.util.Random();
 		int player_army_stock;
 		Player current_player = game_play.getGame_state().get(game_play.getCurrent_player() - 1);
 		List<GamePlayTerritory> player_territories_list = current_player.getTerritory_list();
-		manage_obj.calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(),
-				game_play.getCurrent_player());
 		player_army_stock = current_player.getArmy_stock();
 		int selected_territory_index = random.nextInt(player_territories_list.size());
 		GamePlayTerritory selected_territory_obj = player_territories_list.get(selected_territory_index);
@@ -54,6 +50,7 @@ public class Random implements IStrategy {
 		while (player_army_stock != 0) {
 			selected_territory_obj.setNumber_of_armies(selected_territory_obj.getNumber_of_armies() + 1);
 			player_army_stock--;
+			current_player.setArmy_stock(current_player.getArmy_stock() - 1);
 		}
 		reinforce_message += "After Reinforcement,Territory Info : [ " + selected_territory_obj.getTerritory_name()
 				+ "," + selected_territory_obj.getNumber_of_armies() + " ]\n";
@@ -291,7 +288,7 @@ public class Random implements IStrategy {
 			if (attacker_army_count <= 1) {
 				// Handling Case in which player each territory has 1 army
 				if (territory_processed == current_player.getTerritory_list().size()) {
-					fortify_possible = true;
+					fortify_possible = false;
 					break l1;
 				}
 				territory_processed++;
@@ -321,6 +318,7 @@ public class Random implements IStrategy {
 		if (!fortify_possible) {
 			game_play.setStatus("Fortificaition not possible for random player");
 		} else {
+			System.out.println("FORT RAND" + own_neighbour_territory.size());
 			random_destination = random.nextInt(own_neighbour_territory.size());
 			destination_territory = player_territories_list.get(random_destination);
 			fortify_message += "Random Player Fortification Started\n";

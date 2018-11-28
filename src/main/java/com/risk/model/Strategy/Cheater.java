@@ -52,7 +52,7 @@ public class Cheater implements IStrategy {
 	 */
 	@Override
 	public GamePlay attack(GamePlay game_play) {
-		
+		ManagePlayer manage_player = new ManagePlayer();
 		String territories_won = "";
 		boolean any_territory_occupied = false;
 		Player current_player = null;
@@ -139,14 +139,15 @@ public class Cheater implements IStrategy {
 				}
 			}
 			if (current_player.isAny_territory_occupied()) {
-				ManagePlayer manage_player = new ManagePlayer();
 				manage_player.giveCardAtAttackEnd(game_play);
 			}
 		}
 		if (territories_won.length()>=4) {
 			territories_won = territories_won.substring(0, territories_won.length()-3);			
 		}
-		game_play.setStatus("Territories won by Cheater: "+territories_won+"\n");
+		String old_message = "\nTerritories won by Cheater: "+territories_won+"\n";
+		manage_player.checkForWinner(game_play);
+		game_play.setStatus(game_play.getStatus()+old_message);
 		return game_play;
 	}
 
