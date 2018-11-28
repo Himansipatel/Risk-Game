@@ -77,18 +77,20 @@ public class GamePlay extends Observable {
 	private List<Domination> domination;
 
 	/**
-	 * Unique ID that identifies a GamePlay in Tournament Mode. 
+	 * Unique ID that identifies a GamePlay in Tournament Mode.
 	 */
 	private int game_play_id;
 
 	/**
-	 * Cycle count - Number of turn cycles over in any game play. 
+	 * Cycle count - Number of turn cycles over in any game play.
 	 */
 	private int game_play_turns;
-	
+
+	private Player winner;
+
 	/**
 	 * @return the unique id for any GamePlay.
-	 */		
+	 */
 	public int getGame_play_id() {
 		return game_play_id;
 	}
@@ -100,7 +102,6 @@ public class GamePlay extends Observable {
 		this.game_play_id = game_play_id;
 	}
 
-		
 	public int getGame_play_turns() {
 		return game_play_turns;
 	}
@@ -295,6 +296,22 @@ public class GamePlay extends Observable {
 	 */
 	public void setGui_map(com.risk.model.gui.Map gui_map) {
 		this.gui_map = gui_map;
+	}
+
+	/**
+	 * This getter method returns player object which is winner
+	 * 
+	 * @return Player the winner
+	 */
+	public Player getWinner() {
+		return winner;
+	}
+
+	/**
+	 * @param winner the winner to set
+	 */
+	public void setWinner(Player winner) {
+		this.winner = winner;
 	}
 
 }

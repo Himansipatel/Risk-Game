@@ -53,6 +53,7 @@ public class Human implements IStrategy {
 
 		if (game_play.getGame_phase().equalsIgnoreCase("ATTACK_ARMY_MOVE")) {
 			player_manager.attackArmyMove(game_play);
+			game_play = player_manager.checkForWinner(game_play);
 			return game_play;
 		}
 
@@ -197,14 +198,15 @@ public class Human implements IStrategy {
 						}
 					}
 				}
-				boolean is_winner = player_manager.declareGameWinner(attacker_territory_list, game_play.getMap());
-				if (is_winner) {
-					game_play.setGame_phase("GAME_FINISH");
-					game_play.setStatus("Player" + game_play.getCurrent_player() + " is winner !!");
-				} else {
-					attack_message = String.join("\n", attack_message_list);
-					game_play.setStatus(attack_message);
-				}
+//				game_play = player_manager.checkForWinner(game_play);
+//				if (game_play.getGame_phase().equalsIgnoreCase("GAME_FINISH")) {
+//					return game_play;
+//				} else {
+//					attack_message = String.join("\n", attack_message_list);
+//					game_play.setStatus(attack_message);
+//				}
+				attack_message = String.join("\n", attack_message_list);
+				game_play.setStatus(attack_message);
 			} else {
 				game_play.setStatus(valid_attack_message);
 			}
