@@ -54,7 +54,7 @@ public class Aggressive implements IStrategy {
 					game_play.setCard_trade(player_manager.prepareCardTrade(current_player));
 					if (game_play.getCard_trade() != null) {
 						game_play.setStatus("Army Stock before Card Trade: " + current_player.getArmy_stock()
-								+ "\n3 Cards Traded.\n");
+						+ "\n3 Cards Traded.\n");
 						player_manager.tradeCards(game_play);
 						game_play.setStatus(game_play.getStatus() + "\n" + "New Army Stock after Card Trade: "
 								+ current_player.getArmy_stock());
@@ -86,6 +86,7 @@ public class Aggressive implements IStrategy {
 	 * @author <a href="mailto:himansipatel1994@gmail.com">HimansiPatel</a>
 	 */
 	public GamePlay attack(GamePlay game_play) {
+
 		String aggressive_attack_message = "";
 		String old_message = "";
 		boolean is_territory_occupied = false;
@@ -108,13 +109,11 @@ public class Aggressive implements IStrategy {
 
 		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
-//				attacker_id = player.getId();
 				int max = 0;
 				for (GamePlayTerritory territory : player.getTerritory_list()) {
 					player_territories.add(territory.getTerritory_name());
 					if (territory.getNumber_of_armies() > max) {
 						max = territory.getNumber_of_armies();
-//						attacker_terrtiory_armies = territory.getNumber_of_armies();
 						strongest_territory = territory;
 					}
 				}
@@ -253,13 +252,10 @@ public class Aggressive implements IStrategy {
 								player_territory.setNumber_of_armies(abc.getNumber_of_armies());
 								break;
 							}
-
 						}
 					}
 				}
-
 			}
-
 		}
 
 		for (GamePlayTerritory attacker_territory : attacker_territory_list) {
@@ -271,10 +267,10 @@ public class Aggressive implements IStrategy {
 				} else {
 					attacker_territory.setNumber_of_armies(1);
 					game_play.getGame_state().get(game_play.getCurrent_player() - 1).getTerritory_list()
-							.add(attacker_territory);
+					.add(attacker_territory);
 					is_territory_occupied = true;
 					game_play.getGame_state().get(game_play.getCurrent_player() - 1)
-							.setAny_territory_occupied(is_territory_occupied);
+					.setAny_territory_occupied(is_territory_occupied);
 					break;
 				}
 			}
@@ -304,7 +300,8 @@ public class Aggressive implements IStrategy {
 		Boolean neighbour_flag = false;
 		ManagePlayer player_manager = new ManagePlayer();
 		String aggressive_fortify_message = "";
-
+		String old_message                = "";
+		
 		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				current_player = player;
@@ -334,11 +331,14 @@ public class Aggressive implements IStrategy {
 					}
 
 					if (neighbour_flag == true) {
+						old_message = aggressive_fortify_message;
+						aggressive_fortify_message = "";
+						aggressive_fortify_message += (territory_b.getNumber_of_armies() - 1) + " army moved from "
+								+ territory_b.getTerritory_name() + " to " + territory_a.getTerritory_name()+"\n";
+						aggressive_fortify_message = aggressive_fortify_message + old_message;
 						territory_a.setNumber_of_armies(
 								territory_a.getNumber_of_armies() + territory_b.getNumber_of_armies() - 1);
 						territory_b.setNumber_of_armies(1);
-						aggressive_fortify_message += (territory_b.getNumber_of_armies() - 1) + " army moved from "
-								+ territory_b.getTerritory_name() + " to " + territory_a.getTerritory_name();
 					}
 				}
 			}

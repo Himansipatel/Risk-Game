@@ -208,10 +208,8 @@ public class Cheater implements IStrategy {
 			territories = territories.substring(0, territories.length()-3);
 			game_play.setStatus("Territories fortified by Cheater: "+territories+"\n");
 		}else {
-			game_play.setStatus("No territories to fortify for the Cheater \n");
-		}
-		
-		
+			game_play.setStatus("No territories to fortify for the Cheater.\n");
+		}	
 		return game_play;
 	}
 }
