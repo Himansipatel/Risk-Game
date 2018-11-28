@@ -507,15 +507,19 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 			if (string.equalsIgnoreCase("Aggressive")) {
 				p.setStrategy(new Aggressive());
+				p.setType("Computer");
 				p.setStrategy_name("Aggressive");
 			}else if (string.equalsIgnoreCase("Benevolent")) {
 				p.setStrategy(new Benevolent());
+				p.setType("Computer");
 				p.setStrategy_name("Benevolent");
 			}else if (string.equalsIgnoreCase("Cheater")) {
 				p.setStrategy(new Cheater());
+				p.setType("Computer");
 				p.setStrategy_name("Cheater");
 			}else if (string.equalsIgnoreCase("Random")){
 				p.setStrategy(new Random());
+				p.setType("Computer");
 				p.setStrategy_name("Random");
 			}
 
