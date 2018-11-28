@@ -128,6 +128,12 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 
 					switch (game_play.getGame_phase()) {
 
+					case "STARTUP":
+						game_play.setStatus("");
+						calculateArmiesReinforce(game_play.getGame_state(), map, 1);
+						setCurrentPlayerAndPhase(game_play, game_play.getGame_phase());
+						break;
+
 					case "REINFORCEMENT":
 						game_play.setStatus("");						
 						current_player.executeStrategy("REINFORCE", game_play);
