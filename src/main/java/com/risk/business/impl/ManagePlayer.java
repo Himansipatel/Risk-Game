@@ -803,10 +803,10 @@ public class ManagePlayer implements IManagePlayer {
 		roll_dice_message += "Defender Rolls 1 dice on which max showed number " + defender_dice_result + "\n";
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
-			roll_dice_message += "Winner : Attacker";
+			roll_dice_message = "Winner : Attacker\n" + roll_dice_message;
 		} else if (attacker_dice_result <= defender_dice_result) {
 			dice_result_flag = 0;
-			roll_dice_message += "Winner : Defender";
+			roll_dice_message = "Winner : Defender\n" + roll_dice_message;
 		}
 		return Arrays.asList(dice_result_flag);
 	}
@@ -829,10 +829,10 @@ public class ManagePlayer implements IManagePlayer {
 		roll_dice_message += "Defender Rolls 2 dice on which max showed number " + defender_dice_result + "\n";
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
-			roll_dice_message += "Winner : Attacker";
+			roll_dice_message = "Winner : Attacker\n" + roll_dice_message;
 		} else if (attacker_dice_result <= defender_dice_result) {
 			dice_result_flag = 0;
-			roll_dice_message += "Winner : Defender";
+			roll_dice_message = "Winner : Defender\n" + roll_dice_message;
 		}
 		return Arrays.asList(dice_result_flag);
 	}
@@ -855,11 +855,12 @@ public class ManagePlayer implements IManagePlayer {
 		roll_dice_message += "Defender Rolls 1 dice on which max showed number " + defender_dice_result + "\n";
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
-			roll_dice_message += "Winner : Attacker";
+			roll_dice_message = "Winner : Attacker\n" + roll_dice_message;
 		} else if (attacker_dice_result <= defender_dice_result) {
 			dice_result_flag = 0;
-			roll_dice_message += "Winner : Defender";
+			roll_dice_message = "Winner : Defender\n" + roll_dice_message;
 		}
+
 		return Arrays.asList(dice_result_flag);
 	}
 
@@ -872,6 +873,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceTwoOnTwo() {
+		String old_message = ""; 
 		roll_dice_message = "";
 		Random random = new Random();
 		HashMap<String, List<Integer>> dice_result_list = new HashMap<>();
@@ -886,13 +888,22 @@ public class ManagePlayer implements IManagePlayer {
 		int max_result = attacker_max > defender_max ? 1 : 0;
 		roll_dice_message += "Attacker Rolls 2 dice on which max showed number " + attacker_max + " and ";
 		roll_dice_message += "Defender Rolls 2 dice on which max showed number " + defender_max + "\n";
-		roll_dice_message += max_result == 1 ? "Winner : Attacker" : "Winner : Defender";
+		old_message = roll_dice_message;
+		roll_dice_message = "";
+		roll_dice_message = max_result == 1 ? "Winner : Attacker\n" : "Winner : Defender\n";
+		roll_dice_message = roll_dice_message+old_message;
 		int attacker_min = Collections.min(dice_result_list.get("attacker"));
 		int defender_min = Collections.min(dice_result_list.get("defender"));
 		int min_result = attacker_min > defender_min ? 1 : 0;
+		old_message = roll_dice_message;
+		roll_dice_message = "";
 		roll_dice_message += "Attacker Rolls 2 dice on which min showed number " + attacker_min + " and ";
 		roll_dice_message += "Defender Rolls 2 dice on which min showed number " + defender_min + "\n";
-		roll_dice_message += min_result == 1 ? "Winner : Attacker" : "Winner : Defender";
+		roll_dice_message = roll_dice_message+old_message;
+		old_message = roll_dice_message;
+		roll_dice_message = "";
+		roll_dice_message = min_result == 1 ? "Winner : Attacker\n" : "Winner : Defender\n";
+		roll_dice_message = roll_dice_message+old_message;
 		return Arrays.asList(max_result, min_result);
 	}
 
@@ -905,7 +916,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceThreeOnTwo() {
-		roll_dice_message = "";
+		String old_message = ""; 
+		roll_dice_message  = "";
 		Random random = new Random();
 		List<Integer> attacker_list = new ArrayList<>();
 		List<Integer> defender_list = new ArrayList<>();
@@ -924,15 +936,26 @@ public class ManagePlayer implements IManagePlayer {
 		int first_result = attacker_max > defender_max ? 1 : 0;
 		roll_dice_message += "Attacker Rolls 3 dice on which first max showed number " + attacker_max + " and ";
 		roll_dice_message += "Defender Rolls 2 dice on which first max showed number " + defender_max + "\n";
-		roll_dice_message += first_result == 1 ? "Winner : Attacker\n" : "Winner : Defender\n";
+		old_message = roll_dice_message;
+		roll_dice_message = "";
+		roll_dice_message = first_result == 1 ? "Winner : Attacker\n" : "Winner : Defender\n";
+		roll_dice_message = roll_dice_message+old_message;
 		int attacker_second_max = Collections.max(attacker_list);
 		attacker_list.remove((attacker_list.indexOf(attacker_second_max)));
 		int defender_second_max = Collections.max(defender_list);
 		defender_list.remove((defender_list.indexOf(defender_second_max)));
 		int second_result = attacker_second_max > defender_second_max ? 1 : 0;
+		old_message = roll_dice_message;
+		roll_dice_message = "";
 		roll_dice_message += "Attacker Rolls 3 dice on which second max showed number " + attacker_second_max + " and ";
 		roll_dice_message += "Defender Rolls 2 dice on which second max showed number " + defender_second_max + "\n";
-		roll_dice_message += second_result == 1 ? "Winner : Attacker\n" : "Winner : Defender\n";
+		roll_dice_message = roll_dice_message+old_message;
+
+		old_message = roll_dice_message;
+		roll_dice_message = "";
+		roll_dice_message = second_result == 1 ? "Winner : Attacker\n" : "Winner : Defender\n";
+		roll_dice_message = roll_dice_message+old_message;
+
 		return Arrays.asList(first_result, second_result);
 	}
 
@@ -956,10 +979,10 @@ public class ManagePlayer implements IManagePlayer {
 
 		if (attacker_dice_result > defender_dice_result) {
 			dice_result_flag = 1;
-			roll_dice_message += "Winner : Attacker";
+			roll_dice_message = "Winner : Attacker\n"+roll_dice_message;
 		} else if (attacker_dice_result <= defender_dice_result) {
 			dice_result_flag = 0;
-			roll_dice_message += "Winner : Defender";
+			roll_dice_message = "Winner : Defender\n"+roll_dice_message;
 		}
 		return Arrays.asList(dice_result_flag);
 	}
