@@ -135,12 +135,12 @@ public class ManagePlayer implements IManagePlayer {
 		domination.addObserver(manage_domination);
 		domination.updateDomination(game_play);
 		for (Player player : game_play.getGame_state()) {
-			if (player.getId() == game_play.getCurrent_player() && player.getType().equalsIgnoreCase("Computer")) {
+			if (player.getId() == game_play.getCurrent_player() && ( player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
 				if (game_play.getStatus() != null) {
-					game_play.setStatus(game_play.getStatus() + "\n REINFORCEMENT STARTED FOR PLAYER: "
-							+ game_play.getCurrent_player() + "\n");
+					game_play.setStatus(game_play.getStatus()+"\n"+"REINFORCEMENT WILL START FOR PLAYER: "
+							+game_play.getCurrent_player()+"\n");
 				} else {
-					game_play.setStatus("\n REINFORCEMENT STARTED FOR PLAYER: " + game_play.getCurrent_player() + "\n");
+					game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n");
 				}
 				break;
 			}
