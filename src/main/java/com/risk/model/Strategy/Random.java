@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.risk.business.IStrategy;
 import com.risk.business.impl.ManageGamePlay;
+import com.risk.business.impl.ManagePlayer;
+import com.risk.model.Attack;
 import com.risk.model.GamePlay;
 import com.risk.model.GamePlayTerritory;
 import com.risk.model.Player;
@@ -70,6 +72,188 @@ public class Random implements IStrategy {
 	 * @return GamePlay updated state of the game after attack phase ends.
 	 */
 	public GamePlay attack(GamePlay game_play) {
+		String random_attack_message = "";
+		String old_message = "";
+		List<String> player_territories = new ArrayList<>();
+		List<GamePlayTerritory> attacker_territory_list = new ArrayList<>();
+		List<GamePlayTerritory> defender_territory_list = new ArrayList<>();
+		ManagePlayer player_manager = new ManagePlayer();
+		Player current_player = game_play.getGame_state().get(game_play.getCurrent_player() - 1);
+		int random_territory = 0;
+		int attacker_army_count = 0;
+		GamePlayTerritory source_territory = null;
+		GamePlayTerritory destination_territory = null;
+		List<String> neighbours = new ArrayList<>();
+		List<GamePlayTerritory> player_territories_list = current_player.getTerritory_list();
+		boolean is_territory_occupied = false;
+		Attack attack = null;
+		if (game_play.getAttack() != null) {
+			attack = game_play.getAttack();
+		} else {
+			attack = new Attack();
+			game_play.setAttack(attack);
+		}
+		for (GamePlayTerritory territory : current_player.getTerritory_list()) {
+			player_territories.add(territory.getTerritory_name());
+		}
+		java.util.Random random = new java.util.Random();
+		random_territory = random.nextInt(player_territories_list.size());
+		source_territory = player_territories_list.get(random_territory);
+		attacker_territory_list.add(source_territory);
+		attacker_army_count = source_territory.getNumber_of_armies();
+		boolean defefender_territory_found = false;
+		if (attacker_army_count > 1) {
+			for (com.risk.model.gui.Territory territory : game_play.getGui_map().getTerritories()) {
+				if (territory.getName().equalsIgnoreCase(source_territory.getTerritory_name())) {
+					neighbours = Arrays.asList(territory.getNeighbours().split(";"));
+					break;
+				} else {
+					continue;
+				}
+			}
+
+			for (com.risk.model.gui.Territory defender_territory : game_play.getGui_map().getTerritories()) {
+				if (source_territory.getNumber_of_armies() <= 1) {
+					break;
+				}
+				if (defender_territory.getName().equalsIgnoreCase(source_territory.getTerritory_name())
+						|| player_territories.contains(defender_territory.getName())
+						|| !neighbours.contains(defender_territory.getName())) {
+					continue;
+				} else {
+					for (Player defender : game_play.getGame_state()) {
+
+						if (defender.getId() == game_play.getCurrent_player()) {
+							continue;
+						}
+						for (GamePlayTerritory defend_territory : defender.getTerritory_list()) {
+							if (defend_territory.getTerritory_name().equalsIgnoreCase(defender_territory.getName())) {
+								destination_territory = defend_territory;
+								defender_territory_list.add(destination_territory);
+								defefender_territory_found = true;
+								break;
+							}
+						}
+						if (defefender_territory_found) {
+							break;
+						}
+					}
+				}
+				if (defefender_territory_found) {
+					break;
+				}
+			}
+			if (defefender_territory_found) {
+				int attacker_dice_no = 0;
+				int defender_dice_no = 0;
+				player_manager.setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
+				attacker_dice_no = game_play.getAttack().getAttacker_dice_no();
+				defender_dice_no = game_play.getAttack().getDefender_dice_no();
+				int attacker_terattrtiory_armies = attacker_territory_list.get(0).getNumber_of_armies();
+				int defender_territory_armies = defender_territory_list.get(0).getNumber_of_armies();
+				old_message = random_attack_message;
+				random_attack_message = "";
+				random_attack_message += "\nAttacker territory: " + attacker_territory_list.get(0).getTerritory_name()
+						+ " Defender Territory: " + defender_territory_list.get(0).getTerritory_name() + "\n";
+				random_attack_message = random_attack_message + old_message;
+				String valid_attack_message = player_manager.checkForValidAttack(attacker_terattrtiory_armies,
+						defender_territory_armies, attacker_dice_no, defender_dice_no);
+				if (valid_attack_message.trim().length() == 0) {
+					List<Integer> attack_result = player_manager.rollDiceDecision(attacker_dice_no, defender_dice_no);
+					old_message = random_attack_message;
+					random_attack_message = "";
+					random_attack_message += player_manager.getRollDiceMessage();
+					random_attack_message = random_attack_message + old_message;
+					for (int i = 0; i < attack_result.size(); i++) {
+						int result = attack_result.get(i);
+						System.out.println("result" + i + result);
+						if (result == 1) {
+							// Attacker Won
+							GamePlayTerritory def_obj = defender_territory_list.get(0);
+							def_obj.setNumber_of_armies(def_obj.getNumber_of_armies() - 1);
+
+							if (def_obj.getNumber_of_armies() == 0) {
+								attacker_territory_list.add(def_obj);
+								if (attacker_territory_list.get(0).getNumber_of_armies() > 1) {
+									attacker_territory_list.get(0).setNumber_of_armies(
+											attacker_territory_list.get(0).getNumber_of_armies() - 1);
+									old_message = random_attack_message;
+									random_attack_message = "";
+									random_attack_message += "Attacker territory: "
+											+ attacker_territory_list.get(0).getTerritory_name()
+											+ " occupies Defender Territory: " + def_obj.getTerritory_name() + "\n";
+									random_attack_message = random_attack_message + old_message;
+								}
+							}
+
+						} else {
+							GamePlayTerritory att_obj = attacker_territory_list.get(0);
+							att_obj.setNumber_of_armies(att_obj.getNumber_of_armies() - 1);
+						}
+					}
+					for (Player defender : game_play.getGame_state()) {
+						if (defender.getId() == game_play.getCurrent_player()) {
+							continue;
+						} else {
+							for (GamePlayTerritory player_territory : defender.getTerritory_list()) {
+								if (defender_territory_list.get(0).getTerritory_name()
+										.equalsIgnoreCase(player_territory.getTerritory_name())) {
+
+									if (defender_territory_list.get(0).getNumber_of_armies() == 0) {
+										defender.getTerritory_list().remove(player_territory);
+										break;
+									} else {
+										player_territory.setNumber_of_armies(
+												defender_territory_list.get(0).getNumber_of_armies());
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					for (GamePlayTerritory attacker_territory : attacker_territory_list) {
+
+						for (GamePlayTerritory player_territory : game_play.getGame_state()
+								.get(game_play.getCurrent_player() - 1).getTerritory_list()) {
+							if (attacker_territory.getTerritory_name()
+									.equalsIgnoreCase(player_territory.getTerritory_name())) {
+								player_territory.setNumber_of_armies(attacker_territory.getNumber_of_armies());
+								break;
+							} else if (!game_play.getGame_state().get(game_play.getCurrent_player() - 1)
+									.getTerritory_list().contains(attacker_territory)) {
+								attacker_territory.setNumber_of_armies(1);
+								game_play.getGame_state().get(game_play.getCurrent_player() - 1).getTerritory_list()
+										.add(attacker_territory);
+								is_territory_occupied = true;
+								game_play.getGame_state().get(game_play.getCurrent_player() - 1)
+										.setAny_territory_occupied(is_territory_occupied);
+								break;
+							}
+
+						}
+					}
+				}
+
+			} else {
+				random_attack_message = "All neighbours of " + source_territory.getTerritory_name()
+						+ " belong to Attacker's territoy list \n";
+			}
+
+		} else {
+			random_attack_message = "Selected random attacker territory : " + source_territory.getNumber_of_armies()
+					+ " has only 1 army \n";
+
+		}
+		if (game_play.getGame_state().get(game_play.getCurrent_player() - 1).isAny_territory_occupied()) {
+			player_manager.giveCardAtAttackEnd(game_play);
+			if (game_play.getStatus() != null && game_play.getStatus().length() > 0) {
+				game_play.setStatus(game_play.getStatus() + "\n" + random_attack_message);
+			}
+		} else {
+			game_play.setStatus(random_attack_message);
+		}
+		game_play.setGame_phase("ATTACK");
 		return game_play;
 	}
 
