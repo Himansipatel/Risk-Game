@@ -155,6 +155,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						} else {
 							game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 						}
+						while(checkIfCurrentPlayerOut(game_play)) {
+							if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+								game_play.setCurrent_player(1);
+							} else {
+								game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+							}							
+						}
 						for (Player player : game_play.getGame_state()) {
 							if (player.getId()==game_play.getCurrent_player() && ( player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
 								game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+game_play.getStatus()+"\n");
@@ -231,6 +238,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					} else {
 						game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 					}
+					while(checkIfCurrentPlayerOut(game_play)) {
+						if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+							game_play.setCurrent_player(1);
+						} else {
+							game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+						}							
+					}					
 					game_play.setGame_phase("REINFORCEMENT");
 				}
 			}
@@ -270,6 +284,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				} else {
 					game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 				}
+				while(checkIfCurrentPlayerOut(game_play)) {
+					if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+						game_play.setCurrent_player(1);
+					} else {
+						game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+					}							
+				}				
 			}
 
 			for (Player player : game_play.getGame_state()) {
@@ -300,6 +321,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				} else {
 					game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 				}
+				while(checkIfCurrentPlayerOut(game_play)) {
+					if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+						game_play.setCurrent_player(1);
+					} else {
+						game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+					}							
+				}				
 				game_play.setGame_phase("REINFORCEMENT");
 			}
 			for (Player player : game_play.getGame_state()) {
@@ -312,9 +340,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					}
 					break;
 				}
-			}			
-
-
+			}
 			break;
 
 		case "FORTIFICATION_END":
@@ -323,6 +349,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			} else {
 				game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 			}
+			while(checkIfCurrentPlayerOut(game_play)) {
+				if (game_play.getCurrent_player() + 1 > game_play.getGame_state().size()) {
+					game_play.setCurrent_player(1);
+				} else {
+					game_play.setCurrent_player(game_play.getCurrent_player() + 1);
+				}							
+			}			
 			game_play.setGame_phase("REINFORCEMENT");
 			for (Player player : game_play.getGame_state()) {
 				if (player.getId()==game_play.getCurrent_player() && (player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
@@ -603,6 +636,13 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						} else {
 							current_game_play.setCurrent_player(current_game_play.getCurrent_player() + 1);
 						}						
+						while(checkIfCurrentPlayerOut(current_game_play)) {
+							if (current_game_play.getCurrent_player() + 1 > current_game_play.getGame_state().size()) {
+								current_game_play.setCurrent_player(1);
+							} else {
+								current_game_play.setCurrent_player(current_game_play.getCurrent_player() + 1);
+							}							
+						}
 						current_game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+current_game_play.getCurrent_player()+"\n"+current_game_play.getStatus()+"\n");
 						calculateArmiesReinforce(current_game_play.getGame_state(), current_game_play.getMap(), current_game_play.getCurrent_player());
 						if (current_game_play.getCurrent_player()==current_game_play.getGame_state().size()) {
@@ -666,17 +706,17 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 	 * @param tournament Tournament object
 	 */
 	private void fillTournamentResult(Tournament tournament) {
-		
+
 		TournamentResults tournament_results = new TournamentResults();
-		
+
 		java.util.Map<String, List<GamePlay>> each_map_results = new HashMap<>();
 		List<GamePlay> game_plays = null;
 		List<String> unique_maps  = new ArrayList<>();
-		
+
 		for (GamePlay gamePlay : tournament.getTournament()) {
 			unique_maps.add(gamePlay.getFile_name());
 		}
-		
+
 		for (String string : unique_maps) {
 			game_plays = new ArrayList<>();
 			for (GamePlay gamePlay : tournament.getTournament()) {
@@ -686,11 +726,30 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			}
 			each_map_results.put(string, game_plays);
 		}
-		
+
 		tournament_results.setEach_map_results(each_map_results);
 		tournament.setTournament_results(tournament_results);		
 	}
-	
+
+	/**
+	 * This method checks if the current player is out of the game or not.
+	 * @return True If the current player is out of the game.
+	 */
+	private boolean checkIfCurrentPlayerOut(GamePlay game_play) {
+		Player current_player = null;
+		for (Player player : game_play.getGame_state()) {
+			if (player.getId()==game_play.getCurrent_player()) {
+				current_player = player;
+				break;
+			}
+		}
+		if (current_player.getTerritory_list().size()==0) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+
 	/**
 	 * @see com.risk.business.IManageGamePlay#fetchGamePlay(String)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
