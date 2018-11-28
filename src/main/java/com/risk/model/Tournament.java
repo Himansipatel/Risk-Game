@@ -32,12 +32,25 @@ public class Tournament {
 	 */
 	private int max_turns;
 	
+	/**
+	 * Result of the tournament
+	 */
+	private TournamentResults tournament_results;
+	
 	public int getMax_turns() {
 		return max_turns;
 	}
 
 	public void setMax_turns(int max_turns) {
 		this.max_turns = max_turns;
+	}
+	
+	public TournamentResults getTournament_results() {
+		return tournament_results;
+	}
+
+	public void setTournament_results(TournamentResults tournament_results) {
+		this.tournament_results = tournament_results;
 	}
 
 	public int getCurrent_game_play_id() {

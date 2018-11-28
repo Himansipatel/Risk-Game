@@ -85,8 +85,11 @@ public class GamePlay extends Observable {
 	 * Cycle count - Number of turn cycles over in any game play.
 	 */
 	private int game_play_turns;
-
-	private Player winner;
+	
+	/**
+	 * Winner for the GamePlay
+	 */
+	private String winner;
 
 	/**
 	 * @return the unique id for any GamePlay.
@@ -303,14 +306,14 @@ public class GamePlay extends Observable {
 	 * 
 	 * @return Player the winner
 	 */
-	public Player getWinner() {
+	public String getWinner() {
 		return winner;
 	}
 
 	/**
 	 * @param winner the winner to set
 	 */
-	public void setWinner(Player winner) {
+	public void setWinner(String winner) {
 		this.winner = winner;
 	}
 
