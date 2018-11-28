@@ -599,29 +599,6 @@ public class ManagePlayer implements IManagePlayer {
 	}
 
 	/**
-	 * This function is use to detect if current player(i.e attacker) is winner once
-	 * attacker occupy defender territory
-	 * 
-	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
-	 * @author <a href="himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param attacker_territory_list Total territory list of attacker
-	 * @param map                     The Entire Game Map Object
-	 * @return Flag Current Player(Attacker) is Winner or not
-	 */
-	public boolean declareGameWinner(List<GamePlayTerritory> attacker_territory_list, Map map) {
-		boolean is_winner = false;
-		int total_territory_in_game = getTerritories(map).size();
-		if (total_territory_in_game > 0) {
-			// Current Player(Attacker) Territory Size
-			int player_territory_count = attacker_territory_list.size();
-			if (player_territory_count == total_territory_in_game) {
-				is_winner = true;
-			}
-		}
-		return is_winner;
-	}
-
-	/**
 	 * This function is call at the end of each player attack phase , which performs
 	 * checks that whether player has occupied any territory during each turn and if
 	 * any territory occupied then as per risk rules player should get one card from
@@ -744,6 +721,31 @@ public class ManagePlayer implements IManagePlayer {
 		}
 
 		return message;
+	}
+
+	/**
+	 * This function is use to detect if current player(i.e attacker) is winner once
+	 * attacker occupy defender territory
+	 * 
+	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 * @author <a href="himansipatel1994@gmail.com">Himansi Patel</a>
+	 * @param GamePlay Cuurent GameState
+	 * @return Flag Current Player(Attacker) is Winner or not
+	 */
+	public GamePlay checkForWinner(GamePlay game_play) {
+		List<GamePlayTerritory> player_occupied_territory = game_play.getGame_state()
+				.get(game_play.getCurrent_player() - 1).getTerritory_list();
+		int total_territory_in_game = getTerritories(game_play.getMap()).size();
+		if (total_territory_in_game > 0) {
+			// Current Player(Attacker) Territory Size
+			int player_territory_count = player_occupied_territory.size();
+			if (player_territory_count == total_territory_in_game) {
+				game_play.setGame_phase("GAME_FINISH");
+				game_play.setStatus("Player" + game_play.getCurrent_player() + " Winner Winner Chicken Dinner !!");
+				return game_play;
+			}
+		}
+		return game_play;
 	}
 
 	/**
