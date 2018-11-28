@@ -54,6 +54,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 			status_message = null;
 		} else {
 			status_message = game_play.getStatus().trim();
+			status_message = status_message.replace("\n", "##");
 		}
 
 		int game_play_id = 1;
@@ -345,6 +346,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 			} else if (key.equalsIgnoreCase("Current Player Id")) {
 				game_play.setCurrent_player(Integer.parseInt(value));
 			} else if (key.equalsIgnoreCase("Status")) {
+				value=value.replace("##", System.getProperty("line.separator"));
 				game_play.setStatus(value);
 			} else if (key.equalsIgnoreCase("Game Play Id")) {
 				game_play.setGame_play_id(Integer.parseInt(value));
