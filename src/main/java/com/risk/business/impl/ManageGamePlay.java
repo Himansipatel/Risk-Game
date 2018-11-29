@@ -540,10 +540,10 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 				com.risk.model.Map map_model = map_manager.getFullMap(map);
 
 				if (map_model==null){
-					tournament.setStatus(map+" : Unable to load Map.");
+					tournament.setStatus(map+" : Unable to load Map.\n");
 					return tournament;					
 				}else if (!map_model.getStatus().equals("")) {
-					tournament.setStatus(map+" : "+map_model.getStatus());
+					tournament.setStatus(map+" : "+map_model.getStatus()+"\n");
 					return tournament;										
 				}else {
 

@@ -366,7 +366,7 @@ public class ManageMap implements IManageMap {
 		if (map != null) {
 			if (map.getStatus() != null && map.getStatus() != "") {
 				com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(null, null);
-				map_gui.setStatus(map.getStatus());
+				map_gui.setStatus(map.getStatus()+"\n");
 				return map_gui;				
 			}
 			for (Iterator<Entry<String, Continent>> iterator = map.getContinents().entrySet().iterator(); iterator
@@ -389,12 +389,12 @@ public class ManageMap implements IManageMap {
 				return map_gui;
 			} else {
 				com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(null, null);
-				map_gui.setStatus("Error in parsing Map File.");
+				map_gui.setStatus("Error in parsing Map File."+"\n");
 				return map_gui;
 			}
 		}else {
 			com.risk.model.gui.Map map_gui = new com.risk.model.gui.Map(null, null);
-			map_gui.setStatus("Error in parsing Map File.");
+			map_gui.setStatus("Error in parsing Map File."+"\n");
 			return map_gui;
 		}
 	}
@@ -535,17 +535,17 @@ public class ManageMap implements IManageMap {
 			map.setStatus(message);
 			message 	    = checkDiscontinuity(map);
 			if (message != "") {
-				map.setStatus(message);
+				map.setStatus(message+"\n");
 				return map;
 			}
 			message 		= checkDuplicateTerritory(map);
 			if (message != "") {
-				map.setStatus(message);
+				map.setStatus(message+"\n");
 				return map;
 			}
 			message 		= checkInvalidNeighbour(map);
 			if (message != "") {
-				map.setStatus(message);
+				map.setStatus(message+"\n");
 				return map;
 			}
 			return map;
