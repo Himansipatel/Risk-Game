@@ -5,10 +5,10 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.risk.file.ManageGamePlayFileTest;
-import com.risk.model.strategy.AggressiveTest;
-import com.risk.model.strategy.BenevolentTest;
-import com.risk.model.strategy.CheaterTest;
-import com.risk.model.strategy.HumanTest;
+import com.risk.model.Strategy.AggressiveTest;
+import com.risk.model.Strategy.BenevolentTest;
+import com.risk.model.Strategy.CheaterTest;
+import com.risk.model.Strategy.HumanTest;
 
 /**
  * This is an test suite case for Game Risk Test Cases

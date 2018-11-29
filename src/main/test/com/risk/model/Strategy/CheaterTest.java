@@ -1,4 +1,4 @@
-package com.risk.model.strategy;
+package com.risk.model.Strategy;
 
 import static org.junit.Assert.assertEquals;
 
