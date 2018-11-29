@@ -31,7 +31,7 @@ public class Human implements IStrategy {
 	public GamePlay reinforce(GamePlay game_play) {
 		ManagePlayer manage_player = new ManagePlayer();
 		if (game_play.getGame_phase().equalsIgnoreCase("TRADE_CARDS")) {
-			manage_player.tradeCards(game_play);
+			manage_player.tradeCards(game_play);			
 		}
 		return game_play;
 	}
@@ -78,8 +78,8 @@ public class Human implements IStrategy {
 		int defender_territory_armies = 0;
 		String attacker_territory_name = game_play.getAttack().getAttacker_territory();
 		String defender_territory_name = game_play.getAttack().getDefender_territory();
-		attack_message += "\nAttacker territory: " + attacker_territory_name
-				+ " Defender Territory: " + defender_territory_name + "\n";
+		attack_message += "\nAttacker territory: " + attacker_territory_name + " Defender Territory: "
+				+ defender_territory_name + "\n";
 		List<Player> players_list = game_play.getGame_state();
 
 		for (Player player : players_list) {
@@ -129,7 +129,7 @@ public class Human implements IStrategy {
 						if (def_obj.getNumber_of_armies() == 0) {
 							attacker_territory_list.add(def_obj);
 							old_message = "\nAttacker Occupies Defender Territory\n";
-							attack_message = attack_message + old_message;
+							attack_message = old_message + attack_message;
 						}
 					} else {
 						// Defender Won
@@ -200,7 +200,7 @@ public class Human implements IStrategy {
 						}
 					}
 				}
-				attack_message = String.join("\n", attack_message_list);
+				attack_message = attack_message + String.join("\n", attack_message_list);
 				game_play.setStatus(attack_message);
 			} else {
 				game_play.setStatus(valid_attack_message);
