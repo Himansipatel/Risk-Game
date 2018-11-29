@@ -62,8 +62,13 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		List<Domination> domination_list = game_play.getDomination();
 
 		List<Player> player_list = game_play.getGame_state();
-		file_name = file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name;
+		if(file_name.endsWith(".map")) {
+			file_name = file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name;	
+		}else if(file_name.contains("_")) {
+			file_name = file_name.split("_")[0];
+		}
 		file_name = file_name + "_" + String.valueOf(System.currentTimeMillis());
+
 		try (PrintStream player_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/gameplay/" + file_name + ".txt")))) {
 			player_file_writer.println("[Gameplay]");
