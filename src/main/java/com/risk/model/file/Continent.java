@@ -3,7 +3,7 @@ package com.risk.model.file;
 /**
  * This is an Schema Class for Continent.
  * 
- * @author MayankJariwala
+ * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
  * @version 0.0.1
  */
 public class Continent {

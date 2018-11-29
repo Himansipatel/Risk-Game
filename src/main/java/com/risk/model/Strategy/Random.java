@@ -18,13 +18,14 @@ import com.risk.model.Player;
  * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
  * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a> Functions
  *         Modifications done by Mayank Jariwala
- * @version 0.0.1
+ * @version 0.0.3
  */
 public class Random implements IStrategy {
 
 	/**
-	 * This function is use by random player to reinforce armies on any randomly
-	 * selected territory with given army stock
+	 * Reinforce for a Random Player as per Strategy Design Pattern.This function is
+	 * use by random player to reinforce armies on any randomly selected territory
+	 * with given army stock
 	 * 
 	 * @see com.risk.business.IStrategy#reinforce(com.risk.model.GamePlay)
 	 * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
@@ -63,9 +64,11 @@ public class Random implements IStrategy {
 	}
 
 	/**
-	 * Attack for a Random Player as per Strategy Design Pattern.
+	 * Attack for a Random Player as per Strategy Design Pattern.This player attacks
+	 * a random number of times a random country.
 	 * 
 	 * @see com.risk.business.IStrategy#attack(com.risk.model.GamePlay)
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>
 	 * @param game_play state of the game i.e. entire game related info when attack
 	 *                  starts for a player.
@@ -112,6 +115,7 @@ public class Random implements IStrategy {
 			attacker_army_count = source_territory.getNumber_of_armies();
 			boolean defefender_territory_found = false;
 			if (attacker_army_count > 1) {
+//				for finding neighbour of attcker territory
 				for (com.risk.model.gui.Territory territory : game_play.getGui_map().getTerritories()) {
 					if (territory.getName().equalsIgnoreCase(source_territory.getTerritory_name())) {
 						neighbours = Arrays.asList(territory.getNeighbours().split(";"));
@@ -135,6 +139,7 @@ public class Random implements IStrategy {
 							if (defender.getId() == game_play.getCurrent_player()) {
 								continue;
 							}
+//							For finding defender territory
 							for (GamePlayTerritory defend_territory : defender.getTerritory_list()) {
 								if (defend_territory.getTerritory_name()
 										.equalsIgnoreCase(defender_territory.getName())) {
@@ -150,6 +155,7 @@ public class Random implements IStrategy {
 				if (defefender_territory_found) {
 					int attacker_dice_no = 0;
 					int defender_dice_no = 0;
+//					set attacker and defender dice number to attack object
 					player_manager.setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
 					attacker_dice_no = game_play.getAttack().getAttacker_dice_no();
 					defender_dice_no = game_play.getAttack().getDefender_dice_no();
@@ -165,6 +171,7 @@ public class Random implements IStrategy {
 					String valid_attack_message = player_manager.checkForValidAttack(attacker_terattrtiory_armies,
 							defender_territory_armies, attacker_dice_no, defender_dice_no);
 					if (valid_attack_message.trim().length() == 0) {
+//						Roll dice result
 						List<Integer> attack_result = player_manager.rollDiceDecision(attacker_dice_no,
 								defender_dice_no);
 
@@ -200,10 +207,13 @@ public class Random implements IStrategy {
 								}
 
 							} else {
+//								Defender won
 								GamePlayTerritory att_obj = attacker_territory_list.get(0);
 								att_obj.setNumber_of_armies(att_obj.getNumber_of_armies() - 1);
 							}
 						}
+
+//						update defender's territory list according temporary defender list
 						for (Player defender : game_play.getGame_state()) {
 							if (defender.getId() == game_play.getCurrent_player()) {
 								continue;
@@ -225,6 +235,7 @@ public class Random implements IStrategy {
 							}
 						}
 
+//						update attacker's territory list according attacker territory list
 						for (GamePlayTerritory attacker_territory : attacker_territory_list) {
 
 							for (GamePlayTerritory player_territory : game_play.getGame_state()
@@ -275,8 +286,9 @@ public class Random implements IStrategy {
 	}
 
 	/**
-	 * This function is use by random player to fortify armies from source to
-	 * territory by selecting random source and any of its random neighbors
+	 * Fortify for a Random Player as per Strategy Design Pattern.This function is
+	 * use by random player to fortify armies from source to territory by selecting
+	 * random source and any of its random neighbors
 	 * 
 	 * @see com.risk.business.IStrategy#fortify(com.risk.model.GamePlay)
 	 * @author <a href="zinnia.rana.22@gmail.com">Zinnia Rana</a>

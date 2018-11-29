@@ -86,6 +86,11 @@ public class Domination extends Observable {
 		this.player_army_count = player_army_count;
 	}
 
+	/**
+	 * This method updates player statistics
+	 * 
+	 * @param game_play GamePlay object
+	 */
 	public void updateDomination(GamePlay game_play) {
 		setChanged();
 		notifyObservers(game_play);

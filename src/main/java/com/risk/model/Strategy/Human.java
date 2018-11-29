@@ -31,7 +31,7 @@ public class Human implements IStrategy {
 	public GamePlay reinforce(GamePlay game_play) {
 		ManagePlayer manage_player = new ManagePlayer();
 		if (game_play.getGame_phase().equalsIgnoreCase("TRADE_CARDS")) {
-			manage_player.tradeCards(game_play);			
+			manage_player.tradeCards(game_play);
 		}
 		return game_play;
 	}
@@ -230,6 +230,7 @@ public class Human implements IStrategy {
 		String source_territory = game_play.getFortification().getSource_territory();
 		String destination_territory = game_play.getFortification().getDestination_territory();
 
+//		checks source territory and destination territory is same or not
 		if (source_territory.equalsIgnoreCase(destination_territory)) {
 			game_play.setStatus("Fortification cannot be performed because same territory is selected in destination.");
 			return game_play;

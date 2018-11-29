@@ -15,14 +15,15 @@ import com.risk.model.Player;
  * Pattern, during our GamePlay.
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
- * @version 0.0.1
+ * @version 0.0.3
  */
 public class Cheater implements IStrategy {
 
 	/**
-	 * Reinforcement of an Cheater Player.
+	 * Reinforcement for a Cheater Player as per Strategy Design Pattern.This Player
+	 * doubles the number of armies on all its countries.
 	 * 
-	 * @see com.risk.business.AbstractPlayer#reinforce(com.risk.model.GamePlay)
+	 * @see com.risk.business.IStrategy#reinforce(com.risk.model.GamePlay)
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 */
 	@Override
@@ -45,9 +46,10 @@ public class Cheater implements IStrategy {
 	}
 
 	/**
-	 * Attack of an Cheater Player.
+	 * Attack for a Cheater Player as per Strategy Design Pattern.This Player
+	 * automatically conquers all the neighbors of all its countries.
 	 * 
-	 * @see com.risk.business.AbstractPlayer#attack(com.risk.model.GamePlay)
+	 * @see com.risk.business.IStrategy#attack(com.risk.model.GamePlay)
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 */
 	@Override
@@ -84,6 +86,7 @@ public class Cheater implements IStrategy {
 
 			for (GamePlayTerritory territory : attacker_territories) {
 				attacker_territory_data = territory;
+//				For finding neighbour of attacker territory
 				for (com.risk.model.gui.Territory neighbour : game_play.getGui_map().getTerritories()) {
 					if (territory.getTerritory_name().equalsIgnoreCase(neighbour.getName())) {
 						neighbours = new ArrayList<>();
@@ -157,9 +160,11 @@ public class Cheater implements IStrategy {
 	}
 
 	/**
-	 * Fortify of an Cheater Player.
+	 * Fortify for a Cheater Player as per Strategy Design Pattern.This player
+	 * doubles the number of armies on its countries that have neighbors that belong
+	 * to other players.
 	 * 
-	 * @see com.risk.business.AbstractPlayer#fortify(com.risk.model.GamePlay)
+	 * @see com.risk.business.IStrategy#fortify(com.risk.model.GamePlay)
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 */
 	@Override

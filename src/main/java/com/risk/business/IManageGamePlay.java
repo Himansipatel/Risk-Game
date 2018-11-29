@@ -32,16 +32,20 @@ public interface IManageGamePlay {
 	GamePlay managePhase(GamePlay game_state);
 
 	/**
-	 * This method prepares a GamePlay Object for Tournament Mode.
-	 * It then initiates the Tournament. 
+	 * This method prepares a GamePlay Object for Tournament Mode. It then initiates
+	 * the Tournament.
+	 * 
 	 * @param tournament_inp Inputs from UI to prepare a tournament.
-	 * @return Tournament containing the current as well as the set of pending and executed GamePlays.
+	 * @return Tournament containing the current as well as the set of pending and
+	 *         executed GamePlays.
 	 */
 	Tournament prepareTournamentGamePlay(TournamentChoices tournament_inp);
 
 	/**
 	 * This method is responsible for managing the flow of Game in Tournament Mode.
-	 * @param tournament Tournament containing the current as well as the set of pending and executed GamePlays.
+	 * 
+	 * @param tournament Tournament containing the current as well as the set of
+	 *                   pending and executed GamePlays.
 	 * @return Tournament with updates in the currently active GamePlay.
 	 */
 	Tournament playTournamentMode(Tournament tournament);
@@ -71,13 +75,13 @@ public interface IManageGamePlay {
 	List<String> fetchGamePlays();
 
 	/**
-	 * This method reads a selected GamePlay File, parses it and 
-	 * the converts it to a GamePlay Object while loading a GamePlay.
+	 * This method reads a selected GamePlay File, parses it and the converts it to
+	 * a GamePlay Object while loading a GamePlay.
 	 * 
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
 	 * @param file File Name of the currently selected GamePlay file.
 	 * @return GamePlay Object representing the GamePlay to be loaded.
 	 */
 	GamePlay fetchGamePlay(String file);
-	
+
 }

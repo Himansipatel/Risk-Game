@@ -1,28 +1,27 @@
 package com.risk.model;
+
 import java.util.List;
 
 import com.risk.business.IStrategy;
 
 /**
- * This Player Model represents a Player during our GamePlay.
- * In terms of Strategy design Pattern this is our Context Class
- * having an attribute for Strategy,
- * 
+ * This Player Model represents a Player during our GamePlay. In terms of
+ * Strategy design Pattern this is our Context Class having an attribute for
+ * Strategy *
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a> -
  *         Added Model Description
  * @version 0.0.1
  */
-public class Player{
+public class Player {
 
 	private int id;
 	private String name;
 	private int army_stock;
 	private List<GamePlayTerritory> territory_list;
 	private List<Card> card_list;
-	
-	
+
 	/**
 	 * During Attack Phase If Player is occupying territory then flag will set to
 	 * true and will get one card as per risk rule at the end of attack.
@@ -45,38 +44,61 @@ public class Player{
 	private String strategy_name;
 
 	/**
-	 * Represents a particular strategy a Player has. 
+	 * Represents a particular strategy a Player has.
 	 */
 	private IStrategy strategy;
 
+	/**
+	 * @param strategy Strategy object to set
+	 */
 	public void setStrategy(IStrategy strategy) {
 		this.strategy = strategy;
 	}
-	
+
+	/**
+	 * This method is used to execute player's reinforce, attack, fortification
+	 * method
+	 * 
+	 * @param method_name Like REINFORCE, ATTACK, FORTIFY
+	 * @param game_play   GamePlay Object
+	 * @return updated GamePlay object
+	 */
 	public GamePlay executeStrategy(String method_name, GamePlay game_play) {
 		if (method_name.equalsIgnoreCase("REINFORCE")) {
 			this.strategy.reinforce(game_play);
-		}else if(method_name.equalsIgnoreCase("ATTACK")) {
-			this.strategy.attack(game_play);			
-		}else if(method_name.equalsIgnoreCase("FORTIFY")) {
+		} else if (method_name.equalsIgnoreCase("ATTACK")) {
+			this.strategy.attack(game_play);
+		} else if (method_name.equalsIgnoreCase("FORTIFY")) {
 			this.strategy.fortify(game_play);
 		}
-		
+
 		return game_play;
-	}	
-	
+	}
+
+	/**
+	 * @return Type of Player (Human, Computer)
+	 */
 	public String getType() {
 		return type;
 	}
 
+	/**
+	 * @param type Player's type name (Computer Player or Human Player) to set
+	 */
 	public void setType(String type) {
 		this.type = type;
 	}
-	
+
+	/**
+	 * @return Strategy name of player (Aggressive,Random,Cheater,Benevolent)
+	 */
 	public String getStrategy_name() {
 		return strategy_name;
 	}
 
+	/**
+	 * @param strategy_name the strategy name of player to set
+	 */
 	public void setStrategy_name(String strategy_name) {
 		this.strategy_name = strategy_name;
 	}
@@ -178,5 +200,5 @@ public class Player{
 	public void setCard_list(List<Card> card_list) {
 		this.card_list = card_list;
 	}
-	
+
 }

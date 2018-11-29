@@ -289,7 +289,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * territories to each player, in a round robin fashion.
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param map Map Object for the active map in Game.
+	 * @param map              Map Object for the active map in Game.
+	 * @param player_info_list Player list
 	 */
 	public void assingTerritoriesToPlayers(Map map, List<Player> player_info_list) {
 		List<GamePlayTerritory> territories = getTerritories(map);
@@ -646,9 +647,10 @@ public class ManagePlayer implements IManagePlayer {
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param attacker_territory_list : List of Territories Attacker owes
-	 * @param defender_territory_list : List of Territories Defender owes
-	 * @param attack
+	 * @param attacker_territory_list List of Territories Attacker owes
+	 * @param defender_territory_list List of Territories Defender owes
+	 * @param attack                  Attack object to set attacker and defender
+	 *                                dice number
 	 */
 	public void setAttackerDefenderDiceNo(List<GamePlayTerritory> attacker_territory_list,
 			List<GamePlayTerritory> defender_territory_list, Attack attack) {
@@ -673,8 +675,8 @@ public class ManagePlayer implements IManagePlayer {
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param attacker_id
-	 * @param defender_id
+	 * @param attacker_id Attacker Id
+	 * @param defender_id Defender Id
 	 * @return Valid Attack Message
 	 */
 	public String checkForValidAttackTerritory(int attacker_id, int defender_id) {
@@ -690,10 +692,10 @@ public class ManagePlayer implements IManagePlayer {
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param attacker_territory_armies
-	 * @param defender_territory_armies
-	 * @param attacker_dice_no
-	 * @param defender_dice_no
+	 * @param attacker_territory_armies The number of armies of Attacker Territory
+	 * @param defender_territory_armies The number of armies of Defender Territory
+	 * @param attacker_dice_no          The number of dice to be rolled by attacker
+	 * @param defender_dice_no          The number of dice to be rolled by defender
 	 * @return Valid Attack Message
 	 */
 	public String checkForValidAttack(int attacker_territory_armies, int defender_territory_armies,
@@ -730,7 +732,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * 
 	 * @author <a href="mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 * @author <a href="himansipatel1994@gmail.com">Himansi Patel</a>
-	 * @param GamePlay Cuurent GameState
+	 * @param game_play Cuurent GameState
 	 */
 	public void checkForWinner(GamePlay game_play) {
 		List<GamePlayTerritory> player_occupied_territory = game_play.getGame_state()
@@ -1058,7 +1060,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @param player_territory_list Territory list of player
 	 * @return result
 	 */
-	private static boolean getPlayerTerritoryNeighbours(String territory_name, GamePlay game_play,
+	private boolean getPlayerTerritoryNeighbours(String territory_name, GamePlay game_play,
 			List<GamePlayTerritory> player_territory_list) {
 		List<String> neighbours = new ArrayList<>();
 		List<String> player_territory = new ArrayList<>();

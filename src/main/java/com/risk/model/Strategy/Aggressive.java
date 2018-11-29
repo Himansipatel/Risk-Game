@@ -16,12 +16,14 @@ import com.risk.model.Player;
  * Pattern, during our GamePlay.
  * 
  * @author <a href="mailto:apoorv.semwal20@gmail.com">Apoorv Semwal</a>
- * @version 0.0.1
+ * @version 0.0.3
  */
 public class Aggressive implements IStrategy {
 
 	/**
-	 * Reinforcement of an Aggressive Player.
+	 * Reinforcement for a Aggressive Player as per Strategy Design Pattern. This
+	 * Player main goal is to reinforce on stronger country first and keep
+	 * maintaining this strategy
 	 * 
 	 * @see com.risk.business.IStrategy#reinforce(GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -70,7 +72,9 @@ public class Aggressive implements IStrategy {
 	}
 
 	/**
-	 * Reinforcement of an Aggressive Player.
+	 * Attack for an Aggressive Player as per Strategy Design Pattern.This Player
+	 * main goal is always attack with strongest territory until it cannot attack
+	 * anymore.
 	 * 
 	 * @see com.risk.business.IStrategy#attack(com.risk.model.GamePlay)
 	 * @author <a href="mailto:himansipatel1994@gmail.com">HimansiPatel</a>
@@ -97,6 +101,7 @@ public class Aggressive implements IStrategy {
 		List<String> neighbours = new ArrayList<>();
 		List<String> player_territories = new ArrayList<>();
 
+//		For finding Strongest Territory
 		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				int max = 0;
@@ -107,6 +112,7 @@ public class Aggressive implements IStrategy {
 						strongest_territory = territory;
 					}
 				}
+//				add Strongest Territory to attacker territory list
 				attacker_territory_list.add(strongest_territory);
 				break;
 			} else {
@@ -114,6 +120,7 @@ public class Aggressive implements IStrategy {
 			}
 		}
 
+//		For finding Neighbour 
 		for (com.risk.model.gui.Territory territory : game_play.getGui_map().getTerritories()) {
 			if (territory.getName().equalsIgnoreCase(strongest_territory.getTerritory_name())) {
 				neighbours = Arrays.asList(territory.getNeighbours().split(";"));
@@ -139,6 +146,7 @@ public class Aggressive implements IStrategy {
 					}
 					for (GamePlayTerritory defend_territory : defender.getTerritory_list()) {
 						if (defend_territory.getTerritory_name().equalsIgnoreCase(defender_territory.getName())) {
+//							add defender territory to temporary defender territory list
 							temp_defender_list.add(defend_territory);
 							game_play.setGame_phase("ATTACK_ALL_OUT");
 						}
@@ -167,7 +175,7 @@ public class Aggressive implements IStrategy {
 							defender_territory_armies, attacker_dice_no, defender_dice_no);
 
 					if (valid_attack_message.trim().length() == 0) {
-						// Roll Dice
+						// Roll Dice Result
 						List<Integer> attack_result = player_manager.rollDiceDecision(attacker_dice_no,
 								defender_dice_no);
 
@@ -211,6 +219,7 @@ public class Aggressive implements IStrategy {
 								defender_territory = -1;
 
 							} else {
+//								Defender won
 
 								GamePlayTerritory att_obj = attacker_territory_list.get(0);
 								att_obj.setNumber_of_armies(att_obj.getNumber_of_armies() - 1);
@@ -220,9 +229,7 @@ public class Aggressive implements IStrategy {
 						}
 
 					}
-				} else {
 				}
-
 			} else {
 				old_message = "Can't attack because strongest selected territory : "
 						+ attacker_territory_list.get(0).getTerritory_name() + " has only "
@@ -232,6 +239,7 @@ public class Aggressive implements IStrategy {
 			}
 		}
 
+//		update defender's territory list according temporary defender list 
 		for (GamePlayTerritory temp_defender_territory : temp_defender_list) {
 			for (Player defender : game_play.getGame_state()) {
 				if (defender.getId() == game_play.getCurrent_player()) {
@@ -254,6 +262,7 @@ public class Aggressive implements IStrategy {
 			}
 		}
 
+//		update attacker's territory list according attacker territory list 
 		for (GamePlayTerritory attacker_territory : attacker_territory_list) {
 			for (GamePlayTerritory player_territory : game_play.getGame_state().get(game_play.getCurrent_player() - 1)
 					.getTerritory_list()) {
@@ -290,7 +299,8 @@ public class Aggressive implements IStrategy {
 	}
 
 	/**
-	 * Fortify of an Aggressive Player.
+	 * Fortify for a Aggressive Player as per Strategy Design Pattern..Focus on
+	 * aggregating armies on one country.
 	 * 
 	 * @see com.risk.business.IStrategy#fortify(GamePlay)
 	 * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>

@@ -20,13 +20,14 @@ public interface IManageGamePlayFile {
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @param gamePlay game_state State of Game during any phase
-	 * @return File Save Status Message
+	 * @return True - If file successfully written otherwise return false
 	 */
 	Boolean saveGameStateToDisk(GamePlay gamePlay);
 
 	/**
 	 * This function is use to load the state of ongoing and saved state of game.
 	 * 
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
 	 * @author <a href="mayankjariwala1994@gmail.com"> Mayank Jariwala </a>
 	 * @param file_name The Playing Game File Name
 	 * @return GamePlay : The current ongoing game state object
@@ -34,12 +35,12 @@ public interface IManageGamePlayFile {
 	GamePlay fetchGamePlay(String file_name);
 
 	/**
-	 * This method is used to load and display the list of available GamePlays from resource folder.
+	 * This method is used to load and display the list of available GamePlays from
+	 * resource folder.
 	 * 
 	 * @author <a href="apoorv.semwal20@gmail.com">Apoorv Semwal</a>
-	 * @param file_name The Playing Game File Name
-	 * @return GamePlay : The current ongoing game state object
+	 * @return Name List of GamePlay Files.
 	 */
 	List<String> fetchGamePlayFilesFromResource();
-	
+
 }

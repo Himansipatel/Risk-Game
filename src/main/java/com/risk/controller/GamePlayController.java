@@ -98,7 +98,7 @@ public class GamePlayController {
 	 * @param request       Request Payload
 	 * @param response      An object to assist a servlet in sending a response to
 	 *                      the client
-	 * @param PlayerDetails object with details about players who will be playing
+	 * @param playerDetails object with details about players who will be playing
 	 *                      the game
 	 * @return gamePlay
 	 * @throws Exception NullPointerException when game state object is null
@@ -213,7 +213,7 @@ public class GamePlayController {
 	 * @param request           Request Payload
 	 * @param response          An object to assist a servlet in sending a response
 	 *                          to the client
-	 * @param TournamentChoices object with details about tournament maps and
+	 * @param tournamentChoices object with details about tournament maps and
 	 *                          strategies
 	 * @return Tournament object with gamePlays object
 	 * @throws Exception NullPointerException when game state object is null
@@ -231,10 +231,11 @@ public class GamePlayController {
 	 * as given by user.
 	 * 
 	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
-	 * @param request    Request Payload
-	 * @param response   An object to assist a servlet in sending a response to the
-	 *                   client
-	 * @param Tournament object with details about tournament maps and strategies
+	 * @param request            Request Payload
+	 * @param response           An object to assist a servlet in sending a response
+	 *                           to the client
+	 * @param tournamentFromView Tournament object with details about tournament
+	 *                           maps and strategies
 	 * @return Tournament object with gamePlays object
 	 * @throws Exception NullPointerException when game state object is null
 	 */
@@ -250,10 +251,11 @@ public class GamePlayController {
 	 * This function will fetch tournament results.
 	 * 
 	 * @author <a href="mailto:l_grew@encs.concordia.ca">Loveshant Grewal</a>
-	 * @param request    Request Payload
-	 * @param response   An object to assist a servlet in sending a response to the
-	 *                   client
-	 * @param Tournament object with details about tournament maps and strategies
+	 * @param request            Request Payload
+	 * @param response           An object to assist a servlet in sending a response
+	 *                           to the client
+	 * @param tournamentFromView Tournament object with details about tournament
+	 *                           maps and strategies
 	 * @return Tournament object with gamePlays object
 	 * @throws Exception NullPointerException when game state object is null
 	 */
