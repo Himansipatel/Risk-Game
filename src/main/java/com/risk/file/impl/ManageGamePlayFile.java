@@ -62,6 +62,8 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 		List<Domination> domination_list = game_play.getDomination();
 
 		List<Player> player_list = game_play.getGame_state();
+		file_name = file_name.endsWith(".map") ? file_name.split("\\.")[0] : file_name;
+		file_name = file_name + "_" + String.valueOf(System.currentTimeMillis());
 		try (PrintStream player_file_writer = new PrintStream(
 				new BufferedOutputStream(new FileOutputStream("src/main/resource/gameplay/" + file_name + ".txt")))) {
 			player_file_writer.println("[Gameplay]");
@@ -346,7 +348,7 @@ public class ManageGamePlayFile implements IManageGamePlayFile {
 			} else if (key.equalsIgnoreCase("Current Player Id")) {
 				game_play.setCurrent_player(Integer.parseInt(value));
 			} else if (key.equalsIgnoreCase("Status")) {
-				value=value.replace("##", System.getProperty("line.separator"));
+				value = value.replace("##", System.getProperty("line.separator"));
 				game_play.setStatus(value);
 			} else if (key.equalsIgnoreCase("Game Play Id")) {
 				game_play.setGame_play_id(Integer.parseInt(value));

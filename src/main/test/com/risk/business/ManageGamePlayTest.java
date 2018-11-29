@@ -1,8 +1,10 @@
 package com.risk.business;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
@@ -11,8 +13,11 @@ import org.junit.Test;
 import com.risk.business.impl.ManageGamePlay;
 import com.risk.business.impl.ManagePlayer;
 import com.risk.model.GamePlay;
+import com.risk.model.Tournament;
+import com.risk.model.TournamentResults;
 import com.risk.model.gui.PlayerDetails;
 import com.risk.model.gui.SinglePlayer;
+import com.risk.model.gui.TournamentChoices;
 
 /**
  * @author <a href="mailto:a_semwal@encs.concordia.ca">ApoorvSemwal</a>
@@ -113,8 +118,8 @@ public class ManageGamePlayTest {
 	/**
 	 * Creating a game state using AutoAllocationMode - A. Auto Allocation Mode
 	 * Performs an initial automatic allocation of armies during startup phase and
-	 * then calls calculateArmiesReinforce ,after that checks the next valid game play phase
-	 * is Reinforcement
+	 * then calls calculateArmiesReinforce ,after that checks the next valid game
+	 * play phase is Reinforcement
 	 *
 	 * 
 	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
@@ -141,6 +146,94 @@ public class ManageGamePlayTest {
 		game_manager.calculateArmiesReinforce(game_state.getGame_state(), game_state.getMap(),
 				game_state.getCurrent_player());
 		assertEquals("REINFORCEMENT", game_state.getGame_phase());
+	}
+
+	/**
+	 * Tournament on Invalid Map Test
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 */
+	@Test
+	public void testForInvalidMapTournament() {
+		TournamentChoices tournament_info = new TournamentChoices();
+		tournament_info.setMapNames(Arrays.asList("USA - Disconnected Continent.map"));
+		tournament_info.setMultipleStrategies(Arrays.asList("Benevolent", "Cheater", "Aggressive"));
+		tournament_info.setMaxTurns(20);
+		tournament_info.setNoOfGamesToPlay(2);
+		Tournament tournament = game_manager.prepareTournamentGamePlay(tournament_info);
+		assertTrue(tournament.getStatus().contains("Disconnected"));
+	}
+
+	/**
+	 * Tournament on Valid Maps Test
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 */
+	@Test
+	public void testForTournamentValidMapsTournament() {
+		TournamentChoices tournament_info = new TournamentChoices();
+		tournament_info.setMapNames(Arrays.asList("Asia.map", "Alberta.map"));
+		tournament_info.setMultipleStrategies(Arrays.asList("Benevolent", "Cheater", "Aggressive"));
+		tournament_info.setMaxTurns(20);
+		tournament_info.setNoOfGamesToPlay(2);
+		Tournament tournament = game_manager.prepareTournamentGamePlay(tournament_info);
+		assertTrue(tournament.getStatus().contains("Tournament Ready"));
+	}
+
+	/**
+	 * Tournament Winner Test For Cheater Player
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 */
+	@Test
+	public void testForTournamentWinner() {
+		TournamentChoices tournament_info = new TournamentChoices();
+		TournamentResults tournament_results = new TournamentResults();
+		tournament_info.setMapNames(Arrays.asList("TestAB.map"));
+		tournament_info.setMultipleStrategies(Arrays.asList("Benevolent", "Cheater", "Aggressive"));
+		tournament_info.setMaxTurns(20);
+		tournament_info.setNoOfGamesToPlay(2);
+		Tournament tournament = game_manager.prepareTournamentGamePlay(tournament_info);
+		while (!tournament.getStatus().equalsIgnoreCase("TOURNAMENT_OVER\n")) {
+			tournament = game_manager.playTournamentMode(tournament);
+			tournament_results = tournament.getTournament_results();
+		}
+		List<String> winner = new ArrayList<>();
+		List<String> expected_winner = Arrays.asList("Player2 Behaviour : Cheater", "Player2 Behaviour : Cheater");
+		tournament_results.getEach_map_results().forEach((map, results) -> {
+			results.forEach(result -> {
+				winner.add(result.getWinner());
+			});
+		});
+		assertEquals(winner, expected_winner);
+	}
+
+	/**
+	 * Tournament Draw Test For Aggressive Player vs Benevolent Player
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 */
+	@Test
+	public void testForTournamentDraw() {
+		TournamentChoices tournament_info = new TournamentChoices();
+		TournamentResults tournament_results = new TournamentResults();
+		tournament_info.setMapNames(Arrays.asList("World.map"));
+		tournament_info.setMultipleStrategies(Arrays.asList("Benevolent", "Aggressive"));
+		tournament_info.setMaxTurns(20);
+		tournament_info.setNoOfGamesToPlay(2);
+		Tournament tournament = game_manager.prepareTournamentGamePlay(tournament_info);
+		while (!tournament.getStatus().equalsIgnoreCase("TOURNAMENT_OVER\n")) {
+			tournament = game_manager.playTournamentMode(tournament);
+			tournament_results = tournament.getTournament_results();
+		}
+		List<String> winner = new ArrayList<>();
+		List<String> expected_winner = Arrays.asList("Draw", "Draw");
+		tournament_results.getEach_map_results().forEach((map, results) -> {
+			results.forEach(result -> {
+				winner.add(result.getWinner());
+			});
+		});
+		assertEquals(winner, expected_winner);
 	}
 
 }
