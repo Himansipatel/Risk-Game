@@ -41,9 +41,8 @@ public class Benevolent implements IStrategy {
 	 */
 	public GamePlay reinforce(GamePlay game_play) {
 		Player current_player = game_play.getGame_state().get(game_play.getCurrent_player() - 1);
-		System.out.println(current_player.getArmy_stock());
 		armies_to_place = current_player.getArmy_stock();
-		String message = "Got " + armies_to_place + "armies to place";
+		String message = "Got " + armies_to_place + " armies to place";
 		List<Integer> armies_no_list = getListofArmiesValues(current_player.getTerritory_list());
 		int weak_territory_index = armies_no_list.indexOf(Collections.min(armies_no_list));
 		while (armies_to_place != 0) {
@@ -55,7 +54,7 @@ public class Benevolent implements IStrategy {
 					+ current_player.getTerritory_list().get(weak_territory_index).getTerritory_name() + "\n";
 			message = old_message + message;
 			armies_to_place--;
-			current_player.setArmy_stock(current_player.getArmy_stock()-1);
+			current_player.setArmy_stock(current_player.getArmy_stock() - 1);
 		}
 		game_play.setStatus(message);
 		return game_play;
@@ -72,6 +71,7 @@ public class Benevolent implements IStrategy {
 	 */
 	@Override
 	public GamePlay attack(GamePlay game_play) {
+		game_play.setStatus("Benevolent Player will not attack\n");
 		return game_play;
 	}
 
@@ -107,6 +107,7 @@ public class Benevolent implements IStrategy {
 	private void moveArmiesFromStrongToWeakTerritory(List<Integer> armies_no_list,
 			List<GamePlayTerritory> player_territories_list, GamePlay game_play) {
 		GamePlayTerritory weak_territory = null;
+		GamePlayTerritory strong_territory = null;
 		String message = "";
 		setListofPlayerTerritories(player_territories_list);
 		List<GamePlayTerritory> weak_territories_list = getWeakTerritoriesOfPlayer(armies_no_list,
@@ -117,7 +118,6 @@ public class Benevolent implements IStrategy {
 			for (Entry<String, List<GamePlayTerritory>> neighbor : territory_to_neighbouring.entrySet()) {
 				weak_territory = getTerritoryObjectFromString(weak_territories_list, neighbor.getKey());
 				int max = 0;
-				GamePlayTerritory strong_territory = null;
 				List<GamePlayTerritory> neigbours_list = neighbor.getValue();
 				if (neigbours_list.size() > 0) {
 					for (int neighbours_index = 0; neighbours_index < neigbours_list.size(); neighbours_index++) {
@@ -145,10 +145,14 @@ public class Benevolent implements IStrategy {
 								+ strong_territory.getNumber_of_armies() + " ] and ";
 						message += "Weak Territory Info : [ " + weak_territory.getTerritory_name() + ","
 								+ weak_territory.getNumber_of_armies() + " ]\n";
+						message += diff + " armies moved from " + strong_territory.getTerritory_name() + " to "
+								+ weak_territory.getTerritory_name();
 						game_play.setStatus(message);
 						break;
 					}
 				} else {
+					message += "No Own Strong Territory Neighbours Found For Territory " + weak_territory.getTerritory_name() + "\n";
+					game_play.setStatus(message);
 					continue;
 				}
 			}
