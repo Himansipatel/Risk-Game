@@ -796,6 +796,7 @@ public class ManagePlayer implements IManagePlayer {
 	 * @return Attack Result List
 	 */
 	private List<Integer> rollDiceOneOnOne() {
+		roll_dice_message = "";
 		Random random = new Random();
 		int dice_result_flag = 0;
 		int attacker_dice_result = random.nextInt(6) + 1;
