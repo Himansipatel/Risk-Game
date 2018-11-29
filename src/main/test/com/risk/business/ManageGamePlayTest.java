@@ -114,7 +114,35 @@ public class ManageGamePlayTest {
 				game_state.getCurrent_player());
 		assertEquals(4, game_state.getGame_state().get(2).getArmy_stock());
 	}
-
+	
+	/**
+	 * Cheater Winner Test in single player mode
+	 * 
+	 * @author <a href="mailto:zinnia.rana.22@gmail.com">Zinnia Rana</a>
+	 */
+	@Test
+	public void testForCheaterWinner() {
+		PlayerDetails single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(2);
+		List<SinglePlayer> players = new ArrayList<>();
+		SinglePlayer player = new SinglePlayer();
+		player.setId(Integer.toString(1));
+		player.setType("Computer");
+		player.setBehaviour("Benevolent");
+		players.add(player);
+		single_game_input.setPlayers(players);
+		player.setId(Integer.toString(2));
+		player.setType("Computer");
+		player.setBehaviour("Cheater");
+		players.add(player);
+		single_game_input.setPlayers(players);
+		GamePlay game_state = player_manager.createPlayer(single_game_input);
+		game_state.getGame_state().get(game_state.getCurrent_player() - 1).executeStrategy("ATTACK", game_state);
+		assertEquals("Player1 Behaviour : Cheater", game_state.getWinner());
+	}
+	
 	/**
 	 * Tournament on Invalid Map Test
 	 * 
