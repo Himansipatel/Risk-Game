@@ -116,6 +116,39 @@ public class ManageGamePlayTest {
 	}
 
 	/**
+	 * Creating a game state using AutoAllocationMode - A. Auto Allocation Mode
+	 * Performs an initial automatic allocation of armies during startup phase and
+	 * then calls calculateArmiesReinforce ,after that checks the next valid game
+	 * play phase is Reinforcement
+	 *
+	 * 
+	 * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
+	 */
+	@Test
+	public void checkValidGamePlayPhaseTest() {
+		PlayerDetails single_game_input = new PlayerDetails();
+		single_game_input.setAllocationType("A");
+		single_game_input.setFileName("Switzerland.map");
+		single_game_input.setPlayersNo(6);
+		List<SinglePlayer> players = new ArrayList<>();
+		for (int i = 1; i <= 6; i++) {
+			SinglePlayer player = new SinglePlayer();
+			player.setId(Integer.toString(i));
+			player.setType("Human");
+			player.setBehaviour("Human");
+			players.add(player);
+		}
+		single_game_input.setPlayers(players);
+
+		GamePlay game_state = player_manager.createPlayer(single_game_input);
+
+		game_state.setCurrent_player(3);
+		game_manager.calculateArmiesReinforce(game_state.getGame_state(), game_state.getMap(),
+				game_state.getCurrent_player());
+		assertEquals("REINFORCEMENT", game_state.getGame_phase());
+	}
+
+	/**
 	 * Tournament on Invalid Map Test
 	 * 
 	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
