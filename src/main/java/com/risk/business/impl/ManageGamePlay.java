@@ -770,23 +770,6 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		return tournament;
 	}
 
-/*	*//**
-	 * This method checks if the tournament is over or not
-	 * @param tournament Tournament object
-	 *//*
-	private void checkIfTournamentOver(Tournament tournament) {
-		int finished_game = 0;
-		for (GamePlay gamePlay : tournament.getTournament()) {
-			if (gamePlay.getGame_phase().equalsIgnoreCase("GAME_FINISH")) {
-				finished_game++;
-			}
-		}
-		if (finished_game==tournament.getTournament().size()) {
-			tournament.setStatus("TOURNAMENT_OVER\n");
-			fillTournamentResult(tournament);
-		}
-	}
-*/
 	/**
 	 * This method shifts the tournament to a new GamePlay as the previous one is over.
 	 * @param tournament Tournament object
