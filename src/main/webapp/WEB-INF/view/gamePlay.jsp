@@ -1753,7 +1753,7 @@
 									break;
 								}
 							}
-							if(card_list.length >4){
+							if(typeof card_list != undefined && card_list != null && card_list.length >4){
 								return true;
 							}else{
 								return false;
