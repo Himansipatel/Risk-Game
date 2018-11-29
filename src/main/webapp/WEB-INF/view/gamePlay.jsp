@@ -1252,6 +1252,7 @@
 												$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
 											}
 											currentPhase = data.game_phase;
+											debugger;
 											if(data.status == 'No more attacks' || data.game_phase == 'GAME_FINISH'){
 												hideAttackButtonForPlayer();												
 											}
@@ -1262,9 +1263,9 @@
 											}
 											
 											
-											if(checkIfCurrentPlayerIsHuman(data)){
+											if(checkIfCurrentPlayerIsHuman(data) && data.game_phase != 'GAME_FINISH'){
 												checkForNextPhaseAndDisplayOption();
-											}else{
+											}else if (!checkIfCurrentPlayerIsHuman(data) && data.game_phase != 'GAME_FINISH'){
 												addMessagesToAuditLogs(data.status);
 												stopLoading();
 												saveGameState();
