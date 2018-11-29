@@ -168,7 +168,7 @@ public class Benevolent implements IStrategy {
 	 * @param player_territories_list List of Current Player Territories
 	 * @return List of WeakTerritory List contains weak territories object
 	 */
-	private List<GamePlayTerritory> getWeakTerritoriesOfPlayer(List<Integer> armies_no_list,
+	public List<GamePlayTerritory> getWeakTerritoriesOfPlayer(List<Integer> armies_no_list,
 			List<GamePlayTerritory> player_territories_list) {
 		List<GamePlayTerritory> weak_territories_list = new ArrayList<>();
 		int min = Collections.min(armies_no_list);
@@ -190,7 +190,7 @@ public class Benevolent implements IStrategy {
 	 * @param game_play_territory List of Current Player Territories in Game
 	 * @return IntegerList List of army values on each territory current player owes
 	 */
-	private List<Integer> getListofArmiesValues(List<GamePlayTerritory> game_play_territory) {
+	public List<Integer> getListofArmiesValues(List<GamePlayTerritory> game_play_territory) {
 		List<Integer> armies = new ArrayList<>();
 		for (GamePlayTerritory territory : game_play_territory) {
 			armies.add(territory.getNumber_of_armies());
