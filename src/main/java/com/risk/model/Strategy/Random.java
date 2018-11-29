@@ -343,7 +343,7 @@ public class Random implements IStrategy {
 			old_message = "Source Territory : [ " + source_territory.getTerritory_name() + ","
 					+ source_territory.getNumber_of_armies() + "]";
 			fortify_message = old_message + fortify_message;
-			old_message = " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
+			old_message = "  Destination Territory : [ " + destination_territory.getTerritory_name() + ","
 					+ destination_territory.getNumber_of_armies() + "]\n";
 			fortify_message = old_message + fortify_message;
 			source_territory.setNumber_of_armies(source_territory.getNumber_of_armies() - 1);
@@ -351,12 +351,12 @@ public class Random implements IStrategy {
 			old_message = "Moved 1 army from " + source_territory.getTerritory_name() + " to "
 					+ destination_territory.getTerritory_name() + "\n";
 			fortify_message = old_message + fortify_message;
-			old_message = "After Fortification Results : \n";
+			old_message = "\nAfter Fortification Results : \n";
 			fortify_message = old_message + fortify_message;
 			old_message = "Source Territory : [ " + source_territory.getTerritory_name() + ","
 					+ source_territory.getNumber_of_armies() + "]";
 			fortify_message = old_message + fortify_message;
-			old_message = " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
+			old_message = "  Destination Territory : [ " + destination_territory.getTerritory_name() + ","
 					+ destination_territory.getNumber_of_armies() + "]\n";
 			fortify_message = old_message + fortify_message;
 			game_play.setStatus(fortify_message);

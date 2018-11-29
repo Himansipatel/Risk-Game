@@ -148,10 +148,11 @@ public class Benevolent implements IStrategy {
 						message += diff + " armies moved from " + strong_territory.getTerritory_name() + " to "
 								+ weak_territory.getTerritory_name();
 						game_play.setStatus(message);
-						break;
+						return;
 					}
 				} else {
-					message += "No Own Strong Territory Neighbours Found For Territory " + weak_territory.getTerritory_name() + "\n";
+					message += "No Own Strong Territory Neighbours Found For Territory "
+							+ weak_territory.getTerritory_name() + "\n";
 					game_play.setStatus(message);
 					continue;
 				}
