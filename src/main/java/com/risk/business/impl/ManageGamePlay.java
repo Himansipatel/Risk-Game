@@ -203,7 +203,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						}
 						for (Player player : game_play.getGame_state()) {
 							if (player.getId()==game_play.getCurrent_player() && ( player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
-								game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+game_play.getStatus()+"\n");
+								game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+game_play.getStatus()+"\n");
 								break;
 							}
 						}
@@ -293,11 +293,11 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			for (Player player : game_play.getGame_state()) {
 				if (player.getId()==game_play.getCurrent_player() && (player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
 					if (attack_ok) {
-						game_play.setStatus("ATTACK WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");						
+						game_play.setStatus("ATTACK WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");						
 					}else if (!attack_ok && fortify_ok) {
-						game_play.setStatus("FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");
+						game_play.setStatus("FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");
 					}else if (!attack_ok && !fortify_ok){
-						game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");
+						game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");
 						calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());
 					}
 					break;
@@ -336,15 +336,14 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 						game_play.setCurrent_player(game_play.getCurrent_player() + 1);
 					}							
 				}
-				
 			}
 
 			for (Player player : game_play.getGame_state()) {
 				if (player.getId()==game_play.getCurrent_player() && (player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
 					if (fortify_ok) {
-						game_play.setStatus("FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");
+						game_play.setStatus("FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");
 					}else {
-						game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");
+						game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");
 						calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());
 					}
 					break;
@@ -383,9 +382,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			for (Player player : game_play.getGame_state()) {
 				if (player.getId()==game_play.getCurrent_player() && (player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
 					if (fortify_ok) {
-						game_play.setStatus("FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");
+						game_play.setStatus("FORTIFICATION WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");
 					}else {
-						game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");
+						game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");
 						calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());
 					}
 					break;
@@ -412,7 +411,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 			game_play.setGame_phase("REINFORCEMENT");
 			for (Player player : game_play.getGame_state()) {
 				if (player.getId()==game_play.getCurrent_player() && (player.getType().equalsIgnoreCase("Computer") || player.getType().equalsIgnoreCase("Human"))) {
-					game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"\n"+old_message+"\n");
+					game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+game_play.getCurrent_player()+"-"+game_play.getGame_state().get(game_play.getCurrent_player()-1).getStrategy_name()+"\n"+old_message+"\n");
 					calculateArmiesReinforce(game_play.getGame_state(), game_play.getMap(), game_play.getCurrent_player());
 					break;
 				}
@@ -532,11 +531,11 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 		List<GamePlay> game_play_set   = new ArrayList<>();
 		ManageMap      map_manager     = new ManageMap();
 		ManagePlayer   player_manager  = new ManagePlayer();
-
+		int game_play_count            = 0;
 		for (int i = 1; i <= tournament_inp.getNoOfGamesToPlay(); i++) {
 
 			for (String map  : tournament_inp.getMapNames()) {
-
+				game_play_count++;
 				com.risk.model.Map map_model = map_manager.getFullMap(map);
 
 				if (map_model==null){
@@ -557,8 +556,9 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 					game_play.setGame_play_turns(0);
 					game_play.setGame_phase("REINFORCEMENT");
 					game_play.setFree_cards(free_cards);
-					game_play.setGame_play_id(i);
-					String status = "REINFORCEMENT WILL START FOR PLAYER: 1\n"+"Game ID: "+i+" being played on Map: "+map+"\n";
+					game_play.setGame_play_id(game_play_count);
+					
+					String status = "REINFORCEMENT WILL START FOR PLAYER: 1-"+tournament_inp.getMultipleStrategies().get(0)+"\n"+"Game ID: "+i+" being played on Map: "+map+"\n";
 					game_play.setStatus(status);
 
 					update_tournament_gameplay(game_play, tournament_inp.getMultipleStrategies());
@@ -752,7 +752,7 @@ public class ManageGamePlay implements IManageGamePlay, Observer {
 								current_game_play.setCurrent_player(current_game_play.getCurrent_player() + 1);
 							}							
 						}
-						current_game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+current_game_play.getCurrent_player()+"\n"+current_game_play.getStatus()+"\n");
+						current_game_play.setStatus("REINFORCEMENT WILL START FOR PLAYER: "+current_game_play.getCurrent_player()+"-"+current_game_play.getGame_state().get(current_game_play.getCurrent_player()-1).getStrategy_name()+"\n"+current_game_play.getStatus()+"\n");
 						calculateArmiesReinforce(current_game_play.getGame_state(), current_game_play.getMap(), current_game_play.getCurrent_player());
 						break;
 
