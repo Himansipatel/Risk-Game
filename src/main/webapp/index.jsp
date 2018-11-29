@@ -133,6 +133,8 @@ body {
 						'display' : 'block',
 						'height' : '180px'
 					});
+					$("#footer p").empty();
+					$("#footer p").text("Game Starts");
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");
@@ -153,7 +155,7 @@ body {
 						'display' : 'block',
 						'height' : '350px'
 					});
-					$("#footer p").text("Tournament starts");
+					$("#footer p").empty();
 				},
 				error : function(XMLHttpRequest, textStatus, errorThrown) {
 					alert("Failure");

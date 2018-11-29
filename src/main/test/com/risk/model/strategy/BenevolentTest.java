@@ -52,7 +52,7 @@ public class BenevolentTest {
 		single_game_input.setPlayers(players);
 		game_play = manage_player.createPlayer(single_game_input);
 		game_play.getGame_state().get(game_play.getCurrent_player() - 1).executeStrategy("REINFORCE", game_play);
-		assertEquals(4, game_play.getGame_state().get(game_play.getCurrent_player() - 1).getTerritory_list().get(0)
+		assertEquals(3, game_play.getGame_state().get(game_play.getCurrent_player() - 1).getTerritory_list().get(0)
 				.getNumber_of_armies());
 	}
 
