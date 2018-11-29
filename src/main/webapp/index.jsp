@@ -153,7 +153,7 @@ body {
 					$("#jumbotron").html(data);
 					$("#footer").css({
 						'display' : 'block',
-						'height' : '350px'
+						'height' : '250px'
 					});
 					$("#footer p").empty();
 				},

@@ -155,7 +155,7 @@
 					stopLoading();
 					if(data.status != 'TOURNAMENT_OVER\n'){
 						addMessagesToAuditLogs(data);
-						continueTournament(data);
+						setTimeout(function(){ continueTournament(data); }, 1);
 					}else{
 						var tourStatus = data.status.replace(/\n/g, "<br/>");
 						$("#footer p").prepend(tourStatus);
@@ -189,6 +189,10 @@
 				success : function(data) {
 					stopLoading();
 					$('#choicesSelectModal').modal('toggle');
+					if(typeof data.tournament == undefined || data.tournament ==null || (typeof data.tournament != undefined && data.tournament !=null && data.tournament.length == 0)){
+						$("#footer p").prepend("<br/>"+data.status.replace(/\n/g, "<br/>"));
+						return;
+					}
 					if(data.status != 'TOURNAMENT_OVER'){
 						addMessagesToAuditLogs(data);
 						continueTournament(data);
@@ -276,5 +280,6 @@
 			</div>
 		</div>
 	</div>
+	<div style="margin-bottom: 35%"></div>
 </body>
 </html>
