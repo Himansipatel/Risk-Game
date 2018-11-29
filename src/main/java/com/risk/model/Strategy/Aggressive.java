@@ -46,16 +46,14 @@ public class Aggressive implements IStrategy {
 					game_play.setCard_trade(player_manager.prepareCardTrade(current_player));
 					if (game_play.getCard_trade() != null) {
 						game_play.setStatus("Army Stock before Card Trade: " + current_player.getArmy_stock()
-						+ "\n3 Cards Traded.\n");
+								+ "\n3 Cards Traded.\n");
 						player_manager.tradeCards(game_play);
-						game_play.setStatus(game_play.getStatus() + "\n" + "New Army Stock after Card Trade: "
-								+ current_player.getArmy_stock());
+						game_play.setStatus("\n" + "New Army Stock after Card Trade: " + current_player.getArmy_stock()
+								+ game_play.getStatus());
 					} else {
 						game_play.setStatus("No Card Trading.\n");
 					}
-
 				}
-
 				strongest_territory = player_manager.findStrongestTerritory(current_player);
 			}
 
@@ -65,8 +63,8 @@ public class Aggressive implements IStrategy {
 				current_player.setArmy_stock(0);
 			}
 		}
-		game_play.setStatus("Strongest Territory Reinforced: " + strongest_territory.getTerritory_name() + "\n"
-				+ "New Army count on strongest territory:" + strongest_territory.getNumber_of_armies()
+		game_play.setStatus(" Strongest Territory : " + strongest_territory.getTerritory_name() + " Reinforced\n"
+				+ " New Army count on strongest territory:" + strongest_territory.getNumber_of_armies()
 				+ game_play.getStatus() + "\n");
 		return game_play;
 	}
@@ -156,12 +154,9 @@ public class Aggressive implements IStrategy {
 			if (attacker_territory_list.get(0).getNumber_of_armies() > 1) {
 				if (temp_defender_list.get(defender_territory).getNumber_of_armies() > 0) {
 					defender_territory_list.add(temp_defender_list.get(defender_territory));
-					old_message = aggressive_attack_message;
-					aggressive_attack_message = "";
-					aggressive_attack_message += "\nAttacker territory: "
-							+ attacker_territory_list.get(0).getTerritory_name()
+					old_message = "\nAttacker territory: " + attacker_territory_list.get(0).getTerritory_name()
 							+ " Defender Territory: " + defender_territory_list.get(0).getTerritory_name() + "\n";
-					aggressive_attack_message = aggressive_attack_message + old_message;					
+					aggressive_attack_message = old_message + aggressive_attack_message;
 					player_manager.setAttackerDefenderDiceNo(attacker_territory_list, defender_territory_list, attack);
 					attacker_dice_no = game_play.getAttack().getAttacker_dice_no();
 					defender_dice_no = game_play.getAttack().getDefender_dice_no();
@@ -175,10 +170,9 @@ public class Aggressive implements IStrategy {
 						// Roll Dice
 						List<Integer> attack_result = player_manager.rollDiceDecision(attacker_dice_no,
 								defender_dice_no);
-						old_message = aggressive_attack_message;
-						aggressive_attack_message = "";
-						aggressive_attack_message += player_manager.getRollDiceMessage();
-						aggressive_attack_message = aggressive_attack_message + old_message;
+
+						old_message = player_manager.getRollDiceMessage();
+						aggressive_attack_message = old_message + aggressive_attack_message;
 
 						for (int i = 0; i < attack_result.size(); i++) {
 							int result = attack_result.get(i);
@@ -193,12 +187,18 @@ public class Aggressive implements IStrategy {
 									if (attacker_territory_list.get(0).getNumber_of_armies() > 1) {
 										attacker_territory_list.get(0).setNumber_of_armies(
 												attacker_territory_list.get(0).getNumber_of_armies() - 1);
-										old_message = aggressive_attack_message;
-										aggressive_attack_message = "";
-										aggressive_attack_message += "Attacker territory: "
+
+										old_message = "Attacker territory: "
 												+ attacker_territory_list.get(0).getTerritory_name()
 												+ " occupies Defender Territory: " + def_obj.getTerritory_name() + "\n";
-										aggressive_attack_message = aggressive_attack_message + old_message;
+										aggressive_attack_message = old_message + aggressive_attack_message;
+									} else {
+										attacker_territory_list.get(0).setNumber_of_armies(1);
+
+										old_message = "Attacker territory: "
+												+ attacker_territory_list.get(0).getTerritory_name()
+												+ " occupies Defender Territory: " + def_obj.getTerritory_name() + "\n";
+										aggressive_attack_message = old_message + aggressive_attack_message;
 									}
 
 								}
@@ -219,29 +219,33 @@ public class Aggressive implements IStrategy {
 							}
 						}
 
-					} else {
 					}
 				} else {
 				}
 
 			} else {
+				old_message = "Can't attack because strongest selected territory : "
+						+ attacker_territory_list.get(0).getTerritory_name() + " has only "
+						+ attacker_territory_list.get(0).getNumber_of_armies() + " army \n";
+				aggressive_attack_message = old_message + aggressive_attack_message;
 				break;
 			}
 		}
 
-		for (GamePlayTerritory abc : temp_defender_list) {
+		for (GamePlayTerritory temp_defender_territory : temp_defender_list) {
 			for (Player defender : game_play.getGame_state()) {
 				if (defender.getId() == game_play.getCurrent_player()) {
 					continue;
 				} else {
 					for (GamePlayTerritory player_territory : defender.getTerritory_list()) {
-						if (abc.getTerritory_name().equalsIgnoreCase(player_territory.getTerritory_name())) {
+						if (temp_defender_territory.getTerritory_name()
+								.equalsIgnoreCase(player_territory.getTerritory_name())) {
 
-							if (abc.getNumber_of_armies() == 0) {
+							if (temp_defender_territory.getNumber_of_armies() == 0) {
 								defender.getTerritory_list().remove(player_territory);
 								break;
 							} else {
-								player_territory.setNumber_of_armies(abc.getNumber_of_armies());
+								player_territory.setNumber_of_armies(temp_defender_territory.getNumber_of_armies());
 								break;
 							}
 						}
@@ -256,8 +260,8 @@ public class Aggressive implements IStrategy {
 				if (attacker_territory.getTerritory_name().equalsIgnoreCase(player_territory.getTerritory_name())) {
 					player_territory.setNumber_of_armies(attacker_territory.getNumber_of_armies());
 					break;
-				} else if (!game_play.getGame_state().get(game_play.getCurrent_player() - 1)
-						.getTerritory_list().contains(attacker_territory)) {
+				} else if (!game_play.getGame_state().get(game_play.getCurrent_player() - 1).getTerritory_list()
+						.contains(attacker_territory)) {
 					attacker_territory.setNumber_of_armies(1);
 					game_play.getGame_state().get(game_play.getCurrent_player() - 1).getTerritory_list()
 							.add(attacker_territory);
@@ -272,7 +276,10 @@ public class Aggressive implements IStrategy {
 		if (game_play.getGame_state().get(game_play.getCurrent_player() - 1).isAny_territory_occupied()) {
 			player_manager.giveCardAtAttackEnd(game_play);
 			if (game_play.getStatus() != null && game_play.getStatus().length() > 0) {
-				game_play.setStatus(game_play.getStatus() + "\n" + aggressive_attack_message);
+
+				old_message = game_play.getStatus();
+				aggressive_attack_message = old_message + aggressive_attack_message;
+				game_play.setStatus(aggressive_attack_message);
 			}
 		} else {
 			game_play.setStatus(aggressive_attack_message);
@@ -294,8 +301,8 @@ public class Aggressive implements IStrategy {
 		Boolean neighbour_flag = false;
 		ManagePlayer player_manager = new ManagePlayer();
 		String aggressive_fortify_message = "";
-		String old_message                = "";
-		
+		String old_message = "";
+
 		for (Player player : game_play.getGame_state()) {
 			if (player.getId() == game_play.getCurrent_player()) {
 				current_player = player;
@@ -325,11 +332,10 @@ public class Aggressive implements IStrategy {
 					}
 
 					if (neighbour_flag == true) {
-						old_message = aggressive_fortify_message;
-						aggressive_fortify_message = "";
-						aggressive_fortify_message += (territory_b.getNumber_of_armies() - 1) + " army moved from "
-								+ territory_b.getTerritory_name() + " to " + territory_a.getTerritory_name()+"\n";
-						aggressive_fortify_message = aggressive_fortify_message + old_message;
+
+						old_message = (territory_b.getNumber_of_armies() - 1) + " army moved from "
+								+ territory_b.getTerritory_name() + " to " + territory_a.getTerritory_name() + "\n";
+						aggressive_fortify_message = old_message + aggressive_fortify_message;
 						territory_a.setNumber_of_armies(
 								territory_a.getNumber_of_armies() + territory_b.getNumber_of_armies() - 1);
 						territory_b.setNumber_of_armies(1);

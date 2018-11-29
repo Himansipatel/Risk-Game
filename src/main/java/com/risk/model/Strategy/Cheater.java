@@ -11,8 +11,8 @@ import com.risk.model.GamePlayTerritory;
 import com.risk.model.Player;
 
 /**
- * Concrete implementation of Cheating Strategy in terms of
- * Strategy design Pattern, during our GamePlay.
+ * Concrete implementation of Cheating Strategy in terms of Strategy design
+ * Pattern, during our GamePlay.
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @version 0.0.1
@@ -39,8 +39,8 @@ public class Cheater implements IStrategy {
 				}
 			}
 		}
-		territories = territories.substring(0, territories.length()-3);
-		game_play.setStatus("Cheater Doubled Armies on Territories: "+territories+"\n");
+		territories = territories.substring(0, territories.length() - 3);
+		game_play.setStatus("Cheater Doubled Armies on Territories: " + territories + "\n");
 		return game_play;
 	}
 
@@ -117,13 +117,14 @@ public class Cheater implements IStrategy {
 									current_player.getTerritory_list().add(defender_territory_data);
 									player_territories.add(defender_territory_data.getTerritory_name());
 									attacker_territory_data
-									.setNumber_of_armies(attacker_territory_data.getNumber_of_armies() - 1);
+											.setNumber_of_armies(attacker_territory_data.getNumber_of_armies() - 1);
 									current_player.getTerritory_list().set(
 											current_player.getTerritory_list().indexOf(attacker_territory_data),
 											attacker_territory_data);
 									defender_player.getTerritory_list().remove(
 											defender_player.getTerritory_list().indexOf(defender_territory_data));
-									territories_won = territories_won.concat(defender_territory_data.getTerritory_name()).concat(" , ");
+									territories_won = territories_won
+											.concat(defender_territory_data.getTerritory_name()).concat(" , ");
 									flag_attack_over = true;
 									any_territory_occupied = true;
 									current_player.setAny_territory_occupied(any_territory_occupied);
@@ -138,16 +139,20 @@ public class Cheater implements IStrategy {
 					}
 				}
 			}
-			if (current_player.isAny_territory_occupied()) {
-				manage_player.giveCardAtAttackEnd(game_play);
-			}
 		}
-		if (territories_won.length()>=4) {
-			territories_won = territories_won.substring(0, territories_won.length()-3);			
+		if (territories_won.length() >= 4) {
+			territories_won = territories_won.substring(0, territories_won.length() - 3);
 		}
-		String old_message = "\nTerritories won by Cheater: "+territories_won+"\n";
+		String old_message = "\nTerritories won by Cheater: " + territories_won + "\n";
 		manage_player.checkForWinner(game_play);
-		game_play.setStatus(game_play.getStatus()+old_message);
+
+		if (game_play.getStatus() != null && game_play.getStatus().length() > 0) {
+
+			old_message = game_play.getStatus() + old_message;
+			game_play.setStatus(old_message);
+		} else {
+			game_play.setStatus(old_message);
+		}
 		return game_play;
 	}
 
@@ -159,7 +164,7 @@ public class Cheater implements IStrategy {
 	 */
 	@Override
 	public GamePlay fortify(GamePlay game_play) {
-		
+
 		String territories = "";
 		Player current_player = null;
 		List<String> neighbours = null;
@@ -205,12 +210,12 @@ public class Cheater implements IStrategy {
 				}
 			}
 		}
-		if (territories.length()>=4) {
-			territories = territories.substring(0, territories.length()-3);
-			game_play.setStatus("Territories fortified by Cheater: "+territories+"\n");
-		}else {
+		if (territories.length() >= 4) {
+			territories = territories.substring(0, territories.length() - 3);
+			game_play.setStatus("Territories fortified by Cheater: " + territories + "\n");
+		} else {
 			game_play.setStatus("No territories to fortify for the Cheater.\n");
-		}	
+		}
 		return game_play;
 	}
 }

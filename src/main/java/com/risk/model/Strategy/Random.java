@@ -35,7 +35,8 @@ public class Random implements IStrategy {
 	 * @return GamePlay updated state of the game after reinforcement phase ends.
 	 */
 	public GamePlay reinforce(GamePlay game_play) {
-		String reinforce_message = "Reinforcement Started For Random Player\n";
+		String reinforce_message = "";
+		String old_message = "";
 		java.util.Random random = new java.util.Random();
 		int player_army_stock;
 		Player current_player = game_play.getGame_state().get(game_play.getCurrent_player() - 1);
@@ -43,18 +44,20 @@ public class Random implements IStrategy {
 		player_army_stock = current_player.getArmy_stock();
 		int selected_territory_index = random.nextInt(player_territories_list.size());
 		GamePlayTerritory selected_territory_obj = player_territories_list.get(selected_territory_index);
-		reinforce_message += "Before Reinforcement,Territory Info : [ " + selected_territory_obj.getTerritory_name()
-				+ "," + selected_territory_obj.getNumber_of_armies() + " ]\n";
-		reinforce_message += "Placing " + player_army_stock + " armies on " + selected_territory_obj.getTerritory_name()
+		old_message = "Before Reinforcement,Territory Info : [ " + selected_territory_obj.getTerritory_name() + ","
+				+ selected_territory_obj.getNumber_of_armies() + " ]\n";
+		reinforce_message = old_message + reinforce_message;
+		old_message = "Placing " + player_army_stock + " armies on " + selected_territory_obj.getTerritory_name()
 				+ "\n";
+		reinforce_message = old_message + reinforce_message;
 		while (player_army_stock != 0) {
 			selected_territory_obj.setNumber_of_armies(selected_territory_obj.getNumber_of_armies() + 1);
 			player_army_stock--;
 			current_player.setArmy_stock(current_player.getArmy_stock() - 1);
 		}
-		reinforce_message += "After Reinforcement,Territory Info : [ " + selected_territory_obj.getTerritory_name()
-				+ "," + selected_territory_obj.getNumber_of_armies() + " ]\n";
-		reinforce_message += "Reinforcement Ended For Random Player";
+		old_message = "After Reinforcement,Territory Info : [ " + selected_territory_obj.getTerritory_name() + ","
+				+ selected_territory_obj.getNumber_of_armies() + " ]\n";
+		reinforce_message = old_message + reinforce_message;
 		game_play.setStatus(reinforce_message);
 		return game_play;
 	}
@@ -298,6 +301,7 @@ public class Random implements IStrategy {
 		List<GamePlayTerritory> player_territories_list = current_player.getTerritory_list();
 		java.util.Random random = new java.util.Random();
 		String fortify_message = "";
+		String old_message = "";
 		l1: while (own_neighbour_territory.size() == 0) {
 			random_territory = random.nextInt(player_territories_list.size());
 			source_territory = player_territories_list.get(random_territory);
@@ -325,7 +329,6 @@ public class Random implements IStrategy {
 							}
 						}
 					}
-
 				}
 			}
 			if (own_neighbour_territory.size() == 0) {
@@ -335,24 +338,27 @@ public class Random implements IStrategy {
 		if (!fortify_possible) {
 			game_play.setStatus("Fortificaition not possible for random player");
 		} else {
-			System.out.println("FORT RAND" + own_neighbour_territory.size());
 			random_destination = random.nextInt(own_neighbour_territory.size());
 			destination_territory = player_territories_list.get(random_destination);
-			fortify_message += "Random Player Fortification Started\n";
-			fortify_message += "Source Territory : [ " + source_territory.getTerritory_name() + ","
+			old_message = "Source Territory : [ " + source_territory.getTerritory_name() + ","
 					+ source_territory.getNumber_of_armies() + "]";
-			fortify_message += " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
+			fortify_message = old_message + fortify_message;
+			old_message = " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
 					+ destination_territory.getNumber_of_armies() + "]\n";
+			fortify_message = old_message + fortify_message;
 			source_territory.setNumber_of_armies(source_territory.getNumber_of_armies() - 1);
 			destination_territory.setNumber_of_armies(destination_territory.getNumber_of_armies() + 1);
-			fortify_message += "Moved 1 army from " + source_territory.getTerritory_name() + " to "
+			old_message = "Moved 1 army from " + source_territory.getTerritory_name() + " to "
 					+ destination_territory.getTerritory_name() + "\n";
-			fortify_message += "After Fortification Results : \n";
-			fortify_message += "Source Territory : [ " + source_territory.getTerritory_name() + ","
+			fortify_message = old_message + fortify_message;
+			old_message = "After Fortification Results : \n";
+			fortify_message = old_message + fortify_message;
+			old_message = "Source Territory : [ " + source_territory.getTerritory_name() + ","
 					+ source_territory.getNumber_of_armies() + "]";
-			fortify_message += " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
+			fortify_message = old_message + fortify_message;
+			old_message = " / Destination Territory : [ " + destination_territory.getTerritory_name() + ","
 					+ destination_territory.getNumber_of_armies() + "]\n";
-			fortify_message += "Random Player Fortification Ended\n";
+			fortify_message = old_message + fortify_message;
 			game_play.setStatus(fortify_message);
 		}
 		return game_play;
