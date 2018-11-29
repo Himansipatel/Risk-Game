@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.risk.business.impl;
 
 import java.util.ArrayList;
@@ -18,8 +15,10 @@ import com.risk.model.GamePlayTerritory;
 import com.risk.model.Player;
 
 /**
- * @author MayankJariwala
- *
+ * This class is the Concrete Implementation for interface IManageDomination.
+ * 
+ * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+ * @version 0.0.2
  */
 public class ManageDomination implements IManageDomination, Observer {
 
@@ -75,6 +74,7 @@ public class ManageDomination implements IManageDomination, Observer {
 	 * This function is use to store information about total no. of territory count
 	 * in Continent (Mapping of Terrtiory Count in Continent)
 	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
 	 * @param game_play State of Game
 	 * @return HashMap Count of Territory in respective Continent
 	 */
@@ -88,6 +88,13 @@ public class ManageDomination implements IManageDomination, Observer {
 		return continent_territory_count;
 	}
 
+	/**
+	 * This method here serves for the implementation of Observer Pattern in our
+	 * Project. It handles Domination view during game play as per risk rules.This
+	 * class here is being observed by ManageDomination as an observer.
+	 * 
+	 * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+	 */
 	@Override
 	public void update(Observable o, Object arg) {
 		dominationView((GamePlay) arg);

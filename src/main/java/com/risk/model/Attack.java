@@ -1,12 +1,11 @@
-/**
- * 
- */
 package com.risk.model;
 
 /**
+ * Model class for Attack
  * 
  * @author <a href="mailto:himansipatel1994@gmail.com">Himansi Patel</a>
  * @author <a href="mailto:mayankjariwala1994@gmail.com">Mayank Jariwala</a>
+ * @version 0.0.1
  */
 public class Attack {
 

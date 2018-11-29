@@ -58,7 +58,7 @@ public class GamePlayTerritory {
 
 	@Override
 	public boolean equals(Object obj) {
-		return this.getTerritory_name().equalsIgnoreCase(((GamePlayTerritory)obj).getTerritory_name());
+		return this.getTerritory_name().equalsIgnoreCase(((GamePlayTerritory) obj).getTerritory_name());
 	}
 
 }

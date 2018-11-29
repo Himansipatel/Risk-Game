@@ -85,7 +85,7 @@ public class GamePlay extends Observable {
 	 * Cycle count - Number of turn cycles over in any game play.
 	 */
 	private int game_play_turns;
-	
+
 	/**
 	 * Winner for the GamePlay
 	 */
@@ -105,16 +105,22 @@ public class GamePlay extends Observable {
 		this.game_play_id = game_play_id;
 	}
 
+	/**
+	 * @return Number of turn cycles over in any game play
+	 */
 	public int getGame_play_turns() {
 		return game_play_turns;
 	}
 
+	/**
+	 * @param game_play_turns the game_play_turns to set
+	 */
 	public void setGame_play_turns(int game_play_turns) {
 		this.game_play_turns = game_play_turns;
 	}
 
 	/**
-	 * @return the domination
+	 * @return the domination list
 	 */
 	public List<Domination> getDomination() {
 		return domination;

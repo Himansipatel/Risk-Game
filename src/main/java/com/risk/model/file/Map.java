@@ -1,12 +1,9 @@
-/**
- * 
- */
 package com.risk.model.file;
 
 /**
  * This is an Model Class for Map.
  * 
- * @author MayankJariwala
+ * @author <a href="mailto:mayankjariwala1994@gmail.com">MayankJariwala</a>
  * @version 0.0.1
  */
 public class Map {
